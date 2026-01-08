@@ -8,25 +8,25 @@ interface IStructuredErrors {
 
 export default function useValidation<T>(schema: z.Schema<T>) {
   const [errors, setErrors] = useState<IStructuredErrors[] | null>(null);
-  const validate = (data: unknown): T | null => {
+
+  const validate = (data: unknown): boolean => {
     try {
-      const parsedData = schema.parse(data);
+      schema.parse(data);
       setErrors(null);
-      return parsedData;
+      return true;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const structuredErrors = error.issues.map((item) => {
-          return {
-            path: item.path as (string | number)[],
-            message: item.message,
-          };
-        });
+        const structuredErrors = error.issues.map((item) => ({
+          path: item.path as (string | number)[],
+          message: item.message,
+        }));
         setErrors(structuredErrors);
       }
-      return null;
+      return false;
     }
   };
 
   const clearErrors = () => setErrors(null);
+
   return { validate, clearErrors, errors };
 }

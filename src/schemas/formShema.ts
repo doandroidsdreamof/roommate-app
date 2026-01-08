@@ -1,11 +1,15 @@
 import z from 'zod';
 
-const otpSchema = z.object({
+export const emailSchema = z.object({
   email: z.email('Invalid email'),
+});
+
+export const otpSchema = z.object({
   otp: z
     .string()
     .length(6, 'OTP must be 6 digits')
     .regex(/^\d+$/, 'OTP must be numbers only'),
 });
 
-type OTPFormData = z.infer<typeof otpSchema>;
+export type OTPSchema = z.infer<typeof otpSchema>;
+export type EmailSchema = z.infer<typeof emailSchema>;

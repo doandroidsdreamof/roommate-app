@@ -1,6 +1,5 @@
 import { MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
 
-// Supabase color palette
 const baseColors = {
   brand: '#3ECF8E',
   brandAccent: '#24B47E',
@@ -8,7 +7,7 @@ const baseColors = {
   surface: '#FAFAFA',
   border: '#E8E8E8',
   text: '#1F1F1F',
-  textMuted: '#6B7280',
+  textMuted: '#9B7280',
 };
 
 export const lightTheme = {
@@ -26,7 +25,6 @@ export const lightTheme = {
     onSurface: baseColors.text,
     outline: baseColors.border,
   },
-  roundness: 8,
 };
 
 export const darkTheme = {
@@ -44,7 +42,6 @@ export const darkTheme = {
     onSurface: '#FFFFFF',
     outline: '#333333',
   },
-  roundness: 8,
 };
 
 export const spacing = {

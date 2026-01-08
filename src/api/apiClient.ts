@@ -1,9 +1,17 @@
 import axios, { AxiosInstance } from 'axios';
+import { secureStorage } from '@/storage/storage';
+import { API_ENDPOINTS } from '@/config/apiEndpoints';
+
+// Event emitter for auth events
+type AuthEventListener = () => void;
 
 class ApiClient {
   private api: AxiosInstance;
+  private isRefreshing = false;
+  private refreshSubscribers: ((token: string) => void)[] = [];
+  private onTokenRefreshFailedListener: AuthEventListener | null = null;
+
   constructor() {
-    console.log('🌐 API URL:', process.env.EXPO_PUBLIC_API_URL);
     this.api = axios.create({
       baseURL: process.env.EXPO_PUBLIC_API_URL,
       timeout: 10000,
@@ -14,56 +22,93 @@ class ApiClient {
     });
     this.setupInterceptors();
   }
+
+  // Register listener for token refresh failures
+  public onTokenRefreshFailed(listener: AuthEventListener) {
+    this.onTokenRefreshFailedListener = listener;
+  }
+
   private setupInterceptors() {
     this.api.interceptors.request.use(
-      function (config) {
+      async (config) => {
+        const accessToken = await secureStorage.getAccessToken();
+        if (accessToken) {
+          config.headers.Authorization = `Bearer ${accessToken}`;
+        }
         return config;
       },
-      function (error) {
-        console.log('🚀 ~request error:', error);
-        return Promise.reject(error);
-      }
+      (error) => Promise.reject(error)
     );
-    this.api.interceptors.response.use(
-      (response) => {
-        console.log('🚀 ~response 2response:', response);
-        return response;
-      },
-      (error) => {
-        console.log('🚀 ~ error:', error);
-        // Handle errors globally
-        if (error.response) {
-          // Server responded with a status code out of 2xx range
-          const statusCode = error.response.status;
-          const errorMessage =
-            error.response.data.message || 'An error occurred';
 
-          // Handle different status codes accordingly
-          if (statusCode === 401) {
-            // Handle unauthorized error, for example by redirecting to login
-            console.error('Unauthorized access - redirecting to login');
-          } else if (statusCode === 500) {
-            // Handle server errors
-            console.error('Server error - try again later');
-          } else {
-            // Handle other types of errors
-            console.error(`Error ${statusCode}: ${errorMessage}`);
+    this.api.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        const originalRequest = error.config;
+
+        if (error.response?.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
+
+          if (this.isRefreshing) {
+            return new Promise((resolve) => {
+              this.refreshSubscribers.push((token: string) => {
+                originalRequest.headers.Authorization = `Bearer ${token}`;
+                resolve(this.api(originalRequest));
+              });
+            });
           }
-        } else if (error.request) {
-          // No response received (network error, timeout, etc.)
-          console.error('Network error - check your internet connection');
-        } else {
-          // Something else happened during the request
-          console.error('Request error:', error.message);
+
+          this.isRefreshing = true;
+
+          try {
+            const refreshToken = await secureStorage.getRefreshToken();
+            if (!refreshToken) throw new Error('No refresh token');
+
+            const response = await axios.post(
+              `${process.env.EXPO_PUBLIC_API_URL}${API_ENDPOINTS.AUTH.REFRESH_TOKEN}`,
+              { refreshToken }
+            );
+
+            const { accessToken } = response.data.data;
+
+            await secureStorage.setTokens(accessToken, refreshToken);
+
+            this.api.defaults.headers.common['Authorization'] =
+              `Bearer ${accessToken}`;
+
+            this.refreshSubscribers.forEach((callback) =>
+              callback(accessToken)
+            );
+            this.refreshSubscribers = [];
+
+            originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+            return this.api(originalRequest);
+          } catch (refreshError) {
+            console.error('Token refresh failed:', refreshError);
+            await secureStorage.clearTokens();
+
+            this.refreshSubscribers = [];
+
+            // Emit event for token refresh failure
+            if (this.onTokenRefreshFailedListener) {
+              this.onTokenRefreshFailedListener();
+            }
+
+            return Promise.reject(refreshError);
+          } finally {
+            this.isRefreshing = false;
+          }
         }
 
-        // Optionally, return a rejected promise to ensure `.catch` is triggered in individual requests
         return Promise.reject(error);
       }
     );
   }
+
   getClient(): AxiosInstance {
     return this.api;
   }
 }
-export const apiClient = new ApiClient().getClient();
+
+const apiClientInstance = new ApiClient();
+export const apiClient = apiClientInstance.getClient();
+export const apiClientManager = apiClientInstance; // instance for event registration
