@@ -43,7 +43,9 @@ const OTPInput = ({
       <Text style={[styles.title, { color: theme.colors.onSurface }]}>
         Enter OTP
       </Text>
-      <Text style={styles.subtitle}>We sent a code to your email</Text>
+      <Text style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}>
+        We sent a code to your email
+      </Text>
 
       <RNTextInput
         ref={hiddenInputRef}
@@ -57,7 +59,6 @@ const OTPInput = ({
         style={styles.hiddenInput}
       />
 
-      {/* Visual OTP boxes */}
       <Pressable onPress={handleBoxPress}>
         <View style={styles.otpContainer}>
           {digits.map((digit, index) => (
@@ -65,8 +66,16 @@ const OTPInput = ({
               key={index}
               style={[
                 styles.otpInput,
-                otpError && styles.otpInputError,
-                otp.length === index && styles.otpInputActive,
+                {
+                  backgroundColor: theme.colors.surface,
+                  borderColor: theme.colors.outline,
+                },
+                otp.length === index && {
+                  borderColor: theme.colors.primary,
+                },
+                otpError && {
+                  borderColor: theme.colors.error,
+                },
               ]}
             >
               <Text
@@ -79,7 +88,11 @@ const OTPInput = ({
         </View>
       </Pressable>
 
-      {otpError && <Text style={styles.error}>{otpError}</Text>}
+      {otpError && (
+        <Text style={[styles.error, { color: theme.colors.error }]}>
+          {otpError}
+        </Text>
+      )}
 
       <Button
         mode="contained"
@@ -98,7 +111,9 @@ const OTPInput = ({
         Resend OTP {expiresIn > 0 && `(${formatTime(expiresIn)})`}
       </Button>
       {expiresIn > 0 && (
-        <Text style={styles.timerText}>
+        <Text
+          style={[styles.timerText, { color: theme.colors.onSurfaceVariant }]}
+        >
           Code expires in {formatTime(expiresIn)}
         </Text>
       )}

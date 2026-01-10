@@ -3,7 +3,15 @@ import { API_ENDPOINTS } from '../config/apiEndpoints';
 import { FeedItem } from '@/schemas/feedSchema';
 
 export interface SwipeResponse {
-  match: boolean;
+  swipe: {
+    id: string;
+    createdAt: string;
+    updatedAt: string;
+    swiperId: string;
+    swipedId: string;
+    action: 'pass' | 'like';
+  };
+  matched: boolean;
 }
 
 export class SwipeApi {
@@ -15,18 +23,27 @@ export class SwipeApi {
     );
     return response.data.data;
   }
-  public async swipePass(swipedId: string): Promise<void> {
-    await this.client.post(API_ENDPOINTS.SWIPES.SWIPE, {
-      swipedId,
-      action: 'pass',
-    });
+
+  public async swipePass(swipedId: string): Promise<SwipeResponse> {
+    const response = await this.client.post<{ data: SwipeResponse }>(
+      API_ENDPOINTS.SWIPES.SWIPE,
+      {
+        swipedId,
+        action: 'pass',
+      }
+    );
+    return response.data.data;
   }
-  public async swipeLike(swipedId: string): Promise<SwipeResponse | undefined> {
-    const result = await this.client.post(API_ENDPOINTS.SWIPES.SWIPE, {
-      swipedId,
-      action: 'like',
-    });
-    return result.data;
+
+  public async swipeLike(swipedId: string): Promise<SwipeResponse> {
+    const response = await this.client.post<{ data: SwipeResponse }>(
+      API_ENDPOINTS.SWIPES.SWIPE,
+      {
+        swipedId,
+        action: 'like',
+      }
+    );
+    return response.data.data;
   }
 }
 

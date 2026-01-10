@@ -1,10 +1,14 @@
 import { swipeApi } from '@/api';
 import { SwipeResponse } from '@/api/swipeApi';
+import { FeedItem } from '@/schemas/feedSchema';
 import { useMutation } from '@tanstack/react-query';
 
 export type SwipeDirection = 'pass' | 'like';
 
-const useSwipe = (onMatch?: (data: SwipeResponse) => void) => {
+const useSwipeMutations = (
+  feed: FeedItem[],
+  onMatch?: (profile: FeedItem) => void
+) => {
   const swipeMutation = useMutation({
     mutationFn: async ({
       swipedId,
@@ -26,13 +30,20 @@ const useSwipe = (onMatch?: (data: SwipeResponse) => void) => {
       }
     },
     onSuccess: (data, variables) => {
-      // Check if it's a like and if match is true
-      if (variables.direction === 'like' && data?.match) {
+      if (variables.direction === 'like' && data?.matched) {
         if (__DEV__) console.log('🔥 IT IS A MATCH!');
-        onMatch?.(data); // Trigger the callback passed from your Screen
+
+        // Find the matched profile in feed
+        const matchedProfile = feed.find(
+          (item) => item.userId === data.swipe.swipedId
+        );
+
+        if (matchedProfile) {
+          onMatch?.(matchedProfile);
+        }
       }
     },
-    onError: (error, variables, context) => {
+    onError: (error, variables) => {
       console.error(`Failed to ${variables.direction} profile:`, error);
     },
   });
@@ -53,4 +64,4 @@ const useSwipe = (onMatch?: (data: SwipeResponse) => void) => {
   };
 };
 
-export default useSwipe;
+export default useSwipeMutations;

@@ -1,4 +1,4 @@
-import { containerStyle } from '@/style/main.style';
+import { containerStyle } from '@/styles/main.style';
 import { Text, View } from 'react-native';
 
 const HomeScreen = () => (

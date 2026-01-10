@@ -1,4 +1,4 @@
-import { containerStyle } from '@/style/main.style';
+import { containerStyle } from '@/styles/main.style';
 import { View } from 'react-native';
 import { Text } from 'react-native-paper';
 

@@ -1,5 +1,6 @@
+import { containerStyle } from '@/styles/main.style';
 import React from 'react';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 interface LoadingProps {
@@ -11,18 +12,10 @@ const Loading = ({ size = 'large', color }: LoadingProps) => {
   const theme = useTheme();
 
   return (
-    <View style={styles.container}>
+    <View style={containerStyle.container}>
       <ActivityIndicator size={size} color={color || theme.colors.primary} />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-  },
-});
 
 export default Loading;

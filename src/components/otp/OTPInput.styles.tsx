@@ -9,7 +9,6 @@ export const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   error: {
-    color: '#EF4444',
     fontSize: 14,
     marginTop: spacing.sm,
     textAlign: 'center',
@@ -33,8 +32,6 @@ export const styles = StyleSheet.create({
   },
   otpInput: {
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderColor: '#DDDDDD',
     borderRadius: borderRadius.md,
     borderWidth: 2,
     height: 56,
@@ -42,23 +39,17 @@ export const styles = StyleSheet.create({
     width: 48,
   },
   otpInputActive: {
-    borderColor: '#FF5A5F',
     borderWidth: 2,
-  },
-  otpInputError: {
-    borderColor: '#EF4444',
   },
   resendButton: {
     marginTop: spacing.md,
   },
   subtitle: {
-    color: '#767676',
     fontSize: 16,
     marginTop: spacing.sm,
     textAlign: 'center',
   },
   timerText: {
-    color: '#767676',
     fontSize: 14,
     marginTop: spacing.lg,
     textAlign: 'center',

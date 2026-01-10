@@ -1,75 +1,58 @@
-import { swipeApi } from '@/api';
-import { SwipeResponse } from '@/api/swipeApi';
 import Loading from '@/components/Loading';
+import MatchModal from '@/components/matchModal/MatchModal';
 import ScreenText from '@/components/ScreenText';
 import SwipeCard from '@/components/swipe/SwipeCard';
 import SwipeOverlay from '@/components/swipe/SwipeOverlay';
-import useSwipe from '@/hooks/useSwipe';
+import { useSwipeFeed } from '@/hooks/useSwipeFeed';
+import { useSwipeHandlers } from '@/hooks/useSwipeHandlers';
+import useSwipeMutations from '@/hooks/useSwipeMutations';
 import { FeedItem } from '@/schemas/feedSchema';
-import { useQuery } from '@tanstack/react-query';
 import React, { useCallback, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { IconButton, useTheme } from 'react-native-paper';
 import { Swiper, type SwiperCardRefType } from 'rn-swiper-list';
 import { styles } from './SwipeScreen.styles';
+import { actionButtons } from './actionButtons';
+
+const OverlayLabelLeft = () => <SwipeOverlay type="LIKE" />;
+const OverlayLabelRight = () => <SwipeOverlay type="PASS" />;
 
 const SwipeScreen = () => {
   const theme = useTheme();
   const swiperRef = useRef<SwiperCardRefType | null>(null);
-  const {
-    isFetching,
-    refetch,
-    isLoading,
-    data: feed = [],
-  } = useQuery<FeedItem[]>({
-    queryKey: ['swipe'],
-    queryFn: () => swipeApi.getFeed(),
-  });
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [matchedProfile, setMatchedProfile] = useState<SwipeResponse | null>(
-    null
+  const [matchedProfile, setMatchedProfile] = useState<FeedItem | null>(null);
+  const [showMatchModal, setShowMatchModal] = useState(false);
+
+  const { feed, isLoading, isFetching, currentIndex, handleIndexChange } =
+    useSwipeFeed();
+
+  const { handleSwipeLike, handleSwipePass } = useSwipeMutations(
+    feed,
+    (profile) => {
+      setMatchedProfile(profile);
+      setShowMatchModal(true);
+    }
   );
-  const { handleSwipeLike, handleSwipePass } = useSwipe((matchData) => {
-    setMatchedProfile(matchData);
-  });
+
+  const { handleSwipeRight, handleSwipeLeft } = useSwipeHandlers(
+    feed,
+    handleSwipeLike,
+    handleSwipePass
+  );
 
   const renderCard = useCallback((item: FeedItem) => {
     return <SwipeCard profile={item} />;
   }, []);
 
-  const handleSwipeRight = useCallback(
-    (cardIndex: number) => {
-      const profile = feed[cardIndex];
-      if (profile) {
-        handleSwipePass(profile.userId);
-      }
-    },
-    [feed, handleSwipePass]
-  );
+  const handleSendMessage = useCallback(() => {
+    // TODO: Navigate to messages screen with matched profile
+    console.log('Navigate to messages:', matchedProfile);
+  }, [matchedProfile]);
 
-  const handleSwipeLeft = useCallback(
-    (cardIndex: number) => {
-      const profile = feed[cardIndex];
-      if (profile) {
-        handleSwipeLike(profile.userId);
-      }
-    },
-    [feed, handleSwipeLike]
-  );
-
-  const handleIndexChange = useCallback(
-    (index: number) => {
-      setCurrentIndex(index);
-      if (index >= feed.length - 2 && feed.length > 0) {
-        void refetch();
-      }
-    },
-    [feed.length, refetch]
-  );
-
-  const OverlayLabelLeft = useCallback(() => <SwipeOverlay type="LIKE" />, []);
-  const OverlayLabelRight = useCallback(() => <SwipeOverlay type="PASS" />, []);
+  const handleKeepSwiping = useCallback(() => {
+    setShowMatchModal(false);
+  }, []);
 
   if (isLoading) {
     return <Loading size="large" />;
@@ -99,35 +82,29 @@ const SwipeScreen = () => {
         />
         {isFetching && <Loading size="small" />}
       </View>
+
       <View style={styles.buttonContainer}>
-        <IconButton
-          icon="close"
-          iconColor={theme.colors.error}
-          size={35}
-          mode="contained"
-          style={styles.circleButton}
-          onPress={() => swiperRef.current?.swipeRight()}
-        />
-
-        <IconButton
-          icon="undo"
-          iconColor={theme.colors.secondary}
-          size={25}
-          mode="contained"
-          style={styles.circleButton}
-          disabled={currentIndex === 0}
-          onPress={() => swiperRef.current?.swipeBack()}
-        />
-
-        <IconButton
-          icon="heart"
-          iconColor={theme.colors.primary}
-          size={35}
-          mode="contained"
-          style={styles.circleButton}
-          onPress={() => swiperRef.current?.swipeLeft()}
-        />
+        {actionButtons.map((button) => (
+          <IconButton
+            key={button.icon}
+            icon={button.icon}
+            iconColor={button.getColor(theme)}
+            size={button.size}
+            mode="contained"
+            style={styles.circleButton}
+            disabled={button.getDisabled?.(currentIndex) ?? false}
+            onPress={button.getOnPress(swiperRef)}
+          />
+        ))}
       </View>
+      <MatchModal
+        visible={showMatchModal}
+        onDismiss={() => setShowMatchModal(false)}
+        onSendMessage={handleSendMessage}
+        onKeepSwiping={handleKeepSwiping}
+        matchedProfile={matchedProfile}
+        currentUserPhoto={undefined}
+      />
     </GestureHandlerRootView>
   );
 };

@@ -14,7 +14,7 @@ interface ProfileBadgeProps {
   profile: FeedItem;
 }
 
-const ProfileBadge: React.FC<ProfileBadgeProps> = ({ profile }) => {
+const ProfileBadge = ({ profile }: ProfileBadgeProps) => {
   const badges: BadgeConfig[] = [
     {
       icon: 'smoking',

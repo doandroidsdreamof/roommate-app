@@ -1,4 +1,4 @@
-import { shadows, spacing } from '@/theme/theme';
+import { shadows } from '@/theme/theme';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { useEffect, useRef } from 'react';
 import {
@@ -11,6 +11,7 @@ import {
 import { Text, useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
+import { styles } from './TabBar.styles';
 
 const { width } = Dimensions.get('window');
 const TAB_WIDTH = width / 5;
@@ -24,15 +25,12 @@ interface Route {
   unfocusedIcon: IconName;
 }
 
-interface CurvedTabBarProps {
+interface TabBarBarProps {
   navigationState: { index: number; routes: Route[] };
   onIndexChange: (index: number) => void;
 }
 
-const CurvedTabBar = ({
-  navigationState,
-  onIndexChange,
-}: CurvedTabBarProps) => {
+const TabBar = ({ navigationState, onIndexChange }: TabBarBarProps) => {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { index, routes } = navigationState;
@@ -135,42 +133,4 @@ const CurvedTabBar = ({
   );
 };
 
-const styles = StyleSheet.create({
-  activeCircle: {
-    alignItems: 'center',
-    borderRadius: 30,
-    height: 60,
-    justifyContent: 'center',
-    position: 'absolute',
-    top: -20,
-    width: 60,
-  },
-  background: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  container: {
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginTop: spacing.xs,
-  },
-  tab: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    },
-  tabWrapper: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-  },
-  tabsContainer: {
-    flexDirection: 'row',
-    paddingTop: spacing.md,
-  },
-});
-
-export default CurvedTabBar;
+export default TabBar;
