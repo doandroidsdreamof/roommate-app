@@ -1,14 +1,16 @@
-import React, { useRef, useEffect } from 'react';
+import { shadows, spacing } from '@/theme/theme';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import React, { useEffect, useRef } from 'react';
 import {
-  View,
+  Animated,
+  Dimensions,
   StyleSheet,
   TouchableOpacity,
-  Dimensions,
-  Animated,
+  View,
 } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 const TAB_WIDTH = width / 5;
@@ -31,6 +33,8 @@ const CurvedTabBar = ({
   navigationState,
   onIndexChange,
 }: CurvedTabBarProps) => {
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const { index, routes } = navigationState;
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -47,11 +51,13 @@ const CurvedTabBar = ({
         useNativeDriver: true,
       }),
     ]).start();
-  }, [index]);
+  }, [index, scaleAnim]);
+
+  const tabBarHeight = 60 + insets.bottom;
 
   return (
-    <View style={styles.container}>
-      {/* White background with curve */}
+    <View style={[styles.container, { height: tabBarHeight }]}>
+      {/* Background with curve */}
       <View style={styles.background}>
         <Svg width={width} height={80} style={StyleSheet.absoluteFillObject}>
           <Path
@@ -62,17 +68,17 @@ const CurvedTabBar = ({
               Q ${index * TAB_WIDTH + TAB_WIDTH / 2},0 ${index * TAB_WIDTH + TAB_WIDTH / 2 + 10},10
               Q ${index * TAB_WIDTH + TAB_WIDTH / 2 + 20},20 ${index * TAB_WIDTH + TAB_WIDTH / 2 + 40},20
               L ${width},20
-              L ${width},80
-              L 0,80
+              L ${width},${tabBarHeight + 20}
+              L 0,${tabBarHeight + 20}
               Z
             `}
-            fill="#FFFFFF"
+            fill={theme.colors.surface}
           />
         </Svg>
       </View>
 
       {/* Tab buttons */}
-      <View style={styles.tabsContainer}>
+      <View style={[styles.tabsContainer, { paddingBottom: insets.bottom }]}>
         {routes.map((route, i) => {
           const isFocused = index === i;
 
@@ -82,15 +88,17 @@ const CurvedTabBar = ({
                 <Animated.View
                   style={[
                     styles.activeCircle,
+                    shadows.lg,
                     {
+                      backgroundColor: theme.colors.primary,
                       transform: [{ scale: scaleAnim }],
                     },
                   ]}
                 >
                   <MaterialCommunityIcons
                     name={route.focusedIcon}
-                    size={32}
-                    color="#FFFFFF"
+                    size={28}
+                    color={theme.colors.onPrimary}
                   />
                 </Animated.View>
               )}
@@ -104,10 +112,16 @@ const CurvedTabBar = ({
                   <MaterialCommunityIcons
                     name={route.unfocusedIcon}
                     size={24}
-                    color="#666"
+                    color={theme.colors.onSurfaceVariant}
                   />
                   {route.title && (
-                    <Text style={styles.label} numberOfLines={1}>
+                    <Text
+                      style={[
+                        styles.label,
+                        { color: theme.colors.onSurfaceVariant },
+                      ]}
+                      numberOfLines={1}
+                    >
                       {route.title}
                     </Text>
                   )}
@@ -124,50 +138,38 @@ const CurvedTabBar = ({
 const styles = StyleSheet.create({
   activeCircle: {
     alignItems: 'center',
-    backgroundColor: '#3ECF8E',
     borderRadius: 30,
-    elevation: 8,
     height: 60,
     justifyContent: 'center',
     position: 'absolute',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    top: -10,
+    top: -20,
     width: 60,
   },
   background: {
     ...StyleSheet.absoluteFillObject,
   },
   container: {
-    bottom: 20,
-    height: 90,
+    bottom: 0,
     left: 0,
-    paddingBottom: 0,
-    position: 'absolute',
     right: 0,
   },
   label: {
-    color: '#666',
-    fontSize: 11,
+    fontSize: 14,
     fontWeight: '600',
-    marginTop: 2,
+    marginTop: spacing.xs,
   },
   tab: {
     alignItems: 'center',
-    height: '100%',
     justifyContent: 'center',
-  },
+    },
   tabWrapper: {
     alignItems: 'center',
     flex: 1,
-    justifyContent: 'flex-end',
-    paddingBottom: 20,
+    justifyContent: 'center',
   },
   tabsContainer: {
     flexDirection: 'row',
-    height: 100,
+    paddingTop: spacing.md,
   },
 });
 

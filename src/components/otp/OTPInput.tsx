@@ -1,11 +1,7 @@
 import useCount from '@/hooks/useCount';
 import React, { useRef } from 'react';
-import {
-  TextInput as RNTextInput,
-  TextInputKeyPressEvent,
-  View,
-} from 'react-native';
-import { Button, Text } from 'react-native-paper';
+import { Pressable, TextInput as RNTextInput, View } from 'react-native';
+import { Button, Text, useTheme } from 'react-native-paper';
 import { styles } from './OTPInput.styles';
 
 interface OTPInputProps {
@@ -23,59 +19,66 @@ const OTPInput = ({
   onSubmit,
   onResend,
 }: OTPInputProps) => {
-  const inputRefs = useRef<RNTextInput[]>([]);
+  const theme = useTheme();
+  const hiddenInputRef = useRef<RNTextInput>(null);
   const digits = otp.padEnd(6, ' ').split('').slice(0, 6);
-  const { formatTime, expiresIn } = useCount(300);
+  const { formatTime, expiresIn, reset } = useCount(300);
 
-  const handleChange = (text: string, index: number) => {
-    if (text.length > 1) {
-      const pastedDigits = text.slice(0, 6).split('');
-      onOtpChange(pastedDigits.join(''));
-      inputRefs.current[5]?.focus();
-      return;
-    }
-
-    if (!/^\d*$/.test(text)) return;
-
-    const newDigits = [...digits];
-    newDigits[index] = text;
-    onOtpChange(newDigits.join('').trim());
-
-    if (text && index < 5) {
-      inputRefs.current[index + 1]?.focus();
-    }
+  const handleChange = (text: string) => {
+    const cleaned = text.replace(/\D/g, '').slice(0, 6);
+    onOtpChange(cleaned);
   };
 
-  const handleKeyPress = (e: TextInputKeyPressEvent, index: number) => {
-    if (e && e.nativeEvent.key === 'Backspace') {
-      if (index > 0) {
-        inputRefs.current[index - 1]?.focus();
-      }
-    }
+  const handleBoxPress = () => {
+    hiddenInputRef.current?.focus();
+  };
+
+  const handleResend = () => {
+    onResend();
+    reset();
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Enter OTP</Text>
+      <Text style={[styles.title, { color: theme.colors.onSurface }]}>
+        Enter OTP
+      </Text>
       <Text style={styles.subtitle}>We sent a code to your email</Text>
-      <View style={styles.otpContainer}>
-        {digits.map((digit, index) => (
-          <RNTextInput
-            key={index}
-            ref={(ref) => {
-              if (ref) {
-                inputRefs.current[index] = ref;
-              }
-            }}
-            value={digit.trim()}
-            onChangeText={(text) => handleChange(text, index)}
-            onKeyPress={(e) => handleKeyPress(e, index)}
-            keyboardType="number-pad"
-            maxLength={1}
-            style={[styles.otpInput, otpError && styles.otpInputError]}
-          />
-        ))}
-      </View>
+
+      <RNTextInput
+        ref={hiddenInputRef}
+        value={otp}
+        onChangeText={handleChange}
+        keyboardType="number-pad"
+        maxLength={6}
+        autoComplete="one-time-code"
+        textContentType="oneTimeCode"
+        autoFocus
+        style={styles.hiddenInput}
+      />
+
+      {/* Visual OTP boxes */}
+      <Pressable onPress={handleBoxPress}>
+        <View style={styles.otpContainer}>
+          {digits.map((digit, index) => (
+            <View
+              key={index}
+              style={[
+                styles.otpInput,
+                otpError && styles.otpInputError,
+                otp.length === index && styles.otpInputActive,
+              ]}
+            >
+              <Text
+                style={[styles.otpDigitText, { color: theme.colors.onSurface }]}
+              >
+                {digit.trim()}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </Pressable>
+
       {otpError && <Text style={styles.error}>{otpError}</Text>}
 
       <Button
@@ -86,10 +89,19 @@ const OTPInput = ({
       >
         Verify OTP
       </Button>
-      <Button mode="text" onPress={onResend} style={styles.resendButton}>
-        Resend OTP
+      <Button
+        mode="text"
+        onPress={handleResend}
+        disabled={expiresIn > 0}
+        style={styles.resendButton}
+      >
+        Resend OTP {expiresIn > 0 && `(${formatTime(expiresIn)})`}
       </Button>
-      <Text>OTP expires in {formatTime(expiresIn)} </Text>
+      {expiresIn > 0 && (
+        <Text style={styles.timerText}>
+          Code expires in {formatTime(expiresIn)}
+        </Text>
+      )}
     </View>
   );
 };

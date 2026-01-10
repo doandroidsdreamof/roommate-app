@@ -2,7 +2,6 @@ import axios, { AxiosInstance } from 'axios';
 import { secureStorage } from '@/storage/storage';
 import { API_ENDPOINTS } from '@/config/apiEndpoints';
 
-// Event emitter for auth events
 type AuthEventListener = () => void;
 
 class ApiClient {
@@ -23,7 +22,6 @@ class ApiClient {
     this.setupInterceptors();
   }
 
-  // Register listener for token refresh failures
   public onTokenRefreshFailed(listener: AuthEventListener) {
     this.onTokenRefreshFailedListener = listener;
   }
@@ -61,36 +59,60 @@ class ApiClient {
 
           try {
             const refreshToken = await secureStorage.getRefreshToken();
-            if (!refreshToken) throw new Error('No refresh token');
+
+            if (!refreshToken) {
+              console.log('No refresh token available');
+              throw new Error('No refresh token');
+            }
 
             const response = await axios.post(
               `${process.env.EXPO_PUBLIC_API_URL}${API_ENDPOINTS.AUTH.REFRESH_TOKEN}`,
               { refreshToken }
             );
 
-            const { accessToken } = response.data.data;
+            const { accessToken, refreshToken: newRefreshToken } =
+              response.data.data;
 
-            await secureStorage.setTokens(accessToken, refreshToken);
+            await secureStorage.setTokens(
+              accessToken,
+              newRefreshToken ?? refreshToken
+            );
 
+            // Update default headers
             this.api.defaults.headers.common['Authorization'] =
               `Bearer ${accessToken}`;
 
+            // Notify all waiting requests
             this.refreshSubscribers.forEach((callback) =>
               callback(accessToken)
             );
             this.refreshSubscribers = [];
 
+            // Retry original request
             originalRequest.headers.Authorization = `Bearer ${accessToken}`;
             return this.api(originalRequest);
           } catch (refreshError) {
             console.error('Token refresh failed:', refreshError);
-            await secureStorage.clearTokens();
 
+            // Clear tokens and subscribers
             this.refreshSubscribers = [];
 
-            // Emit event for token refresh failure
-            if (this.onTokenRefreshFailedListener) {
-              this.onTokenRefreshFailedListener();
+            // Only clear tokens on auth errors, not network issues
+            if (axios.isAxiosError(refreshError)) {
+              const status = refreshError.response?.status;
+
+              if (status === 401 || status === 403) {
+                await secureStorage.clearTokens();
+                if (this.onTokenRefreshFailedListener) {
+                  this.onTokenRefreshFailedListener();
+                }
+              }
+            } else {
+              // Non-axios error (like "No refresh token")
+              await secureStorage.clearTokens();
+              if (this.onTokenRefreshFailedListener) {
+                this.onTokenRefreshFailedListener();
+              }
             }
 
             return Promise.reject(refreshError);
@@ -111,4 +133,4 @@ class ApiClient {
 
 const apiClientInstance = new ApiClient();
 export const apiClient = apiClientInstance.getClient();
-export const apiClientManager = apiClientInstance; // instance for event registration
+export const apiClientManager = apiClientInstance;

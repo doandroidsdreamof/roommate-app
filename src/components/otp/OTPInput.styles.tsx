@@ -1,45 +1,72 @@
-import { spacing, typography } from '@/theme/theme';
 import { StyleSheet } from 'react-native';
+import { spacing, borderRadius } from '@/theme/theme';
+
 export const styles = StyleSheet.create({
   button: {
-    marginTop: spacing.sm,
+    marginTop: spacing.lg,
   },
   container: {
-    padding: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
   error: {
-    ...typography.caption,
     color: '#EF4444',
-    marginTop: spacing.xs,
+    fontSize: 14,
+    marginTop: spacing.sm,
+    textAlign: 'center',
+  },
+  hiddenInput: {
+    height: 0,
+    opacity: 0,
+    position: 'absolute',
+    width: 0,
   },
   otpContainer: {
     flexDirection: 'row',
     gap: spacing.sm,
-    marginBottom: spacing.md,
+    justifyContent: 'center',
+    marginTop: spacing.xl,
+  },
+  otpDigitText: {
+    fontSize: 24,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   otpInput: {
-    borderColor: '#3ECF8E',
-    borderRadius: 8,
-    borderWidth: 1,
-    flex: 1,
-    fontSize: 20,
-    fontWeight: '600',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#DDDDDD',
+    borderRadius: borderRadius.md,
+    borderWidth: 2,
     height: 56,
-    textAlign: 'center',
+    justifyContent: 'center',
+    width: 48,
+  },
+  otpInputActive: {
+    borderColor: '#FF5A5F',
+    borderWidth: 2,
   },
   otpInputError: {
     borderColor: '#EF4444',
   },
   resendButton: {
-    marginTop: spacing.xs,
+    marginTop: spacing.md,
   },
   subtitle: {
-    ...typography.body,
-    color: '#666',
-    marginBottom: spacing.lg,
+    color: '#767676',
+    fontSize: 16,
+    marginTop: spacing.sm,
+    textAlign: 'center',
+  },
+  timerText: {
+    color: '#767676',
+    fontSize: 14,
+    marginTop: spacing.lg,
+    textAlign: 'center',
   },
   title: {
-    ...typography.h2,
-    marginBottom: spacing.xs,
+    fontSize: 26,
+    fontWeight: '800',
+    letterSpacing: -0.3,
+    textAlign: 'center',
   },
 });

@@ -1,16 +1,75 @@
 import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const secureStorage = {
-  setTokens: async (accessToken: string, refreshToken: string) => {
-    await SecureStore.setItemAsync('accessToken', accessToken);
-    await SecureStore.setItemAsync('refreshToken', refreshToken);
-  },
+const IS_DEV = __DEV__;
+console.log('🚀 ~ IS_DEV:', IS_DEV);
 
-  getAccessToken: () => SecureStore.getItemAsync('accessToken'),
-  getRefreshToken: () => SecureStore.getItemAsync('refreshToken'),
+class SecureStorage {
+  private async setItem(key: string, value: string): Promise<void> {
+    if (IS_DEV) {
+      await AsyncStorage.setItem(key, value);
+    }
+    await SecureStore.setItemAsync(key, value);
+  }
 
-  clearTokens: async () => {
-    await SecureStore.deleteItemAsync('accessToken');
-    await SecureStore.deleteItemAsync('refreshToken');
-  },
-};
+  private async getItem(key: string): Promise<string | null> {
+    try {
+      const value = await SecureStore.getItemAsync(key);
+      if (value) return value;
+
+      if (IS_DEV) {
+        return await AsyncStorage.getItem(key);
+      }
+      return null;
+    } catch (error) {
+      console.error(`Error getting ${key}:`, error);
+      if (IS_DEV) {
+        return await AsyncStorage.getItem(key);
+      }
+      return null;
+    }
+  }
+
+  private async removeItem(key: string): Promise<void> {
+    await SecureStore.deleteItemAsync(key);
+    if (IS_DEV) {
+      await AsyncStorage.removeItem(key);
+    }
+  }
+
+  async setTokens(accessToken: string, refreshToken: string): Promise<void> {
+    await Promise.all([
+      this.setItem('accessToken', accessToken),
+      this.setItem('refreshToken', refreshToken),
+    ]);
+  }
+
+  async getAccessToken(): Promise<string | null> {
+    return this.getItem('accessToken');
+  }
+
+  async getRefreshToken(): Promise<string | null> {
+    return this.getItem('refreshToken');
+  }
+
+  async clearTokens(): Promise<void> {
+    await Promise.all([
+      this.removeItem('accessToken'),
+      this.removeItem('refreshToken'),
+    ]);
+  }
+
+  // Debug method - call this from components
+  async logTokenStatus(): Promise<void> {
+    if (__DEV__) {
+      const hasAccessToken = !!(await this.getAccessToken());
+      const hasRefreshToken = !!(await this.getRefreshToken());
+      console.log('🔑 Token status:', {
+        hasAccessToken,
+        hasRefreshToken,
+      });
+    }
+  }
+}
+
+export const secureStorage = new SecureStorage();

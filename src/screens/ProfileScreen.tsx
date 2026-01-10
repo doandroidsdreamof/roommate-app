@@ -66,8 +66,6 @@ const ProfileScreen = () => {
           </View>
         </Card.Content>
       </Card>
-
-      {/* Account Settings Section */}
       <View style={styles.section}>
         <Text variant="titleMedium" style={styles.sectionTitle}>
           Account Settings
@@ -97,7 +95,6 @@ const ProfileScreen = () => {
             onPress={() => console.log('Preferences')}
           />
           <Divider />
-          {/* Dark Mode Toggle */}
           <View style={styles.darkModeItem}>
             <View style={styles.menuItemLeft}>
               <MaterialCommunityIcons
@@ -115,8 +112,6 @@ const ProfileScreen = () => {
           </View>
         </Card>
       </View>
-
-      {/* Support Section */}
       <View style={styles.section}>
         <Text variant="titleMedium" style={styles.sectionTitle}>
           Support
@@ -136,13 +131,13 @@ const ProfileScreen = () => {
         </Card>
       </View>
 
-      {/* Logout */}
       <View style={styles.section}>
         <Card style={styles.menuCard}>
           <MenuItem
             icon="logout"
             title="Logout"
-            onPress={handleLogout}
+            onPress={() => 
+              handleLogout}
             danger
           />
         </Card>

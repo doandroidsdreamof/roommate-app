@@ -10,7 +10,7 @@ const RootNavigator = () => {
   const { isAuthenticated, isLoading, checkAuth } = useAuthStore();
 
   useEffect(() => {
-    checkAuth();
+    void checkAuth();
   }, [checkAuth]);
 
   if (isLoading) {

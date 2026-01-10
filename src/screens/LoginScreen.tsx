@@ -1,7 +1,6 @@
 import { authApi } from '@/api';
 import EmailInput from '@/components/EmailInput';
 import OTPInput from '@/components/otp/OTPInput';
-import useDebounce from '@/hooks/useDebounce';
 import useValidation from '@/hooks/useValidation';
 import { emailSchema, otpSchema } from '@/schemas/formShema';
 import { secureStorage } from '@/storage/storage';
@@ -21,16 +20,12 @@ const LoginScreen = () => {
   const otpValidation = useValidation(otpSchema);
   const login = useAuthStore((state) => state.login);
 
-  const validateEmail = useDebounce((value: string) => {
-    emailValidation.validate({ email: value });
-  }, 200);
-
   const handleEmailChange = (value: string) => {
     setEmail(value);
-    validateEmail(value);
+    emailValidation.validate({ email: value });
   };
 
-  const emailSubmit = async () => {
+  const emailSubmit = async (): Promise<void> => {
     const result = emailValidation.validate({ email });
     if (!result) return;
 
@@ -50,13 +45,10 @@ const LoginScreen = () => {
 
     try {
       const response = await authApi.authenticate(email, otp);
-
-      // Save tokens and update auth state
       const { accessToken, refreshToken } = response.data;
       console.log('🚀 ~ response.data==========>:', response.data);
       await login(accessToken, refreshToken);
 
-      // Navigation happens automatically in RootNavigator
       console.log('✅ Login successful');
     } catch (error) {
       console.log('🚀 ~ error:', error);
@@ -73,17 +65,17 @@ const LoginScreen = () => {
       {step === 'email' ? (
         <EmailInput
           email={email}
-          isDisabled={!email || !!emailValidation.errors}
+          isDisabled={!!emailValidation.errors || !email}
           onEmailChange={handleEmailChange}
-          onSubmit={emailSubmit}
+          onSubmit={() => emailSubmit}
         />
       ) : (
         <OTPInput
           otp={otp}
           otpError={otpValidation.errors?.[0]?.message}
           onOtpChange={setOtp}
-          onSubmit={handleVerifyOTP}
-          onResend={handleResendOTP}
+          onSubmit={() => handleVerifyOTP}
+          onResend={() => handleResendOTP}
         />
       )}
     </View>

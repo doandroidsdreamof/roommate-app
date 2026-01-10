@@ -1,6 +1,6 @@
 import { apiClient } from './apiClient';
 import { AuthApi } from './authApi';
-import FeedApi from './feedApi';
+import { SwipeApi } from './swipeApi';
 
 export const authApi = new AuthApi(apiClient);
-export const feedApi = new FeedApi(apiClient);
+export const swipeApi = new SwipeApi(apiClient);
