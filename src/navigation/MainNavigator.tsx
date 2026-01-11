@@ -1,18 +1,18 @@
 import { apiClientManager } from '@/api/apiClient';
 import TabBar from '@/components/tabBar/TabBar';
 import { ROUTES } from '@/config/routes';
-import BookmarksScreen from '@/screens/BookmarksScreen';
-import HomeScreen from '@/screens/HomeScreen';
-import MessageScreen from '@/screens/MessageScreen';
-import ProfileScreen from '@/screens/ProfileScreen';
+import BookmarksScreen from '@/screens/bookmark/BookmarksScreen';
+import HomeScreen from '@/screens/home/HomeScreen';
+import MessageScreen from '@/screens/message/MessageScreen';
+import ProfileScreen from '@/screens/profile/ProfileScreen';
 import SwipeScreen from '@/screens/swipe/SwipeScreen';
-import { useAuthStore } from '@/store/authStore';
+import { useStore } from '@/store/index';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 const MainNavigator = () => {
   const [index, setIndex] = useState(2); // Start at Home (middle)
-  const logout = useAuthStore((state) => state.logout);
+  const logout = useStore((state) => state.logout);
 
   const [routes] = useState(ROUTES);
   // TODO look better ways
@@ -36,10 +36,7 @@ const MainNavigator = () => {
       <View style={styles.screen}>
         <CurrentScreen />
       </View>
-      <TabBar
-        navigationState={{ index, routes }}
-        onIndexChange={setIndex}
-      />
+      <TabBar navigationState={{ index, routes }} onIndexChange={setIndex} />
     </View>
   );
 };

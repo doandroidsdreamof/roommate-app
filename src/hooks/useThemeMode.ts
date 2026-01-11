@@ -1,18 +1,20 @@
 import { useColorScheme } from 'react-native';
-import { useThemeStore } from '@/store/themeStore';
+import { useStore } from '@/store/index';
 
 export const useThemeMode = () => {
   const systemColorScheme = useColorScheme();
-  const { themeMode, setThemeMode } = useThemeStore();
+
+  const themeMode = useStore((state) => state.themeMode);
+  const setThemeMode = useStore((state) => state.setThemeMode);
 
   const isDarkMode =
     themeMode === 'system'
       ? systemColorScheme === 'dark'
       : themeMode === 'dark';
 
-  const toggleDarkMode = async () => {
+  const toggleDarkMode = () => {
     const newMode = isDarkMode ? 'light' : 'dark';
-    await setThemeMode(newMode);
+    setThemeMode(newMode);
   };
 
   return {

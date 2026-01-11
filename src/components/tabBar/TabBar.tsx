@@ -8,10 +8,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
-import { styles } from './TabBar.styles';
+import MessageIconNotification from '../messageIconNotification/MessageIconNotification';
+import { createStyles } from './TabBar.styles';
 
 const { width } = Dimensions.get('window');
 const TAB_WIDTH = width / 5;
@@ -32,6 +33,7 @@ interface TabBarBarProps {
 
 const TabBar = ({ navigationState, onIndexChange }: TabBarBarProps) => {
   const theme = useTheme();
+  const styles = createStyles(theme);
   const insets = useSafeAreaInsets();
   const { index, routes } = navigationState;
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -79,6 +81,7 @@ const TabBar = ({ navigationState, onIndexChange }: TabBarBarProps) => {
       <View style={[styles.tabsContainer, { paddingBottom: insets.bottom }]}>
         {routes.map((route, i) => {
           const isFocused = index === i;
+          const isMessageTab = route.key === 'messages';
 
           return (
             <View key={route.key} style={styles.tabWrapper}>
@@ -93,11 +96,20 @@ const TabBar = ({ navigationState, onIndexChange }: TabBarBarProps) => {
                     },
                   ]}
                 >
-                  <MaterialCommunityIcons
-                    name={route.focusedIcon}
-                    size={28}
-                    color={theme.colors.onPrimary}
-                  />
+                  {isMessageTab ? (
+                    <MessageIconNotification
+                      size={28}
+                      color={theme.colors.onPrimary}
+                      unreadCount={2} // TODO: Pass state here later
+                      icon={'message'}
+                    />
+                  ) : (
+                    <MaterialCommunityIcons
+                      name={route.focusedIcon}
+                      size={28}
+                      color={theme.colors.onPrimary}
+                    />
+                  )}
                 </Animated.View>
               )}
 
@@ -107,21 +119,19 @@ const TabBar = ({ navigationState, onIndexChange }: TabBarBarProps) => {
                   onPress={() => onIndexChange(i)}
                   activeOpacity={0.7}
                 >
-                  <MaterialCommunityIcons
-                    name={route.unfocusedIcon}
-                    size={24}
-                    color={theme.colors.onSurfaceVariant}
-                  />
-                  {route.title && (
-                    <Text
-                      style={[
-                        styles.label,
-                        { color: theme.colors.onSurfaceVariant },
-                      ]}
-                      numberOfLines={1}
-                    >
-                      {route.title}
-                    </Text>
+                  {isMessageTab ? (
+                    <MessageIconNotification
+                      size={24}
+                      color={theme.colors.onSurfaceVariant}
+                      unreadCount={2} // TODO: Pass state here later
+                      icon={'message-outline'}
+                    />
+                  ) : (
+                    <MaterialCommunityIcons
+                      name={route.unfocusedIcon}
+                      size={24}
+                      color={theme.colors.onSurfaceVariant}
+                    />
                   )}
                 </TouchableOpacity>
               )}

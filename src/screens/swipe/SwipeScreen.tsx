@@ -1,8 +1,8 @@
 import Loading from '@/components/Loading';
 import MatchModal from '@/components/matchModal/MatchModal';
 import ScreenText from '@/components/ScreenText';
-import SwipeCard from '@/components/swipe/SwipeCard';
 import SwipeOverlay from '@/components/swipe/SwipeOverlay';
+import SwipeCard from '@/components/swipeCard/SwipeCard';
 import { useSwipeFeed } from '@/hooks/useSwipeFeed';
 import { useSwipeHandlers } from '@/hooks/useSwipeHandlers';
 import useSwipeMutations from '@/hooks/useSwipeMutations';
@@ -12,14 +12,15 @@ import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { IconButton, useTheme } from 'react-native-paper';
 import { Swiper, type SwiperCardRefType } from 'rn-swiper-list';
-import { styles } from './SwipeScreen.styles';
 import { actionButtons } from './actionButtons';
+import { createStyles } from './SwipeScreen.styles';
 
 const OverlayLabelLeft = () => <SwipeOverlay type="LIKE" />;
 const OverlayLabelRight = () => <SwipeOverlay type="PASS" />;
 
 const SwipeScreen = () => {
   const theme = useTheme();
+  const styles = createStyles(theme);
   const swiperRef = useRef<SwiperCardRefType | null>(null);
   const [matchedProfile, setMatchedProfile] = useState<FeedItem | null>(null);
   const [showMatchModal, setShowMatchModal] = useState(false);
@@ -64,9 +65,7 @@ const SwipeScreen = () => {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <View
-        style={[styles.container, { backgroundColor: theme.colors.background }]}
-      >
+      <View style={styles.container}>
         <Swiper
           ref={swiperRef}
           data={feed}

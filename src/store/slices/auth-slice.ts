@@ -1,43 +1,34 @@
-import { create } from 'zustand';
-import { secureStorage } from '../storage/storage';
+import { StateCreator } from 'zustand';
+import { secureStorage } from '@/storage/storage';
 
-interface UserProfile {
-  id: string;
-  name: string;
-  email: string;
-  photoUrl?: string;
-  city: string;
-  gender: string;
-}
-
-interface AuthState {
+export interface AuthSlice {
   isAuthenticated: boolean;
   isLoading: boolean;
-  profile: UserProfile | null;
+  hasProfile: boolean;
   error: string | null;
 
   login: (
     accessToken: string,
     refreshToken: string,
-    profile?: UserProfile
+    hasProfile: boolean
   ) => Promise<void>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
-  setProfile: (profile: UserProfile) => void;
+  setHasProfile: (hasProfile: boolean) => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const createAuthSlice: StateCreator<AuthSlice> = (set) => ({
   isAuthenticated: false,
   isLoading: true,
-  profile: null,
+  hasProfile: false,
   error: null,
 
-  login: async (accessToken, refreshToken, profile) => {
+  login: async (accessToken, refreshToken, hasProfile) => {
     try {
       await secureStorage.setTokens(accessToken, refreshToken);
       set({
         isAuthenticated: true,
-        profile: profile || null,
+        hasProfile,
         error: null,
       });
     } catch (error) {
@@ -52,15 +43,14 @@ export const useAuthStore = create<AuthState>((set) => ({
       await secureStorage.clearTokens();
       set({
         isAuthenticated: false,
-        profile: null,
+        hasProfile: false,
         error: null,
       });
     } catch (error) {
       console.error('Logout failed:', error);
-      // Still clear state even if storage fails
       set({
         isAuthenticated: false,
-        profile: null,
+        hasProfile: false,
       });
     }
   },
@@ -74,8 +64,6 @@ export const useAuthStore = create<AuthState>((set) => ({
         return;
       }
 
-      // TODO: Verify token is valid by making API call
-      // For now, just check if it exists
       set({
         isAuthenticated: true,
         isLoading: false,
@@ -91,5 +79,5 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  setProfile: (profile) => set({ profile, error: null }),
-}));
+  setHasProfile: (hasProfile) => set({ hasProfile }),
+});

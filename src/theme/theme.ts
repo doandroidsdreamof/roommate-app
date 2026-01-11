@@ -1,4 +1,8 @@
 import { MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
+import {
+  DarkTheme as NavigationDarkTheme,
+  DefaultTheme as NavigationDefaultTheme,
+} from '@react-navigation/native';
 
 const airbnbColors = {
   rausch: '#FF5A5F',
@@ -108,5 +112,31 @@ export const shadows = {
     shadowOpacity: 0.15,
     shadowRadius: 12,
     elevation: 6,
+  },
+};
+
+export const combinedLightTheme = {
+  ...NavigationDefaultTheme,
+  colors: {
+    ...NavigationDefaultTheme.colors,
+    primary: lightTheme.colors.primary,
+    background: lightTheme.colors.background,
+    card: lightTheme.colors.surface,
+    text: lightTheme.colors.onSurface,
+    border: lightTheme.colors.outline,
+    notification: lightTheme.colors.error,
+  },
+};
+
+export const combinedDarkTheme = {
+  ...NavigationDarkTheme,
+  colors: {
+    ...NavigationDarkTheme.colors,
+    primary: darkTheme.colors.primary,
+    background: darkTheme.colors.background,
+    card: darkTheme.colors.surface,
+    text: darkTheme.colors.onSurface,
+    border: darkTheme.colors.outline,
+    notification: darkTheme.colors.error,
   },
 };

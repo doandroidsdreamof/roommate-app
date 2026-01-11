@@ -4,7 +4,7 @@ import OTPInput from '@/components/otp/OTPInput';
 import useValidation from '@/hooks/useValidation';
 import { emailSchema, otpSchema } from '@/schemas/formShema';
 import { secureStorage } from '@/storage/storage';
-import { useAuthStore } from '@/store/authStore';
+import { useStore } from '@/store/index';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
@@ -18,7 +18,7 @@ const LoginScreen = () => {
 
   const emailValidation = useValidation(emailSchema);
   const otpValidation = useValidation(otpSchema);
-  const login = useAuthStore((state) => state.login);
+  const login = useStore((state) => state.login);
 
   const handleEmailChange = (value: string) => {
     setEmail(value);
@@ -45,9 +45,9 @@ const LoginScreen = () => {
 
     try {
       const response = await authApi.authenticate(email, otp);
-      const { accessToken, refreshToken } = response.data;
+      const { accessToken, refreshToken, hasProfile } = response.data;
       console.log('🚀 ~ response.data==========>:', response.data);
-      await login(accessToken, refreshToken);
+      await login(accessToken, refreshToken, hasProfile);
 
       console.log('✅ Login successful');
     } catch (error) {

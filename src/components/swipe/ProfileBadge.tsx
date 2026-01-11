@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Chip } from 'react-native-paper';
+import { Chip, useTheme } from 'react-native-paper';
 import { FeedItem } from '@/schemas/feedSchema';
 import { spacing } from '@/theme/theme';
 
@@ -15,6 +15,8 @@ interface ProfileBadgeProps {
 }
 
 const ProfileBadge = ({ profile }: ProfileBadgeProps) => {
+  const theme = useTheme();
+
   const badges: BadgeConfig[] = [
     {
       icon: 'smoking',
@@ -46,8 +48,14 @@ const ProfileBadge = ({ profile }: ProfileBadgeProps) => {
           key={`${badge.icon}-${index}`}
           icon={badge.icon}
           compact
-          style={styles.chip}
-          textStyle={styles.chipText}
+          style={[
+            styles.chip,
+            { backgroundColor: theme.colors.surfaceVariant },
+          ]}
+          textStyle={[
+            styles.chipText,
+            { color: theme.colors.onSurfaceVariant },
+          ]}
         >
           {badge.value}
         </Chip>
@@ -58,7 +66,6 @@ const ProfileBadge = ({ profile }: ProfileBadgeProps) => {
 
 const styles = StyleSheet.create({
   chip: {
-    backgroundColor: '#f0f0f0',
     height: 32,
   },
   chipText: {

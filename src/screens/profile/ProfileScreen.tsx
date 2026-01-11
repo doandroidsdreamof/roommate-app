@@ -1,23 +1,29 @@
 import MenuItem from '@/components/menu/MenuItem';
-import { useAuthStore } from '@/store/authStore';
 import { useThemeMode } from '@/hooks/useThemeMode';
-import { spacing } from '@/theme/theme';
+import { useStore } from '@/store/index';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import {
   Avatar,
   Card,
   Divider,
+  Switch,
   Text,
   useTheme,
-  Switch,
 } from 'react-native-paper';
+import { styles } from './ProfileScreen.styles';
 
 const ProfileScreen = () => {
   const theme = useTheme();
-  const { profile, logout } = useAuthStore();
+  const { logout } = useStore(); //profile,
   const { isDarkMode, toggleDarkMode } = useThemeMode();
+  const profile = {
+    name: null,
+    photoUrl: null,
+    email: null,
+    city: null,
+  };
 
   const handleLogout = async () => {
     await logout();
@@ -136,8 +142,7 @@ const ProfileScreen = () => {
           <MenuItem
             icon="logout"
             title="Logout"
-            onPress={() => 
-              handleLogout}
+            onPress={() => handleLogout}
             danger
           />
         </Card>
@@ -147,63 +152,5 @@ const ProfileScreen = () => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  bottomSpacer: {
-    height: 100,
-  },
-  container: {
-    flex: 1,
-  },
-  darkModeItem: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-  },
-  locationRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    marginTop: spacing.xs,
-  },
-  menuCard: {
-    overflow: 'hidden',
-  },
-  menuItemLeft: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: spacing.md,
-  },
-  menuItemText: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  profileCard: {
-    margin: spacing.md,
-    marginTop: spacing.lg,
-  },
-  profileContent: {
-    alignItems: 'center',
-    paddingVertical: spacing.lg,
-  },
-  profileInfo: {
-    alignItems: 'center',
-    marginTop: spacing.md,
-  },
-  profileName: {
-    fontWeight: '700',
-    marginBottom: spacing.xs / 2,
-  },
-  section: {
-    marginTop: spacing.lg,
-    paddingHorizontal: spacing.md,
-  },
-  sectionTitle: {
-    fontWeight: '600',
-    marginBottom: spacing.sm,
-    paddingLeft: spacing.xs,
-  },
-});
 
 export default ProfileScreen;

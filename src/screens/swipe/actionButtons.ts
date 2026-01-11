@@ -25,7 +25,7 @@ export const actionButtons: ActionButton[] = [
   },
   {
     icon: 'heart',
-    getColor: (theme) => theme.colors.primary,
+    getColor: (theme) => theme.dark ? theme.colors.onPrimary : theme.colors.primary,
     size: 35,
     getOnPress: (swiperRef) => () => swiperRef.current?.swipeLeft(),
   },
