@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 
 const BookmarksScreen = () => (
   <View style={containerStyle.container}>
-    <Text>Home Screen</Text>
+    <Text>Bookmark Screen</Text>
   </View>
 );
 

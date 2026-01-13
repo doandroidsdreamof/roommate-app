@@ -10,7 +10,10 @@ export const API_ENDPOINTS = {
     PROFILE: '/users/profile',
     PROFILE_PHOTO: '/users/profile/photo',
     PROFILE_ADDRESS: '/users/profile/address',
+    
+    PREFERENCES_EXIST: '/users/preference/exists',
     PREFERENCES: '/users/preference',
+
     BLOCK: '/users/block',
     UNBLOCK: '/users/unblock',
     BOOKMARKS: '/users/bookmarks',

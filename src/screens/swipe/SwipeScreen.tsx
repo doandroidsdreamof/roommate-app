@@ -1,53 +1,27 @@
 import Loading from '@/components/Loading';
 import MatchModal from '@/components/matchModal/MatchModal';
-import ScreenText from '@/components/ScreenText';
-import SwipeOverlay from '@/components/swipe/SwipeOverlay';
-import SwipeCard from '@/components/swipeCard/SwipeCard';
-import { useSwipeFeed } from '@/hooks/useSwipeFeed';
-import { useSwipeHandlers } from '@/hooks/useSwipeHandlers';
-import useSwipeMutations from '@/hooks/useSwipeMutations';
+import PreferencesModalWrapper from '@/components/PreferencesModalWrapper/PreferencesModalWrapper';
+import SwipeContainer from '@/components/swipe/swipeContainer/SwipeContainer';
+import { usePreferenceCheck } from '@/hooks/usePreferenceCheck';
 import { FeedItem } from '@/schemas/feedSchema';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { IconButton, useTheme } from 'react-native-paper';
-import { Swiper, type SwiperCardRefType } from 'rn-swiper-list';
-import { actionButtons } from './actionButtons';
-import { createStyles } from './SwipeScreen.styles';
-
-const OverlayLabelLeft = () => <SwipeOverlay type="LIKE" />;
-const OverlayLabelRight = () => <SwipeOverlay type="PASS" />;
+import { styles } from './SwipeScreen.styles';
 
 const SwipeScreen = () => {
-  const theme = useTheme();
-  const styles = createStyles(theme);
-  const swiperRef = useRef<SwiperCardRefType | null>(null);
+  const { hasPreferences, isLoading } = usePreferenceCheck();
   const [matchedProfile, setMatchedProfile] = useState<FeedItem | null>(null);
   const [showMatchModal, setShowMatchModal] = useState(false);
+  const [showPreferencesModal, setShowPreferencesModal] =
+    useState<boolean>(!hasPreferences);
 
-  const { feed, isLoading, isFetching, currentIndex, handleIndexChange } =
-    useSwipeFeed();
-
-  const { handleSwipeLike, handleSwipePass } = useSwipeMutations(
-    feed,
-    (profile) => {
-      setMatchedProfile(profile);
-      setShowMatchModal(true);
-    }
-  );
-
-  const { handleSwipeRight, handleSwipeLeft } = useSwipeHandlers(
-    feed,
-    handleSwipeLike,
-    handleSwipePass
-  );
-
-  const renderCard = useCallback((item: FeedItem) => {
-    return <SwipeCard profile={item} />;
+  const handleMatch = useCallback((profile: FeedItem) => {
+    setMatchedProfile(profile);
+    setShowMatchModal(true);
   }, []);
 
   const handleSendMessage = useCallback(() => {
-    // TODO: Navigate to messages screen with matched profile
+    // TODO: Navigate to messages screen
     console.log('Navigate to messages:', matchedProfile);
   }, [matchedProfile]);
 
@@ -59,52 +33,26 @@ const SwipeScreen = () => {
     return <Loading size="large" />;
   }
 
-  if (feed.length === 0 && !isFetching) {
-    return <ScreenText message="No more profiles to show" />;
-  }
+  const handlePreferencesDismiss = useCallback(() => {
+    setShowPreferencesModal(false);
+  }, []);
 
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <View style={styles.container}>
-        <Swiper
-          ref={swiperRef}
-          data={feed}
-          renderCard={renderCard}
-          cardStyle={styles.cardStyle}
-          disableTopSwipe={true}
-          disableBottomSwipe={true}
-          onSwipeRight={handleSwipeRight}
-          onSwipeLeft={handleSwipeLeft}
-          OverlayLabelLeft={OverlayLabelLeft}
-          OverlayLabelRight={OverlayLabelRight}
-          onIndexChange={handleIndexChange}
-        />
-        {isFetching && <Loading size="small" />}
-      </View>
-
-      <View style={styles.buttonContainer}>
-        {actionButtons.map((button) => (
-          <IconButton
-            key={button.icon}
-            icon={button.icon}
-            iconColor={button.getColor(theme)}
-            size={button.size}
-            mode="contained"
-            style={styles.circleButton}
-            disabled={button.getDisabled?.(currentIndex) ?? false}
-            onPress={button.getOnPress(swiperRef)}
-          />
-        ))}
-      </View>
+    <View style={styles.container}>
+      <SwipeContainer onMatch={handleMatch} />
+      <PreferencesModalWrapper
+        visible={showPreferencesModal}
+        onDismiss={handlePreferencesDismiss}
+      />
       <MatchModal
         visible={showMatchModal}
         onDismiss={() => setShowMatchModal(false)}
         onSendMessage={handleSendMessage}
         onKeepSwiping={handleKeepSwiping}
         matchedProfile={matchedProfile}
-        currentUserPhoto={undefined}
+        currentUserPhoto={undefined} // TODO pass user image
       />
-    </GestureHandlerRootView>
+    </View>
   );
 };
 

@@ -18,6 +18,7 @@ const ProfileScreen = () => {
   const theme = useTheme();
   const { logout } = useStore();
   const { isDarkMode, toggleDarkMode } = useThemeMode();
+  // TODO hard-coded profile
   const profile = {
     name: null,
     photoUrl: null,
@@ -142,7 +143,7 @@ const ProfileScreen = () => {
           <MenuItem
             icon="logout"
             title="Logout"
-            onPress={handleLogout} 
+            onPress={handleLogout}
             danger
           />
         </Card>

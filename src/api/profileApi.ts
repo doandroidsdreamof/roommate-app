@@ -44,6 +44,13 @@ export class ProfileApi {
     return response.data;
   }
 
+  public async checkPreferenceExists(): Promise<{ exists: boolean }> {
+    const response = await this.client.get(
+      API_ENDPOINTS.USERS.PREFERENCES_EXIST
+    );
+    return response.data.data;
+  }
+
   public async updatePreferences(data: Partial<CreatePreferencesDto>) {
     const response = await this.client.patch(
       API_ENDPOINTS.USERS.PREFERENCES,
