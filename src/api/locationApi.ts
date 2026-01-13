@@ -20,6 +20,14 @@ export interface NeighborhoodSearchParams {
   districtId?: string;
 }
 
+export interface District {
+  id: number;
+  name: string;
+  provincePlateCode: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export class LocationApi {
   constructor(private client: AxiosInstance) {}
 
@@ -35,6 +43,13 @@ export class LocationApi {
       {
         params,
       }
+    );
+    return response.data.data;
+  }
+
+  public async getDistrictsByProvince(provinceId: number): Promise<District[]> {
+    const response = await this.client.get(
+      API_ENDPOINTS.LOCATIONS.DISTRICTS(provinceId)
     );
     return response.data.data;
   }

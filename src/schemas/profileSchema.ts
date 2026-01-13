@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const profileSetupSchema = z.object({
   name: z
     .string()
-    .min(1, 'Name is required')
+    .min(2, 'Name is required')
     .max(30, 'Name must be at most 30 characters'),
   gender: z.enum(['male', 'female', 'other']),
   city: z.string().min(1, 'City is required'),

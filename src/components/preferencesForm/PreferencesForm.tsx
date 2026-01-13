@@ -5,6 +5,7 @@ import { Controller, UseFormReturn } from 'react-hook-form';
 import { View } from 'react-native';
 import { Button, Chip, Text, useTheme } from 'react-native-paper';
 import { createStyles } from './PreferencesForm.styles';
+import FormErrorMessage from '../formErrorMessage/FormErrorMessage';
 
 interface PreferencesFormProps {
   form: UseFormReturn<PreferencesSetupForm>;
@@ -32,7 +33,6 @@ const PreferencesForm = ({
 
   return (
     <View style={styles.formContainer}>
-      {/* Age Range */}
       <View style={styles.ageSliderContainer}>
         <Text variant="bodyMedium" style={styles.ageLabel}>
           Age Range:{' '}
@@ -56,6 +56,7 @@ const PreferencesForm = ({
             />
           )}
         />
+        <FormErrorMessage error={errors.ageMin} />
 
         <Controller
           control={control}
@@ -72,12 +73,8 @@ const PreferencesForm = ({
             />
           )}
         />
-        {errors.ageMax && (
-          <Text style={styles.errorText}>{errors.ageMax.message}</Text>
-        )}
+        <FormErrorMessage error={errors.ageMax} />
       </View>
-
-      {/* Gender Preference */}
       <View>
         <Text variant="bodyMedium" style={styles.ageLabel}>
           Gender Preference (Optional)

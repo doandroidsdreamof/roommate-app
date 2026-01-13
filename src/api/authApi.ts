@@ -9,7 +9,7 @@ export class AuthApi {
     });
     return response.data;
   }
-  public async authenticate(email: string, otp: string) {
+  public async authenticate(email: string, otp?: string) {
     const response = await this.client.post(API_ENDPOINTS.AUTH.AUTHENTICATE, {
       email,
       otp,

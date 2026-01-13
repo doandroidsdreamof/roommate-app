@@ -1,83 +1,102 @@
 import { authApi } from '@/api';
-import EmailInput from '@/components/EmailInput';
-import OTPInput from '@/components/otp/OTPInput';
-import useValidation from '@/hooks/useValidation';
-import { emailSchema, otpSchema } from '@/schemas/formShema';
-import { secureStorage } from '@/storage/storage';
+import EmailInput from '@/components/loginModule/emailInput/EmailInput';
+import OTPInput from '@/components/loginModule/otp/OTPInput';
+import { LoginSchema, loginSchema } from '@/schemas/loginSchema';
 import { useStore } from '@/store/index';
+import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 
 type LoginStep = 'email' | 'otp';
 
 const LoginScreen = () => {
   const [step, setStep] = useState<LoginStep>('email');
-  const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState('');
-  console.log('🚀 ~ secureStorage==========>:', secureStorage.getAccessToken());
-
-  const emailValidation = useValidation(emailSchema);
-  const otpValidation = useValidation(otpSchema);
+  const {
+    control,
+    handleSubmit,
+    watch,
+    trigger,
+    getValues,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginSchema>({
+    resolver: zodResolver(loginSchema),
+    mode: 'onChange',
+    shouldUnregister: false,
+    defaultValues: {
+      stepOne: { email: '' },
+      stepTwo: { otp: '' },
+    },
+  });
   const login = useStore((state) => state.login);
+  const email = watch('stepOne.email');
+  const isEmailValid = email && !errors.stepOne?.email;
 
-  const handleEmailChange = (value: string) => {
-    setEmail(value);
-    emailValidation.validate({ email: value });
-  };
-
-  const emailSubmit = async (): Promise<void> => {
-    const result = emailValidation.validate({ email });
-    if (!result) return;
+  const requestOTP = async () => {
+    const email = getValues('stepOne.email');
 
     try {
       const response = await authApi.requestOTP(email);
-      if (response?.success) {
-        setStep('otp');
-      }
+      if (response?.success) setStep('otp');
     } catch (error) {
-      console.log('🚀 ~ error:', error);
+      console.error('OTP request error:', error);
     }
   };
 
-  const handleVerifyOTP = async () => {
-    const result = otpValidation.validate({ otp });
-    if (!result) return;
+  const onEmailSubmit = async () => {
+    const isValid = await trigger('stepOne');
+    if (isValid) {
+      await requestOTP();
+    }
+  };
+
+  const onOTPSubmit = async (data: LoginSchema) => {
+    const email = getValues('stepOne.email');
 
     try {
-      const response = await authApi.authenticate(email, otp);
+      const response = await authApi.authenticate(email, data.stepTwo.otp);
       const { accessToken, refreshToken, hasProfile } = response.data;
-      console.log('🚀 ~ response.data==========>:', response.data);
       await login(accessToken, refreshToken, hasProfile);
-
-      console.log('✅ Login successful');
     } catch (error) {
-      console.log('🚀 ~ error:', error);
+      console.error('Authentication Error:', error);
     }
-  };
-
-  const handleResendOTP = async () => {
-    setOtp('');
-    await emailSubmit();
   };
 
   return (
     <View style={styles.container}>
-      {step === 'email' ? (
-        <EmailInput
-          email={email}
-          isDisabled={!!emailValidation.errors || !email}
-          onEmailChange={handleEmailChange}
-          onSubmit={() => emailSubmit}
-        />
-      ) : (
-        <OTPInput
-          otp={otp}
-          otpError={otpValidation.errors?.[0]?.message}
-          onOtpChange={setOtp}
-          onSubmit={() => handleVerifyOTP}
-          onResend={() => handleResendOTP}
-        />
-      )}
+      <View style={styles.container}>
+        <View style={{ display: step === 'email' ? 'flex' : 'none' }}>
+          <Controller
+            control={control}
+            name="stepOne.email"
+            render={({ field: { onChange, value } }) => (
+              <EmailInput
+                email={value}
+                onEmailChange={onChange}
+                onSubmit={onEmailSubmit}
+                isDisabled={!isEmailValid || isSubmitting}
+                error={!!errors.stepOne?.email}
+              />
+            )}
+          />
+        </View>
+
+        <View style={{ display: step === 'otp' ? 'flex' : 'none' }}>
+          <Controller
+            control={control}
+            name="stepTwo.otp"
+            render={({ field: { onChange, value } }) => (
+              <OTPInput
+                otp={value}
+                onOtpChange={onChange}
+                onSubmit={handleSubmit(onOTPSubmit)}
+                onResend={requestOTP}
+                otpError={errors.stepTwo?.otp?.message}
+              />
+            )}
+          />
+        </View>
+      </View>
     </View>
   );
 };

@@ -1,13 +1,14 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { View } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-import { spacing } from '../theme/theme';
+import { styles } from './EmailInput.styles';
 
 interface EmailInputProps {
   email: string;
   onEmailChange: (email: string) => void;
   onSubmit: () => void;
   isDisabled: boolean;
+  error?: boolean;
 }
 
 const EmailInput = ({
@@ -15,6 +16,7 @@ const EmailInput = ({
   isDisabled,
   onEmailChange,
   onSubmit,
+  error,
 }: EmailInputProps) => {
   return (
     <View style={styles.container}>
@@ -25,6 +27,7 @@ const EmailInput = ({
         keyboardType="email-address"
         autoCapitalize="none"
         mode="outlined"
+        error={error}
       />
       <Button
         mode="contained"
@@ -32,20 +35,10 @@ const EmailInput = ({
         disabled={isDisabled}
         style={styles.button}
       >
-        <Text>Send OTP</Text>
+        Send OTP
       </Button>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  button: {
-    borderRadius: 5,
-    marginTop: spacing.md,
-  },
-  container: {
-    padding: spacing.md,
-  },
-});
 
 export default EmailInput;

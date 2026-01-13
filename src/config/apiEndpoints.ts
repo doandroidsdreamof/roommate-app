@@ -27,6 +27,8 @@ export const API_ENDPOINTS = {
   LOCATIONS: {
     PROVINCES: '/locations/provinces',
     NEIGHBORHOODS_SEARCH: '/locations/neighborhoods/search',
+    DISTRICTS: (provinceId: number) =>
+      `/locations/provinces/${provinceId}/districts`,
   },
 
   SWIPES: {

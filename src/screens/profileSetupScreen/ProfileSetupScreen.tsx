@@ -17,6 +17,7 @@ import { ScrollView, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { createStyles } from './ProfileSetupScreen.styles';
 
+
 const ProfileSetupScreen = () => {
   const theme = useTheme();
   const styles = createStyles(theme);
@@ -79,10 +80,7 @@ const ProfileSetupScreen = () => {
       </View>
 
       {step === 'profile' ? (
-        <ProfileForm
-          form={profileForm}
-          onSubmit={onSubmitProfile}
-        />
+        <ProfileForm form={profileForm} onSubmit={onSubmitProfile} />
       ) : (
         <PreferencesForm
           form={preferencesForm}

@@ -16,7 +16,7 @@ import { styles } from './ProfileScreen.styles';
 
 const ProfileScreen = () => {
   const theme = useTheme();
-  const { logout } = useStore(); //profile,
+  const { logout } = useStore();
   const { isDarkMode, toggleDarkMode } = useThemeMode();
   const profile = {
     name: null,
@@ -142,7 +142,7 @@ const ProfileScreen = () => {
           <MenuItem
             icon="logout"
             title="Logout"
-            onPress={() => handleLogout}
+            onPress={handleLogout} 
             danger
           />
         </Card>

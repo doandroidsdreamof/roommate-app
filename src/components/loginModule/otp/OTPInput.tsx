@@ -87,13 +87,11 @@ const OTPInput = ({
           ))}
         </View>
       </Pressable>
-
       {otpError && (
         <Text style={[styles.error, { color: theme.colors.error }]}>
           {otpError}
         </Text>
       )}
-
       <Button
         mode="contained"
         onPress={onSubmit}
