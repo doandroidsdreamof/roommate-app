@@ -8,12 +8,13 @@ import React, { useCallback, useState } from 'react';
 import { View } from 'react-native';
 import { styles } from './SwipeScreen.styles';
 
+// TODO currently it renders 20 card optimize it
 const SwipeScreen = () => {
   const { hasPreferences, isLoading } = usePreferenceCheck();
   const [matchedProfile, setMatchedProfile] = useState<FeedItem | null>(null);
   const [showMatchModal, setShowMatchModal] = useState(false);
   const [showPreferencesModal, setShowPreferencesModal] =
-    useState<boolean>(!hasPreferences);
+    useState<boolean>(false);
 
   const handleMatch = useCallback((profile: FeedItem) => {
     setMatchedProfile(profile);
@@ -29,19 +30,21 @@ const SwipeScreen = () => {
     setShowMatchModal(false);
   }, []);
 
+  const handlePreferencesDismiss = useCallback(() => {
+    setShowPreferencesModal(false);
+  }, []);
+
   if (isLoading) {
     return <Loading size="large" />;
   }
 
-  const handlePreferencesDismiss = useCallback(() => {
-    setShowPreferencesModal(false);
-  }, []);
+  const shouldShowPreferencesModal = showPreferencesModal || !hasPreferences;
 
   return (
     <View style={styles.container}>
       <SwipeContainer onMatch={handleMatch} />
       <PreferencesModalWrapper
-        visible={showPreferencesModal}
+        visible={shouldShowPreferencesModal}
         onDismiss={handlePreferencesDismiss}
       />
       <MatchModal

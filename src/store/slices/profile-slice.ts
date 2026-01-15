@@ -18,9 +18,12 @@ export interface UserProfile {
 
 export interface ProfileSlice {
   profile: UserProfile | null;
+  hasProfile: boolean;
   isProfileLoading: boolean;
+  isProfileLoaded: boolean;
 
-  setProfile: (profile: UserProfile) => Promise<void>;
+  setProfile: (profile: UserProfile | null) => Promise<void>;
+  setHasProfile: (hasProfile: boolean) => void;
   loadProfileFromCache: () => Promise<void>;
   clearProfile: () => Promise<void>;
   updateProfileField: <K extends keyof UserProfile>(
@@ -31,17 +34,33 @@ export interface ProfileSlice {
 
 export const createProfileSlice: StateCreator<ProfileSlice> = (set, get) => ({
   profile: null,
+  hasProfile: false,
   isProfileLoading: false,
+  isProfileLoaded: false,
 
   setProfile: async (profile) => {
     try {
-      await AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(profile));
-      set({ profile });
+      if (profile) {
+        await AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(profile));
+      } else {
+        await AsyncStorage.removeItem(PROFILE_CACHE_KEY);
+      }
+      set({
+        profile,
+        hasProfile: !!profile,
+        isProfileLoaded: true,
+      });
     } catch (error) {
       console.error('Failed to save profile:', error);
-      set({ profile });
+      set({
+        profile,
+        hasProfile: !!profile,
+        isProfileLoaded: true,
+      });
     }
   },
+
+  setHasProfile: (hasProfile) => set({ hasProfile }),
 
   loadProfileFromCache: async () => {
     try {
@@ -49,7 +68,12 @@ export const createProfileSlice: StateCreator<ProfileSlice> = (set, get) => ({
       const cached = await AsyncStorage.getItem(PROFILE_CACHE_KEY);
 
       if (cached) {
-        set({ profile: JSON.parse(cached), isProfileLoading: false });
+        const profile = JSON.parse(cached);
+        set({
+          profile,
+          hasProfile: true,
+          isProfileLoading: false,
+        });
       } else {
         set({ isProfileLoading: false });
       }
@@ -62,10 +86,18 @@ export const createProfileSlice: StateCreator<ProfileSlice> = (set, get) => ({
   clearProfile: async () => {
     try {
       await AsyncStorage.removeItem(PROFILE_CACHE_KEY);
-      set({ profile: null });
+      set({
+        profile: null,
+        hasProfile: false,
+        isProfileLoaded: false,
+      });
     } catch (error) {
       console.error('Failed to clear profile:', error);
-      set({ profile: null });
+      set({
+        profile: null,
+        hasProfile: false,
+        isProfileLoaded: false,
+      });
     }
   },
 
@@ -76,7 +108,6 @@ export const createProfileSlice: StateCreator<ProfileSlice> = (set, get) => ({
     const updatedProfile = {
       ...currentProfile,
       [field]: value,
-      updatedAt: new Date().toISOString(),
     };
 
     await get().setProfile(updatedProfile);

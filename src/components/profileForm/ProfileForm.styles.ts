@@ -1,43 +1,42 @@
-import { spacing } from '@/theme/theme';
 import { MD3Theme } from 'react-native-paper';
 import { StyleSheet } from 'react-native';
+import { spacing } from '@/theme/theme';
 
 export const createStyles = (theme: MD3Theme) =>
   StyleSheet.create({
-    button: {
-      marginTop: spacing.md,
+    keyboardAvoidingView: {
+      flex: 1,
     },
-    cityContainer: {
-      zIndex: 2,
-    },
-    districtContainer: {
-      zIndex: 1,
+    scrollViewContent: {
+      flexGrow: 1,
     },
     formContainer: {
       gap: spacing.lg,
-      paddingBottom: spacing.xl,
-      paddingHorizontal: spacing.lg,
-    },
-    genderChip: {
-      flex: 1,
-    },
-    genderChips: {
-      flexDirection: 'row',
-      gap: spacing.sm,
-      marginTop: spacing.sm,
+      padding: spacing.md,
     },
     input: {
       backgroundColor: theme.colors.surface,
     },
-    keyboardAvoidingView: {
-      flex: 1,
-    },
     label: {
       color: theme.colors.onSurfaceVariant,
-      marginBottom: spacing.xs,
+      marginBottom: spacing.sm,
     },
-    scrollViewContent: {
-      flexGrow: 1,
-      justifyContent: 'center',
+    genderChips: {
+      flexDirection: 'row',
+      gap: spacing.sm,
+      flexWrap: 'wrap',
+    },
+    genderChip: {
+      flex: 1,
+      minWidth: 80,
+    },
+    cityContainer: {
+      gap: spacing.xs,
+    },
+    districtContainer: {
+      gap: spacing.xs,
+    },
+    button: {
+      marginTop: spacing.md,
     },
   });

@@ -54,6 +54,7 @@ const SwipeContainer = ({ onMatch }: SwipeContainerProps) => {
       <View style={styles.container}>
         <Swiper
           ref={swiperRef}
+          keyExtractor={(item) => item.userId}
           data={feed}
           renderCard={renderCard}
           cardStyle={styles.cardStyle}

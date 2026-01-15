@@ -1,12 +1,12 @@
-// stores/store.ts
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createAuthSlice, AuthSlice } from './slices/auth-slice';
 import { createThemeSlice, ThemeSlice } from './slices/theme-slice';
 import { createProfileSlice, ProfileSlice } from './slices/profile-slice';
+import { createFilterSlice, FilterSlice } from './slices/filter-slice';
 
-export type RootStore = AuthSlice & ThemeSlice & ProfileSlice;
+export type RootStore = AuthSlice & ThemeSlice & ProfileSlice & FilterSlice;
 
 export const useStore = create<RootStore>()(
   persist(
@@ -14,6 +14,7 @@ export const useStore = create<RootStore>()(
       ...createAuthSlice(...a),
       ...createThemeSlice(...a),
       ...createProfileSlice(...a),
+      ...createFilterSlice(...a),
     }),
     {
       name: 'roommate-app-storage',

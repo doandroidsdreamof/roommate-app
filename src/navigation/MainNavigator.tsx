@@ -1,40 +1,36 @@
 import { apiClientManager } from '@/api/apiClient';
+import ScreenLayout from '@/components/screenLayout/ScreenLayout';
 import TabBar from '@/components/tabBar/TabBar';
 import { ROUTES } from '@/config/routes';
-import BookmarksScreen from '@/screens/bookmark/BookmarksScreen';
-import HomeScreen from '@/screens/home/HomeScreen';
-import MessageScreen from '@/screens/message/MessageScreen';
-import ProfileScreen from '@/screens/profile/ProfileScreen';
-import SwipeScreen from '@/screens/swipe/SwipeScreen';
+import { SCREEN_CONFIG } from '@/config/screen';
 import { useStore } from '@/store/index';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 const MainNavigator = () => {
-  const [index, setIndex] = useState(2); // Start at Home (middle)
+  const [index, setIndex] = useState(2);
   const logout = useStore((state) => state.logout);
-
   const [routes] = useState(ROUTES);
-  // TODO look better ways
+
   useEffect(() => {
     apiClientManager.onTokenRefreshFailed(() => {
       void logout();
     });
-  }, []);
+  }, [logout]);
 
-  const screens = [
-    BookmarksScreen,
-    SwipeScreen,
-    HomeScreen,
-    MessageScreen,
-    ProfileScreen,
-  ];
-  const CurrentScreen = screens[index];
+  const currentConfig = SCREEN_CONFIG[index as keyof typeof SCREEN_CONFIG];
+  const CurrentScreen = currentConfig.component;
 
   return (
     <View style={styles.container}>
       <View style={styles.screen}>
-        <CurrentScreen />
+        {currentConfig.hasLayout ? (
+          <ScreenLayout scrollable={currentConfig.scrollable}>
+            <CurrentScreen />
+          </ScreenLayout>
+        ) : (
+          <CurrentScreen />
+        )}
       </View>
       <TabBar navigationState={{ index, routes }} onIndexChange={setIndex} />
     </View>

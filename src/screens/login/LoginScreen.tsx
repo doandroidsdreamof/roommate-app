@@ -55,8 +55,8 @@ const LoginScreen = () => {
 
     try {
       const response = await authApi.authenticate(email, data.stepTwo.otp);
-      const { accessToken, refreshToken, hasProfile } = response.data;
-      await login(accessToken, refreshToken, hasProfile);
+      const { accessToken, refreshToken } = response.data;
+      await login(accessToken, refreshToken);
     } catch (error) {
       console.error('Authentication Error:', error);
     }

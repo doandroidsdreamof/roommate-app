@@ -4,31 +4,23 @@ import { secureStorage } from '@/storage/storage';
 export interface AuthSlice {
   isAuthenticated: boolean;
   isLoading: boolean;
-  hasProfile: boolean;
   error: string | null;
 
-  login: (
-    accessToken: string,
-    refreshToken: string,
-    hasProfile: boolean
-  ) => Promise<void>;
+  login: (accessToken: string, refreshToken: string) => Promise<void>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
-  setHasProfile: (hasProfile: boolean) => void;
 }
 
 export const createAuthSlice: StateCreator<AuthSlice> = (set) => ({
   isAuthenticated: false,
   isLoading: true,
-  hasProfile: false,
   error: null,
 
-  login: async (accessToken, refreshToken, hasProfile) => {
+  login: async (accessToken, refreshToken) => {
     try {
       await secureStorage.setTokens(accessToken, refreshToken);
       set({
         isAuthenticated: true,
-        hasProfile,
         error: null,
       });
     } catch (error) {
@@ -43,14 +35,12 @@ export const createAuthSlice: StateCreator<AuthSlice> = (set) => ({
       await secureStorage.clearTokens();
       set({
         isAuthenticated: false,
-        hasProfile: false,
         error: null,
       });
     } catch (error) {
       console.error('Logout failed:', error);
       set({
         isAuthenticated: false,
-        hasProfile: false,
       });
     }
   },
@@ -78,6 +68,4 @@ export const createAuthSlice: StateCreator<AuthSlice> = (set) => ({
       });
     }
   },
-
-  setHasProfile: (hasProfile) => set({ hasProfile }),
 });

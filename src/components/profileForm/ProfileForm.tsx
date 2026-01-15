@@ -63,7 +63,7 @@ const ProfileForm = ({ form, onSubmit }: ProfileFormProps) => {
     void handleSubmit(onSubmit)();
   };
   // * it make sures dropdown value corresponds to values of API response
-  // TODO move it to zod refine func 
+  // TODO move it to zod refine func
   const isFormValid = Boolean(
     watch('name') &&
     watch('gender') &&

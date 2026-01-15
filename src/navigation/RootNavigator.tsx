@@ -1,3 +1,5 @@
+// navigation/RootNavigator.tsx
+import { useProfile } from '@/hooks/useProfile';
 import { useThemeMode } from '@/hooks/useThemeMode';
 import { useStore } from '@/store/index';
 import { containerStyle } from '@/styles/main.style';
@@ -10,15 +12,27 @@ import MainNavigator from './MainNavigator';
 import ProfileSetupNavigator from './ProfileSetupNavigator';
 
 const RootNavigator = () => {
-  const { isAuthenticated, isLoading, checkAuth, hasProfile } = useStore();
+  const {
+    isAuthenticated,
+    isLoading: isAuthLoading,
+    checkAuth,
+    profile,
+    isProfileLoaded,
+  } = useStore();
   const { isDarkMode } = useThemeMode();
   const navigationTheme = isDarkMode ? combinedDarkTheme : combinedLightTheme;
+
+  const { isFetched: isProfileFetched } = useProfile();
 
   useEffect(() => {
     void checkAuth();
   }, [checkAuth]);
 
-  if (isLoading) {
+  // Wait for auth check AND profile fetch to complete
+  const isInitializing =
+    isAuthLoading || (isAuthenticated && !isProfileFetched);
+
+  if (isInitializing || !isProfileLoaded) {
     return (
       <View style={containerStyle.container}>
         <ActivityIndicator size="large" color="#3ECF8E" />
@@ -30,7 +44,7 @@ const RootNavigator = () => {
     <NavigationContainer theme={navigationTheme}>
       {!isAuthenticated ? (
         <AuthNavigator />
-      ) : !hasProfile ? (
+      ) : !profile ? (
         <ProfileSetupNavigator />
       ) : (
         <MainNavigator />

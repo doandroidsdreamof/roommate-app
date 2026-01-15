@@ -33,7 +33,7 @@ export class ProfileApi {
 
   public async getProfile() {
     const response = await this.client.get(API_ENDPOINTS.USERS.PROFILE);
-    return response.data;
+    return response.data.data;
   }
 
   public async createPreferences(data: CreatePreferencesDto) {
