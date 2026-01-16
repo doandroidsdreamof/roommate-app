@@ -59,5 +59,3 @@ export class ProfileApi {
     return response.data;
   }
 }
-
-export default ProfileApi;

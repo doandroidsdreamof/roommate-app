@@ -1,34 +1,24 @@
 import MenuItem from '@/components/menu/MenuItem';
+import Loading from '@/components/Loading';
+import Avatar from '@/components/avatar/Avatar';
 import { useThemeMode } from '@/hooks/useThemeMode';
 import { useStore } from '@/store/index';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React from 'react';
 import { ScrollView, View } from 'react-native';
-import {
-  Avatar,
-  Card,
-  Divider,
-  Switch,
-  Text,
-  useTheme,
-} from 'react-native-paper';
+import { Card, Divider, Switch, Text, useTheme } from 'react-native-paper';
 import { styles } from './ProfileScreen.styles';
 
 const ProfileScreen = () => {
   const theme = useTheme();
   const { logout } = useStore();
   const { isDarkMode, toggleDarkMode } = useThemeMode();
-  // TODO hard-coded profile
-  const profile = {
-    name: null,
-    photoUrl: null,
-    email: null,
-    city: null,
-  };
+  const profile = useStore((state) => state.profile);
+  const isProfileLoading = useStore((state) => state.isProfileLoading);
 
-  const handleLogout = async () => {
-    await logout();
-  };
+  if (isProfileLoading) {
+    return <Loading size="large" />;
+  }
 
   return (
     <ScrollView
@@ -37,25 +27,11 @@ const ProfileScreen = () => {
     >
       <Card style={styles.profileCard}>
         <Card.Content style={styles.profileContent}>
-          <Avatar.Image
-            size={80}
-            source={{
-              uri: profile?.photoUrl || 'https://via.placeholder.com/150',
-            }}
-          />
+          <Avatar size={80} src={profile?.photoUrl} />
           <View style={styles.profileInfo}>
-            <Text variant="headlineSmall" style={styles.profileName}>
-              {profile?.name || 'Guest User'}
-            </Text>
-            {profile?.email && (
-              <Text
-                variant="bodyMedium"
-                style={{ color: theme.colors.secondary }}
-              >
-                {profile.email}
-              </Text>
-            )}
-            {profile?.city && (
+            <Text variant="headlineSmall">{profile?.name}</Text>
+
+            {(profile?.city || profile?.district) && (
               <View style={styles.locationRow}>
                 <MaterialCommunityIcons
                   name="map-marker"
@@ -66,41 +42,52 @@ const ProfileScreen = () => {
                   variant="bodySmall"
                   style={{ color: theme.colors.secondary, marginLeft: 4 }}
                 >
-                  {profile.city}
+                  {[profile?.district, profile?.city]
+                    .filter(Boolean)
+                    .join(', ')}
+                </Text>
+              </View>
+            )}
+
+            {profile?.photoVerified && (
+              <View style={styles.locationRow}>
+                <MaterialCommunityIcons
+                  name="check-decagram"
+                  size={16}
+                  color={theme.colors.primary}
+                />
+                <Text
+                  variant="bodySmall"
+                  style={{ color: theme.colors.primary, marginLeft: 4 }}
+                >
+                  Doğrulanmış
                 </Text>
               </View>
             )}
           </View>
         </Card.Content>
       </Card>
+
       <View style={styles.section}>
         <Text variant="titleMedium" style={styles.sectionTitle}>
-          Account Settings
+          Hesap Ayarları
         </Text>
         <Card style={styles.menuCard}>
           <MenuItem
             icon="account-edit"
-            title="Edit Profile"
-            onPress={() => console.log('Edit Profile')}
+            title="Profili Düzenle"
+            onPress={() => {}}
           />
           <Divider />
           <MenuItem
             icon="bell-outline"
-            title="Notifications"
-            onPress={() => console.log('Notifications')}
+            title="Bildirimler"
+            onPress={() => {}}
           />
           <Divider />
-          <MenuItem
-            icon="lock-outline"
-            title="Privacy"
-            onPress={() => console.log('Privacy')}
-          />
+          <MenuItem icon="lock-outline" title="Gizlilik" onPress={() => {}} />
           <Divider />
-          <MenuItem
-            icon="cog-outline"
-            title="Preferences"
-            onPress={() => console.log('Preferences')}
-          />
+          <MenuItem icon="cog-outline" title="Tercihler" onPress={() => {}} />
           <Divider />
           <View style={styles.darkModeItem}>
             <View style={styles.menuItemLeft}>
@@ -109,7 +96,7 @@ const ProfileScreen = () => {
                 size={24}
                 color={theme.colors.onSurface}
               />
-              <Text style={styles.menuItemText}>Dark Mode</Text>
+              <Text style={styles.menuItemText}>Karanlık Mod</Text>
             </View>
             <Switch
               value={isDarkMode}
@@ -119,33 +106,29 @@ const ProfileScreen = () => {
           </View>
         </Card>
       </View>
+
       <View style={styles.section}>
         <Text variant="titleMedium" style={styles.sectionTitle}>
-          Support
+          Destek
         </Text>
         <Card style={styles.menuCard}>
           <MenuItem
             icon="help-circle-outline"
-            title="Help Center"
-            onPress={() => console.log('Help')}
+            title="Yardım Merkezi"
+            onPress={() => {}}
           />
           <Divider />
           <MenuItem
             icon="information-outline"
-            title="About"
-            onPress={() => console.log('About')}
+            title="Hakkında"
+            onPress={() => {}}
           />
         </Card>
       </View>
 
       <View style={styles.section}>
         <Card style={styles.menuCard}>
-          <MenuItem
-            icon="logout"
-            title="Logout"
-            onPress={handleLogout}
-            danger
-          />
+          <MenuItem icon="logout" title="Çıkış Yap" onPress={logout} danger />
         </Card>
       </View>
 

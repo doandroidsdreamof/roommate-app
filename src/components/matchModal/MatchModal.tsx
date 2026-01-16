@@ -45,8 +45,8 @@ const MatchModal = ({
           </Text>
 
           <View style={styles.profilesContainer}>
-            <Avatar photoUrl={currentUserPhoto} name="You" size={90} />
-            <Avatar photoUrl={photoUrl} name={name} size={90} />
+            <Avatar src={currentUserPhoto} name="You" size={90} />
+            <Avatar src={photoUrl} name={name} size={90} />
           </View>
 
           <Text variant="bodyLarge" style={styles.subtitle}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -9,6 +9,8 @@ import {
   preferencesSetupSchema,
 } from '@/schemas/profileSchema';
 import Modal from '../modal/Modal';
+import { usePreferenceCheck } from '@/hooks/usePreferenceCheck';
+import Loading from '../Loading';
 
 interface PreferencesModalWrapperProps {
   visible: boolean;
@@ -20,6 +22,7 @@ const PreferencesModalWrapper = ({
   onDismiss,
 }: PreferencesModalWrapperProps) => {
   const queryClient = useQueryClient();
+  const { isLoading } = usePreferenceCheck();
 
   const form = useForm<PreferencesSetupForm>({
     resolver: zodResolver(preferencesSetupSchema),
@@ -29,11 +32,14 @@ const PreferencesModalWrapper = ({
     },
   });
 
-  const { mutate: createPreferences, isPending } = useMutation({
+  const mutation = useMutation({
     mutationFn: (data: PreferencesSetupForm) =>
       profileApi.createPreferences(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['preferenceExists'] });
+    onSuccess: async () => {
+      console.log('Preferences created successfully');
+      await queryClient.invalidateQueries({ queryKey: ['preferenceExists'] });
+      await queryClient.invalidateQueries({ queryKey: ['swipe'] });
+      form.reset();
       onDismiss();
     },
     onError: (error) => {
@@ -41,17 +47,29 @@ const PreferencesModalWrapper = ({
     },
   });
 
-  const handleSubmit = (data: PreferencesSetupForm) => {
-    createPreferences(data);
-  };
+  const handleSubmit = useCallback(
+    async (data: PreferencesSetupForm): Promise<void> => {
+      await mutation.mutateAsync(data);
+    },
+    [mutation]
+  );
+
+  if (isLoading) {
+    return <Loading size="large" />;
+  }
 
   return (
     <Modal
-      showCloseButton={true}
+      showCloseButton={false}
+      dismissable={false}
       visible={visible}
       onDismiss={onDismiss}
     >
-      <PreferencesForm form={form} onSubmit={handleSubmit} />
+      <PreferencesForm
+        form={form}
+        onSubmit={handleSubmit}
+        isLoading={mutation.isPending}
+      />
     </Modal>
   );
 };

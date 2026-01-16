@@ -3,7 +3,7 @@ import { District, Province } from '@/api/locationApi';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
-const useDistricts = (selectedProvinceData?: Province) => {
+export const useDistricts = (selectedProvinceData?: Province) => {
   const { data: districts = [], isFetching } = useQuery<District[]>({
     queryKey: ['districts', selectedProvinceData?.plateCode],
     queryFn: (): Promise<District[]> => {
@@ -38,4 +38,4 @@ const useDistricts = (selectedProvinceData?: Province) => {
   return { districts, getDistrictByValue, filterDistricts, isFetching };
 };
 
-export default useDistricts;
+

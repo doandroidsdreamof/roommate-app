@@ -46,5 +46,3 @@ export class SwipeApi {
     return response.data.data;
   }
 }
-
-export default SwipeApi;

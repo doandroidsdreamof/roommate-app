@@ -31,5 +31,3 @@ export class AuthApi {
     return response.data;
   }
 }
-
-export default AuthApi;

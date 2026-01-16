@@ -4,6 +4,10 @@ import { spacing } from '@/theme/theme';
 
 export const createStyles = (theme: MD3Theme) =>
   StyleSheet.create({
+    wrapper: {
+      paddingHorizontal: spacing.sm,
+      paddingBottom: spacing.lg,
+    },
     container: {
       backgroundColor: theme.colors.surface,
       borderRadius: 32,
@@ -15,7 +19,7 @@ export const createStyles = (theme: MD3Theme) =>
       shadowOpacity: 0.15,
       shadowRadius: 8,
       marginTop: '20%',
-      width: "100%"
+      width: '100%',
     },
     content: {
       flexDirection: 'row',

@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   bottomSpacer: {
-    height: 100,
+    height: 20,
   },
   container: {
     flex: 1,
@@ -33,7 +33,6 @@ export const styles = StyleSheet.create({
     fontWeight: '500',
   },
   profileCard: {
-    margin: spacing.md,
     marginTop: spacing.lg,
   },
   profileContent: {
@@ -50,7 +49,6 @@ export const styles = StyleSheet.create({
   },
   section: {
     marginTop: spacing.lg,
-    paddingHorizontal: spacing.md,
   },
   sectionTitle: {
     fontWeight: '600',

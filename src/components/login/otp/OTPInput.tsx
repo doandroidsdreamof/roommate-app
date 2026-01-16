@@ -1,4 +1,4 @@
-import useCount from '@/hooks/useCount';
+import {useCount} from '@/hooks/useCount';
 import React, { useRef } from 'react';
 import { Pressable, TextInput as RNTextInput, View } from 'react-native';
 import { Button, Text, useTheme } from 'react-native-paper';

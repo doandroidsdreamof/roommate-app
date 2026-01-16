@@ -1,6 +1,6 @@
 import { shadows } from '@/theme/theme';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import {
   Animated,
   Dimensions,
@@ -36,28 +36,32 @@ const TabBar = ({ navigationState, onIndexChange }: TabBarBarProps) => {
   const styles = createStyles(theme);
   const insets = useSafeAreaInsets();
   const { index, routes } = navigationState;
-  const scaleAnim = useRef(new Animated.Value(1)).current;
 
-  useEffect(() => {
+  const scaleAnims = useRef(routes.map(() => new Animated.Value(1))).current;
+
+  const handleTabPress = (i: number) => {
+    if (i === index) return;
+
     Animated.sequence([
-      Animated.timing(scaleAnim, {
+      Animated.timing(scaleAnims[i], {
         toValue: 1.1,
         duration: 150,
         useNativeDriver: true,
       }),
-      Animated.timing(scaleAnim, {
+      Animated.timing(scaleAnims[i], {
         toValue: 1,
         duration: 150,
         useNativeDriver: true,
       }),
     ]).start();
-  }, [index, scaleAnim]);
+
+    onIndexChange(i);
+  };
 
   const tabBarHeight = 60 + insets.bottom;
 
   return (
     <View style={[styles.container, { height: tabBarHeight }]}>
-      {/* Background with curve */}
       <View style={styles.background}>
         <Svg width={width} height={80} style={StyleSheet.absoluteFillObject}>
           <Path
@@ -77,7 +81,6 @@ const TabBar = ({ navigationState, onIndexChange }: TabBarBarProps) => {
         </Svg>
       </View>
 
-      {/* Tab buttons */}
       <View style={[styles.tabsContainer, { paddingBottom: insets.bottom }]}>
         {routes.map((route, i) => {
           const isFocused = index === i;
@@ -92,7 +95,7 @@ const TabBar = ({ navigationState, onIndexChange }: TabBarBarProps) => {
                     shadows.lg,
                     {
                       backgroundColor: theme.colors.primary,
-                      transform: [{ scale: scaleAnim }],
+                      transform: [{ scale: scaleAnims[i] }],
                     },
                   ]}
                 >
@@ -100,8 +103,8 @@ const TabBar = ({ navigationState, onIndexChange }: TabBarBarProps) => {
                     <MessageIconNotification
                       size={28}
                       color={theme.colors.onPrimary}
-                      unreadCount={2} // TODO: Pass state here later
-                      icon={'message'}
+                      unreadCount={2}
+                      icon='message'
                     />
                   ) : (
                     <MaterialCommunityIcons
@@ -116,15 +119,15 @@ const TabBar = ({ navigationState, onIndexChange }: TabBarBarProps) => {
               {!isFocused && (
                 <TouchableOpacity
                   style={styles.tab}
-                  onPress={() => onIndexChange(i)}
+                  onPress={() => handleTabPress(i)}
                   activeOpacity={0.7}
                 >
                   {isMessageTab ? (
                     <MessageIconNotification
                       size={24}
                       color={theme.colors.onSurfaceVariant}
-                      unreadCount={2} // TODO: Pass state here later
-                      icon={'message-outline'}
+                      unreadCount={2}
+                      icon='message-outline'
                     />
                   ) : (
                     <MaterialCommunityIcons

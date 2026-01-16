@@ -10,6 +10,7 @@ export const createStyles = (theme: MD3Theme) =>
     title: {
       color: theme.colors.onSurface,
       marginBottom: spacing.xs,
+      marginTop: spacing.lg,
     },
     subtitle: {
       color: theme.colors.onSurfaceVariant,

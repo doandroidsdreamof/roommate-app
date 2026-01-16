@@ -9,7 +9,7 @@ import { createStyles } from './PreferencesForm.styles';
 
 interface PreferencesFormProps {
   form: UseFormReturn<PreferencesSetupForm>;
-  onSubmit: (data: PreferencesSetupForm) => void;
+  onSubmit: (data: PreferencesSetupForm) => Promise<void>;
   isLoading?: boolean;
 }
 
@@ -21,17 +21,12 @@ const PreferencesForm = ({
   const {
     control,
     handleSubmit,
-    watch,
+    getValues,
     setValue,
     formState: { errors },
   } = form;
   const theme = useTheme();
   const styles = createStyles(theme);
-
-  const ageMin = watch('ageMin');
-  const ageMax = watch('ageMax');
-  const budgetMin = watch('budgetMin');
-  const budgetMax = watch('budgetMax');
 
   const handleFormSubmit = (): void => {
     void handleSubmit(onSubmit)();
@@ -40,75 +35,101 @@ const PreferencesForm = ({
   return (
     <View style={styles.container}>
       <Text variant="headlineSmall" style={styles.title}>
-        Set Your Preferences
+        Tercihlerinizi Belirleyin
       </Text>
       <Text variant="bodyMedium" style={styles.subtitle}>
-        Help us find your perfect roommate
+        Mükemmel ev arkadaşınızı bulmamıza yardımcı olun
       </Text>
 
       <View style={styles.section}>
-        <Text variant="bodyMedium" style={styles.label}>
-          Age Range: {ageMin} - {ageMax}
-        </Text>
         <Controller
           control={control}
           name="ageMin"
-          render={() => (
-            <MultiSlider
-              values={[ageMin, ageMax]}
-              min={18}
-              max={100}
-              step={1}
-              onValuesChange={(values) => {
-                setValue('ageMin', values[0]);
-                setValue('ageMax', values[1]);
-              }}
-              selectedStyle={{ backgroundColor: theme.colors.primary }}
-              unselectedStyle={{ backgroundColor: theme.colors.surfaceVariant }}
-              markerStyle={{
-                backgroundColor: theme.colors.primary,
-                height: 24,
-                width: 24,
-              }}
-              containerStyle={styles.sliderContainer}
-              trackStyle={styles.sliderTrack}
+          render={({ field: { value: ageMin } }) => (
+            <Controller
+              control={control}
+              name="ageMax"
+              render={({ field: { value: ageMax } }) => (
+                <>
+                  <Text variant="bodyMedium" style={styles.label}>
+                    Yaş Aralığı: {ageMin} - {ageMax}
+                  </Text>
+                  <MultiSlider
+                    values={[ageMin, ageMax]}
+                    min={18}
+                    max={100}
+                    step={1}
+                    onValuesChange={(values) => {
+                      setValue('ageMin', values[0], { shouldValidate: false });
+                      setValue('ageMax', values[1], { shouldValidate: false });
+                    }}
+                    selectedStyle={{ backgroundColor: theme.colors.primary }}
+                    unselectedStyle={{
+                      backgroundColor: theme.colors.surfaceVariant,
+                    }}
+                    markerStyle={{
+                      backgroundColor: theme.colors.primary,
+                      height: 24,
+                      width: 24,
+                    }}
+                    containerStyle={styles.sliderContainer}
+                    trackStyle={styles.sliderTrack}
+                  />
+                </>
+              )}
             />
           )}
         />
         <FormErrorMessage error={errors.ageMin || errors.ageMax} />
       </View>
-
       <View style={styles.section}>
-        <Text variant="bodyMedium" style={styles.label}>
-          Budget Range (Optional):{' '}
-          {budgetMin ? `₺${budgetMin.toLocaleString()}` : 'Not set'} -{' '}
-          {budgetMax ? `₺${budgetMax.toLocaleString()}` : 'Not set'}
-        </Text>
         <Controller
           control={control}
           name="budgetMin"
-          render={() => (
-            <MultiSlider
-              values={[budgetMin || 0, budgetMax || 50000]}
-              min={0}
-              max={50000}
-              step={500}
-              onValuesChange={(values) => {
-                setValue('budgetMin', values[0] === 0 ? undefined : values[0]);
-                setValue(
-                  'budgetMax',
-                  values[1] === 50000 ? undefined : values[1]
-                );
-              }}
-              selectedStyle={{ backgroundColor: theme.colors.primary }}
-              unselectedStyle={{ backgroundColor: theme.colors.surfaceVariant }}
-              markerStyle={{
-                backgroundColor: theme.colors.primary,
-                height: 24,
-                width: 24,
-              }}
-              containerStyle={styles.sliderContainer}
-              trackStyle={styles.sliderTrack}
+          render={({ field: { value: budgetMin } }) => (
+            <Controller
+              control={control}
+              name="budgetMax"
+              render={({ field: { value: budgetMax } }) => (
+                <>
+                  <Text variant="bodyMedium" style={styles.label}>
+                    Bütçe Aralığı (Opsiyonel):
+                    {budgetMin
+                      ? ` ₺${budgetMin.toLocaleString('tr-TR')}`
+                      : ' '}{' '}
+                    - {budgetMax ? `₺${budgetMax.toLocaleString('tr-TR')}` : ''}
+                  </Text>
+                  <MultiSlider
+                    values={[budgetMin || 0, budgetMax || 50000]}
+                    min={0}
+                    max={1000000}
+                    step={500}
+                    onValuesChange={(values) => {
+                      setValue(
+                        'budgetMin',
+                        values[0] === 0 ? undefined : values[0],
+                        { shouldValidate: false }
+                      );
+                      setValue(
+                        'budgetMax',
+                        values[1] === 50000 ? undefined : values[1],
+                        { shouldValidate: false }
+                      );
+                    }}
+                    selectedStyle={{ backgroundColor: theme.colors.primary }}
+                    unselectedStyle={{
+                      backgroundColor: theme.colors.surfaceVariant,
+                    }}
+                    markerStyle={{
+                      backgroundColor: theme.colors.primary,
+                      height: 24,
+                      width: 24,
+                    }}
+                    containerStyle={styles.sliderContainer}
+                    trackStyle={styles.sliderTrack}
+                  />
+                </>
+              )}
             />
           )}
         />
@@ -117,7 +138,7 @@ const PreferencesForm = ({
 
       <View style={styles.section}>
         <Text variant="bodyMedium" style={styles.label}>
-          Gender Preference (Optional)
+          Cinsiyet Tercihi (Opsiyonel)
         </Text>
         <Controller
           control={control}
@@ -133,10 +154,10 @@ const PreferencesForm = ({
                   style={styles.chip}
                 >
                   {pref === 'female_only'
-                    ? 'Female Only'
+                    ? 'Sadece Kadın'
                     : pref === 'male_only'
-                      ? 'Male Only'
-                      : 'Mixed'}
+                      ? 'Sadece Erkek'
+                      : 'Karma'}
                 </Chip>
               ))}
             </View>
@@ -146,32 +167,28 @@ const PreferencesForm = ({
 
       <View style={styles.section}>
         <Text variant="bodyMedium" style={styles.label}>
-          Smoking Preference (Optional)
+          Sigara Tercihi (Opsiyonel)
         </Text>
         <Controller
           control={control}
           name="smokingHabit"
           render={({ field: { onChange, value } }) => (
             <View style={styles.chipContainer}>
-              {(['non_smoker', 'occasional', 'regular'] as const).map(
-                (habit) => (
-                  <Chip
-                    key={habit}
-                    selected={value === habit}
-                    onPress={() =>
-                      onChange(value === habit ? undefined : habit)
-                    }
-                    mode="outlined"
-                    style={styles.chip}
-                  >
-                    {habit === 'non_smoker'
-                      ? 'Non-Smoker'
-                      : habit === 'occasional'
-                        ? 'Occasional'
-                        : 'Regular'}
-                  </Chip>
-                )
-              )}
+              {(['no', 'social', 'regular'] as const).map((habit) => (
+                <Chip
+                  key={habit}
+                  selected={value === habit}
+                  onPress={() => onChange(value === habit ? undefined : habit)}
+                  mode="outlined"
+                  style={styles.chip}
+                >
+                  {habit === 'no'
+                    ? 'İçmez'
+                    : habit === 'social'
+                      ? 'Sosyal'
+                      : 'Düzenli'}
+                </Chip>
+              ))}
             </View>
           )}
         />
@@ -179,14 +196,14 @@ const PreferencesForm = ({
 
       <View style={styles.section}>
         <Text variant="bodyMedium" style={styles.label}>
-          Pet Ownership (Optional)
+          Evcil Hayvan Durumu (Opsiyonel)
         </Text>
         <Controller
           control={control}
           name="petOwnership"
           render={({ field: { onChange, value } }) => (
             <View style={styles.chipContainer}>
-              {(['no_pets', 'has_pets'] as const).map((pet) => (
+              {(['none', 'cat', 'dog', 'other'] as const).map((pet) => (
                 <Chip
                   key={pet}
                   selected={value === pet}
@@ -194,7 +211,13 @@ const PreferencesForm = ({
                   mode="outlined"
                   style={styles.chip}
                 >
-                  {pet === 'no_pets' ? 'No Pets' : 'Has Pets'}
+                  {pet === 'none'
+                    ? 'Hayvan Yok'
+                    : pet === 'cat'
+                      ? 'Kedi'
+                      : pet === 'dog'
+                        ? 'Köpek'
+                        : 'Diğer'}
                 </Chip>
               ))}
             </View>
@@ -204,7 +227,7 @@ const PreferencesForm = ({
 
       <View style={styles.section}>
         <Text variant="bodyMedium" style={styles.label}>
-          Pet Compatibility (Optional)
+          Evcil Hayvan Uyumu (Opsiyonel)
         </Text>
         <Controller
           control={control}
@@ -221,9 +244,7 @@ const PreferencesForm = ({
                   mode="outlined"
                   style={styles.chip}
                 >
-                  {compat === 'not_compatible'
-                    ? 'Not Compatible'
-                    : 'Compatible'}
+                  {compat === 'not_compatible' ? 'Uyumlu Değil' : 'Uyumlu'}
                 </Chip>
               ))}
             </View>
@@ -233,7 +254,7 @@ const PreferencesForm = ({
 
       <View style={styles.section}>
         <Text variant="bodyMedium" style={styles.label}>
-          Alcohol Preference (Optional)
+          Alkol Tercihi (Opsiyonel)
         </Text>
         <Controller
           control={control}
@@ -251,7 +272,11 @@ const PreferencesForm = ({
                     mode="outlined"
                     style={styles.chip}
                   >
-                    {alcohol.charAt(0).toUpperCase() + alcohol.slice(1)}
+                    {alcohol === 'never'
+                      ? 'Hiç'
+                      : alcohol === 'occasionally'
+                        ? 'Ara Sıra'
+                        : 'Düzenli'}
                   </Chip>
                 )
               )}
@@ -267,7 +292,7 @@ const PreferencesForm = ({
         disabled={isLoading}
         style={styles.button}
       >
-        Save Preferences
+        Tercihleri Kaydet
       </Button>
     </View>
   );

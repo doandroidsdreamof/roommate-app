@@ -5,7 +5,7 @@ import LocationPicker, {
 } from '@/components/locationPicker/LocationPicker';
 import { useStore } from '@/store';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
   Modal,
   ScrollView,
@@ -25,15 +25,24 @@ interface SearchModalProps {
 
 const SearchModal = ({ visible, onDismiss }: SearchModalProps) => {
   const theme = useTheme();
-  const styles = createStyles(theme);
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
+  const filters = useStore((state) => state.filters);
   const setFilters = useStore((state) => state.setFilters);
   const clearFilters = useStore((state) => state.clearFilters);
 
   const filtersRef = useRef<Partial<ListsQueryParams>>({});
-  // TODO bottleneck
-  const [localCity, setLocalCity] = useState<string>('');
-  const [localDistrict, setLocalDistrict] = useState<string>('');
+
+  const [locationFilterKey, setLocationFilterKey] = useState(0);
+  const [initialCity, setInitialCity] = useState<string>('');
+  const [initialDistrict, setInitialDistrict] = useState<string>('');
+
+  if (visible && locationFilterKey === 0) {
+    filtersRef.current = { ...filters };
+    setInitialCity(filters.province || '');
+    setInitialDistrict(filters.district || '');
+    setLocationFilterKey(Date.now());
+  }
 
   const handleFilterChange = useCallback(
     (field: string, value: string | number | boolean) => {
@@ -46,22 +55,23 @@ const SearchModal = ({ visible, onDismiss }: SearchModalProps) => {
   );
 
   const handleLocationSelect = useCallback((location: LocationData) => {
-    const city = location.city || '';
+    const province = location.province || '';
     const district = location.district || '';
 
     filtersRef.current = {
       ...filtersRef.current,
-      city,
+      province,
       district,
     };
-    setLocalCity(city);
-    setLocalDistrict(district);
+
+    setInitialCity(province);
+    setInitialDistrict(district);
+    setLocationFilterKey(Date.now());
   }, []);
 
   const handleCityChange = useCallback(
     (value: string) => {
-      handleFilterChange('city', value);
-      setLocalCity(value);
+      handleFilterChange('province', value);
     },
     [handleFilterChange]
   );
@@ -69,20 +79,21 @@ const SearchModal = ({ visible, onDismiss }: SearchModalProps) => {
   const handleDistrictChange = useCallback(
     (value: string) => {
       handleFilterChange('district', value);
-      setLocalDistrict(value);
     },
     [handleFilterChange]
   );
 
   const handleSearch = useCallback(() => {
     setFilters(filtersRef.current);
+    setLocationFilterKey(0);
     onDismiss();
   }, [setFilters, onDismiss]);
 
   const handleClearAll = useCallback(() => {
     filtersRef.current = {};
-    setLocalCity('');
-    setLocalDistrict('');
+    setInitialCity('');
+    setInitialDistrict('');
+    setLocationFilterKey(Date.now());
     clearFilters();
   }, [clearFilters]);
 
@@ -110,7 +121,7 @@ const SearchModal = ({ visible, onDismiss }: SearchModalProps) => {
             showsVerticalScrollIndicator={false}
           >
             <View style={styles.content}>
-              <Text style={styles.title}>Where?</Text>
+              <Text style={styles.title}>Nerede?</Text>
 
               <View style={styles.searchInputContainer}>
                 <MaterialCommunityIcons
@@ -129,8 +140,9 @@ const SearchModal = ({ visible, onDismiss }: SearchModalProps) => {
               <LocationPicker onLocationSelect={handleLocationSelect} />
 
               <LocationFilter
-                city={localCity}
-                district={localDistrict}
+                key={locationFilterKey}
+                initialCity={initialCity}
+                initialDistrict={initialDistrict}
                 onCityChange={handleCityChange}
                 onDistrictChange={handleDistrictChange}
               />

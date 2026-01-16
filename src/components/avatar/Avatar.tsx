@@ -4,7 +4,7 @@ import { Avatar as PaperAvatar, Text } from 'react-native-paper';
 import { styles } from './Avatar.styles';
 
 interface AvatarProps {
-  photoUrl?: string | null;
+  src?: string | null;
   name?: string;
   size?: number;
   showName?: boolean;
@@ -15,14 +15,14 @@ interface AvatarProps {
 const FALLBACK_AVATAR = require('../../../assets/images/fallback-avatar.png');
 
 const Avatar = ({
-  photoUrl,
+  src,
   name,
   size = 90,
   showName = true,
   containerStyle,
   nameVariant = 'labelMedium',
 }: AvatarProps) => {
-  const avatarSource = photoUrl ? { uri: photoUrl } : FALLBACK_AVATAR;
+  const avatarSource = src ? { uri: src } : FALLBACK_AVATAR;
 
   return (
     <View style={[styles.container, containerStyle]}>

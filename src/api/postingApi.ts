@@ -14,14 +14,15 @@ export interface CreatePostingDto {
   availableFrom?: string;
   coverImageUrl?: string;
   preferredRoommateGender?: 'female_only' | 'male_only' | 'mixed';
-  // Specs
-  hasParking?: boolean;
-  hasBalcony?: boolean;
-  hasElevator?: boolean;
-  billsIncluded?: boolean;
-  smokingAllowed?: boolean;
-  alcoholFriendly?: boolean;
-  hasPets?: boolean;
+  specs: {
+    hasParking?: boolean;
+    hasBalcony?: boolean;
+    hasElevator?: boolean;
+    billsIncluded?: boolean;
+    smokingAllowed?: boolean;
+    alcoholFriendly?: boolean;
+    hasPets?: boolean;
+  };
 }
 
 export interface UpdatePostingDto {
@@ -49,6 +50,7 @@ export interface ListsQueryParams {
 
   // Location
   city?: string;
+  province?: string; // TODO fix
   district?: string;
   neighborhoodId?: number;
 
@@ -81,7 +83,7 @@ export interface ListsQueryParams {
   availableFrom?: string;
 
   // Sort
-  sortBy?: 'price' | 'date' | 'views' | 'bookmarks';
+  sortBy?: 'price' | 'date' | 'viewCount' | 'bookmarkCount';
   sortOrder?: 'asc' | 'desc';
 
   // Search
@@ -89,7 +91,7 @@ export interface ListsQueryParams {
 }
 
 export interface PostingSpec {
-  id: number;
+  id: string;
   postingId: number;
   description: string | null;
   hasParking: boolean;
@@ -104,7 +106,7 @@ export interface PostingSpec {
 }
 
 export interface PostingItem {
-  id: number;
+  id: string;
   title: string;
   city: string;
   district: string;
@@ -117,6 +119,7 @@ export interface PostingItem {
   availableFrom: string | null;
   createdAt: string;
   specs: PostingSpec | null;
+  isBookmarked: boolean;
 }
 
 export interface ListsResponse {
@@ -172,8 +175,7 @@ export class PostingApi {
     const response = await this.client.get(API_ENDPOINTS.POSTINGS.LISTS, {
       params,
     });
-    return response.data;
+
+    return response.data.data;
   }
 }
-
-export default PostingApi;

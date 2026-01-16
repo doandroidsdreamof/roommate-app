@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Button, Chip, Text, TextInput, useTheme } from 'react-native-paper';
 
-import useDistricts from '@/hooks/useDistricts';
+import { useDistricts } from '@/hooks/useDistricts';
 import { useDropdownState } from '@/hooks/useDropdownState';
 import { useProvinces } from '@/hooks/useProvinces';
 import { ProfileSetupForm } from '@/schemas/profileSchema';

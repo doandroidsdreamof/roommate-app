@@ -7,7 +7,7 @@ import { createStyles } from './LocationPicker.styles';
 
 // TODO custom hook for location
 export interface LocationData {
-  city?: string;
+  province?: string;
   district?: string;
 }
 
@@ -61,7 +61,7 @@ const LocationPicker = ({
       if (addresses.length > 0) {
         const address = addresses[0];
         const locationData: LocationData = {
-          city: address.region || undefined,
+          province: address.region || undefined,
           district: address.subregion || address.district || undefined,
         };
         onLocationSelect(locationData);

@@ -17,8 +17,8 @@ export const preferencesSetupSchema = z
     ageMin: z.number().int().min(18, 'Minimum age is 18').max(100),
     ageMax: z.number().int().min(18).max(100, 'Maximum age is 100'),
     genderPreference: z.enum(['female_only', 'male_only', 'mixed']).optional(),
-    smokingHabit: z.enum(['non_smoker', 'occasional', 'regular']).optional(),
-    petOwnership: z.enum(['no_pets', 'has_pets']).optional(),
+    smokingHabit: z.enum(['no', 'social', 'regular']).optional(),
+    petOwnership: z.enum(['none', 'cat', 'dog', 'other']).optional(),
     petCompatibility: z.enum(['not_compatible', 'compatible']).optional(),
     alcoholConsumption: z
       .enum(['never', 'occasionally', 'regularly'])
@@ -26,10 +26,6 @@ export const preferencesSetupSchema = z
   })
   .refine((data) => data.ageMax >= data.ageMin, {
     message: 'Maximum age must be greater than or equal to minimum age',
-    path: ['ageMax'],
-  })
-  .refine((data) => data.ageMax - data.ageMin <= 50, {
-    message: 'Age range cannot exceed 50 years',
     path: ['ageMax'],
   })
   .refine(
@@ -40,6 +36,6 @@ export const preferencesSetupSchema = z
       path: ['budgetMax'],
     }
   );
-  
+
 export type ProfileSetupForm = z.infer<typeof profileSetupSchema>;
 export type PreferencesSetupForm = z.infer<typeof preferencesSetupSchema>;

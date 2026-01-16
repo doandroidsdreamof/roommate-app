@@ -1,6 +1,6 @@
 import { authApi } from '@/api';
-import EmailInput from '@/components/loginModule/emailInput/EmailInput';
-import OTPInput from '@/components/loginModule/otp/OTPInput';
+import EmailInput from '@/components/login/emailInput/EmailInput';
+import OTPInput from '@/components/login/otp/OTPInput';
 import { LoginSchema, loginSchema } from '@/schemas/loginSchema';
 import { useStore } from '@/store/index';
 import { zodResolver } from '@hookform/resolvers/zod';

@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 
 export type SwipeDirection = 'pass' | 'like';
 
-const useSwipeMutations = (
+export const useSwipeMutations = (
   feed: FeedItem[],
   onMatch?: (profile: FeedItem) => void
 ) => {
@@ -64,4 +64,4 @@ const useSwipeMutations = (
   };
 };
 
-export default useSwipeMutations;
+

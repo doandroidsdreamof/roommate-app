@@ -10,7 +10,7 @@ export const createStyles = (theme: MD3Theme) =>
     content: {
       flexGrow: 1,
       justifyContent: 'center',
-      padding: spacing.lg, 
+      padding: spacing.lg,
       paddingTop: spacing.xxl,
     },
     header: {

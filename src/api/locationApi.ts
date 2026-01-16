@@ -55,4 +55,3 @@ export class LocationApi {
   }
 }
 
-export default LocationApi;

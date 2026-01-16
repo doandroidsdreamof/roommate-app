@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-const useCount = (expiration: number = 300) => {
+export const useCount = (expiration: number = 300) => {
   const [expiresIn, setExpiresIn] = useState(expiration);
 
   useEffect(() => {
@@ -26,4 +26,4 @@ const useCount = (expiration: number = 300) => {
   return { formatTime, expiresIn, reset };
 };
 
-export default useCount;
+

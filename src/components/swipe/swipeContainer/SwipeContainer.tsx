@@ -8,7 +8,7 @@ import ScreenText from '@/components/ScreenText';
 import SwipeOverlay from '@/components/swipe/SwipeOverlay';
 import { useSwipeFeed } from '@/hooks/useSwipeFeed';
 import { useSwipeHandlers } from '@/hooks/useSwipeHandlers';
-import useSwipeMutations from '@/hooks/useSwipeMutations';
+import {useSwipeMutations} from '@/hooks/useSwipeMutations';
 import { FeedItem } from '@/schemas/feedSchema';
 import { actionButtons } from '@/screens/swipe/actionButtons';
 import SwipeCard from '../swipeCard/SwipeCard';

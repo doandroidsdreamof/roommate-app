@@ -1,11 +1,7 @@
 import { profileApi } from '@/api';
 import ProfileForm from '@/components/profileForm/ProfileForm';
-import type {
-  ProfileSetupForm
-} from '@/schemas/profileSchema';
-import {
-  profileSetupSchema
-} from '@/schemas/profileSchema';
+import type { ProfileSetupForm } from '@/schemas/profileSchema';
+import { profileSetupSchema } from '@/schemas/profileSchema';
 import { useStore } from '@/store';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React from 'react';

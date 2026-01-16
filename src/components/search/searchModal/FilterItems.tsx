@@ -1,8 +1,7 @@
 import { ListsQueryParams } from '@/api/postingApi';
-import { ExpandedSection } from '../modalAccordion/ModalAccordion';
-import { Text } from 'react-native-paper';
 import React from 'react';
-import LocationFilter from '@/components/locationFilter/LocationFilter';
+import { Text } from 'react-native-paper';
+import { ExpandedSection } from '../modalAccordion/ModalAccordion';
 
 type FilterSection = Exclude<ExpandedSection, null>;
 
@@ -12,7 +11,7 @@ interface FilterConfig {
   section: FilterSection;
   fields: (keyof ListsQueryParams)[];
   renderComponent: (props: {
-    filterValues: Record<string, any>;
+    filterValues: Record<string, any>; // TODO any
     onFilterChange: (field: string, value: any) => void;
   }) => React.ReactElement;
 }

@@ -4,7 +4,7 @@ import { MD3Theme } from 'react-native-paper';
 
 const { width, height } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.9;
-const CARD_HEIGHT = height * 0.70;
+const CARD_HEIGHT = height * 0.7;
 
 export const createStyles = (theme: MD3Theme) =>
   StyleSheet.create({
