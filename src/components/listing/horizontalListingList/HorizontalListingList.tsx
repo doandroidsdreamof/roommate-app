@@ -1,10 +1,10 @@
+import { PostingItem } from '@/api/postingApi';
+import Loading from '@/components/loading/Loading';
 import React from 'react';
 import { FlatList, View } from 'react-native';
-import { PostingItem } from '@/api/postingApi';
 import { useTheme } from 'react-native-paper';
 import CompactListingCard from '../compactListingCard/CompactListingCard';
 import { createStyles } from './HorizontalListingList.styles';
-import Loading from '@/components/Loading';
 
 interface HorizontalListingListProps {
   data: PostingItem[] | undefined;

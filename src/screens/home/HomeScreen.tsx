@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import HorizontalListingList from '@/components/listing/horizontalListingList/HorizontalListingList';
+import SectionHeader from '@/components/listing/sectionHeader/SectionHeader';
 import SearchBar from '@/components/search/searchBar/SearchBar';
 import SearchModal from '@/components/search/searchModal/SearchModal';
-import SectionHeader from '@/components/sectionHeader/SectionHeader';
-import { useStore } from '@/store';
-import { styles } from './HomeScreen.styles';
-import HorizontalListingList from '@/components/listing/horizontalListingList/HorizontalListingList';
 import { useHomeSections } from '@/hooks/useHomeSection';
+import { useStore } from '@/store';
+import React, { useState } from 'react';
+import { ScrollView, View } from 'react-native';
+import { styles } from './HomeScreen.styles';
 
 const HomeScreen = () => {
   const [isSearchModalVisible, setIsSearchModalVisible] = useState(false);
@@ -27,7 +27,6 @@ const HomeScreen = () => {
         <HorizontalListingList
           data={forYou.data?.lists}
           isLoading={forYou.isLoading}
-          
         />
 
         <SectionHeader

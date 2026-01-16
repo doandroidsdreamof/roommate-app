@@ -14,7 +14,7 @@ import { useDistricts } from '@/hooks/useDistricts';
 import { useDropdownState } from '@/hooks/useDropdownState';
 import { useProvinces } from '@/hooks/useProvinces';
 import { ProfileSetupForm } from '@/schemas/profileSchema';
-import Dropdown from '../dropdown/Dropdown';
+import Dropdown from '@/components/dropdown/Dropdown';
 import FormErrorMessage from '../formErrorMessage/FormErrorMessage';
 import { createStyles } from './ProfileForm.styles';
 

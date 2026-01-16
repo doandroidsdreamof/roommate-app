@@ -1,6 +1,6 @@
 import { BookmarkItem } from '@/api/bookmarkApi';
 import ListingCard from '@/components/listing/listingCard/ListingCard';
-import Loading from '@/components/Loading';
+import Loading from '@/components/loading/Loading';
 import { useInfiniteBookmarks } from '@/hooks/useInfiniteBookmarks';
 import React, { useCallback } from 'react';
 import { FlatList, View } from 'react-native';

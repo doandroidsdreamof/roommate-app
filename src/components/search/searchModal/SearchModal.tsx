@@ -1,8 +1,8 @@
 import { ListsQueryParams } from '@/api/postingApi';
-import LocationFilter from '@/components/locationFilter/LocationFilter';
+import LocationFilter from '@/components/location/locationFilter/LocationFilter';
 import LocationPicker, {
   LocationData,
-} from '@/components/locationPicker/LocationPicker';
+} from '@/components/location/locationPicker/LocationPicker';
 import { useStore } from '@/store';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { useCallback, useMemo, useRef, useState } from 'react';

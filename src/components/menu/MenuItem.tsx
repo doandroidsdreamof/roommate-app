@@ -1,7 +1,7 @@
-import { spacing } from '@/theme/theme';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
+import { styles } from './MenuItem.styles';
 
 interface MenuItemProps {
   icon: string;
@@ -39,24 +39,5 @@ const MenuItem = ({ icon, title, onPress, danger = false }: MenuItemProps) => {
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  menuItem: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-  },
-  menuItemLeft: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: spacing.md,
-  },
-  menuItemText: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-});
 
 export default MenuItem;

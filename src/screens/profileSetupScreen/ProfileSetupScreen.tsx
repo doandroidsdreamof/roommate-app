@@ -1,5 +1,5 @@
 import { profileApi } from '@/api';
-import ProfileForm from '@/components/profileForm/ProfileForm';
+import ProfileForm from '@/components/forms/profileForm/ProfileForm';
 import type { ProfileSetupForm } from '@/schemas/profileSchema';
 import { profileSetupSchema } from '@/schemas/profileSchema';
 import { useStore } from '@/store';
@@ -35,10 +35,10 @@ const ProfileSetupScreen = () => {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
         <Text variant="displaySmall" style={styles.title}>
-          Create Your Profile
+          Profilinizi Oluşturun
         </Text>
         <Text variant="bodyMedium" style={styles.subtitle}>
-          Tell us about yourself
+          Bize kendinizden bahsedin
         </Text>
       </View>
 

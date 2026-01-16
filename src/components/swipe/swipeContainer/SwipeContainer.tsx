@@ -1,16 +1,16 @@
+import Loading from '@/components/loading/Loading';
+import ScreenText from '@/components/screenText/ScreenText';
+import SwipeOverlay from '@/components/swipe/SwipeOverlay';
+import { useSwipeFeed } from '@/hooks/useSwipeFeed';
+import { useSwipeHandlers } from '@/hooks/useSwipeHandlers';
+import { useSwipeMutations } from '@/hooks/useSwipeMutations';
+import { FeedItem } from '@/schemas/feedSchema';
+import { actionButtons } from '@/screens/swipe/actionButtons';
 import React, { useCallback, useRef } from 'react';
 import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { IconButton, useTheme } from 'react-native-paper';
 import { Swiper, type SwiperCardRefType } from 'rn-swiper-list';
-import Loading from '@/components/Loading';
-import ScreenText from '@/components/ScreenText';
-import SwipeOverlay from '@/components/swipe/SwipeOverlay';
-import { useSwipeFeed } from '@/hooks/useSwipeFeed';
-import { useSwipeHandlers } from '@/hooks/useSwipeHandlers';
-import {useSwipeMutations} from '@/hooks/useSwipeMutations';
-import { FeedItem } from '@/schemas/feedSchema';
-import { actionButtons } from '@/screens/swipe/actionButtons';
 import SwipeCard from '../swipeCard/SwipeCard';
 import { createStyles } from './SwipeContainer.styles';
 

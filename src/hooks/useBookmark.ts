@@ -31,7 +31,7 @@ export const useBookmark = ({
       if (context) {
         setIsBookmarked(context.previousState);
       }
-      onError?.(error as Error);
+      onError?.(error);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['bookmarks'] });
@@ -52,7 +52,7 @@ export const useBookmark = ({
       if (context) {
         setIsBookmarked(context.previousState);
       }
-      onError?.(error as Error);
+      onError?.(error);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['bookmarks'] });

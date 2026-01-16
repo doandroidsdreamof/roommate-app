@@ -1,12 +1,12 @@
-import MatchModal from '@/components/matchModal/MatchModal';
+import Loading from '@/components/loading/Loading';
 import PreferencesModalWrapper from '@/components/PreferencesModalWrapper/PreferencesModalWrapper';
+import MatchModal from '@/components/swipe/matchModal/MatchModal';
 import SwipeContainer from '@/components/swipe/swipeContainer/SwipeContainer';
+import { usePreferenceCheck } from '@/hooks/usePreferenceCheck';
 import { FeedItem } from '@/schemas/feedSchema';
 import React, { useCallback, useState } from 'react';
 import { View } from 'react-native';
 import { styles } from './SwipeScreen.styles';
-import { usePreferenceCheck } from '@/hooks/usePreferenceCheck';
-import Loading from '@/components/Loading';
 
 const SwipeScreen = () => {
   const [matchedProfile, setMatchedProfile] = useState<FeedItem | null>(null);

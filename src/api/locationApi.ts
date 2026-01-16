@@ -54,4 +54,3 @@ export class LocationApi {
     return response.data.data;
   }
 }
-

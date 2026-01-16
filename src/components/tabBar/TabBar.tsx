@@ -104,7 +104,7 @@ const TabBar = ({ navigationState, onIndexChange }: TabBarBarProps) => {
                       size={28}
                       color={theme.colors.onPrimary}
                       unreadCount={2}
-                      icon='message'
+                      icon="message"
                     />
                   ) : (
                     <MaterialCommunityIcons
@@ -127,7 +127,7 @@ const TabBar = ({ navigationState, onIndexChange }: TabBarBarProps) => {
                       size={24}
                       color={theme.colors.onSurfaceVariant}
                       unreadCount={2}
-                      icon='message-outline'
+                      icon="message-outline"
                     />
                   ) : (
                     <MaterialCommunityIcons

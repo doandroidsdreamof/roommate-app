@@ -1,5 +1,5 @@
 import Dropdown from '@/components/dropdown/Dropdown';
-import {useDistricts} from '@/hooks/useDistricts';
+import { useDistricts } from '@/hooks/useDistricts';
 import { useDropdownState } from '@/hooks/useDropdownState';
 import { useProvinces } from '@/hooks/useProvinces';
 import React, { useMemo, useRef, useState } from 'react';

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { View, ViewStyle } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';

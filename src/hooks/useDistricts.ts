@@ -37,5 +37,3 @@ export const useDistricts = (selectedProvinceData?: Province) => {
 
   return { districts, getDistrictByValue, filterDistricts, isFetching };
 };
-
-

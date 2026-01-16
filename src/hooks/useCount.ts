@@ -25,5 +25,3 @@ export const useCount = (expiration: number = 300) => {
 
   return { formatTime, expiresIn, reset };
 };
-
-

@@ -2,7 +2,7 @@ import { FeedItem } from '@/schemas/feedSchema';
 import React from 'react';
 import { View } from 'react-native';
 import { Button, Modal, Portal, Text, useTheme } from 'react-native-paper';
-import Avatar from '../avatar/Avatar';
+import Avatar from '../../avatar/Avatar';
 import { styles } from './MatchModal.styles';
 
 interface MatchModalProps {

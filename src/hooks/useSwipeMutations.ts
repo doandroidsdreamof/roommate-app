@@ -17,11 +17,6 @@ export const useSwipeMutations = (
       swipedId: string;
       direction: SwipeDirection;
     }): Promise<SwipeResponse | undefined> => {
-      if (__DEV__) {
-        console.log(
-          `Swiped ${direction === 'like' ? 'RIGHT (LIKE)' : 'LEFT (PASS)'} on: ${swipedId}`
-        );
-      }
       if (direction === 'like') {
         return swipeApi.swipeLike(swipedId);
       } else {
@@ -31,8 +26,6 @@ export const useSwipeMutations = (
     },
     onSuccess: (data, variables) => {
       if (variables.direction === 'like' && data?.matched) {
-        if (__DEV__) console.log('🔥 IT IS A MATCH!');
-
         // Find the matched profile in feed
         const matchedProfile = feed.find(
           (item) => item.userId === data.swipe.swipedId
@@ -63,5 +56,3 @@ export const useSwipeMutations = (
     error: swipeMutation.error,
   };
 };
-
-
