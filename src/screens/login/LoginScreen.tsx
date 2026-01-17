@@ -6,7 +6,8 @@ import { useStore } from '@/store/index';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
+import { styles } from './LoginScreen.styles';
 
 type LoginStep = 'email' | 'otp';
 
@@ -31,6 +32,10 @@ const LoginScreen = () => {
   const login = useStore((state) => state.login);
   const email = watch('stepOne.email');
   const isEmailValid = email && !errors.stepOne?.email;
+
+  const handleBackToEmail = () => {
+    setStep('email');
+  };
 
   const requestOTP = async () => {
     const email = getValues('stepOne.email');
@@ -91,6 +96,8 @@ const LoginScreen = () => {
                 onOtpChange={onChange}
                 onSubmit={handleSubmit(onOTPSubmit)}
                 onResend={requestOTP}
+                onBackToEmail={handleBackToEmail}
+                email={email}
                 otpError={errors.stepTwo?.otp?.message}
               />
             )}
@@ -100,12 +107,5 @@ const LoginScreen = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-});
 
 export default LoginScreen;

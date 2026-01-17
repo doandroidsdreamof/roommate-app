@@ -25,6 +25,7 @@ export const API_ENDPOINTS = {
     UPDATE: (id: string) => `/postings/${id}`,
     CLOSE: (id: string) => `/postings/${id}/close`,
     IMAGES: '/postings/images',
+    GET: (id: string) => `/postings/${id}`,
   },
 
   LOCATIONS: {

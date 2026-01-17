@@ -9,11 +9,13 @@ import { createStyles } from './HorizontalListingList.styles';
 interface HorizontalListingListProps {
   data: PostingItem[] | undefined;
   isLoading?: boolean;
+  onPostingPress: (postingId: string) => void;
 }
 
 const HorizontalListingList = ({
   data,
   isLoading,
+  onPostingPress,
 }: HorizontalListingListProps) => {
   const theme = useTheme();
   const styles = createStyles(theme);
@@ -36,7 +38,11 @@ const HorizontalListingList = ({
       data={data}
       renderItem={({ item }) => (
         <View style={styles.cardContainer}>
-          <CompactListingCard isBookmarked={item.isBookmarked} listing={item} />
+          <CompactListingCard
+            isBookmarked={item.isBookmarked}
+            listing={item}
+            onPress={onPostingPress}
+          />
         </View>
       )}
       keyExtractor={(item) => item.id}

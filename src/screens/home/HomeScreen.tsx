@@ -4,14 +4,24 @@ import SearchBar from '@/components/search/searchBar/SearchBar';
 import SearchModal from '@/components/search/searchModal/SearchModal';
 import { useHomeSections } from '@/hooks/useHomeSection';
 import { useStore } from '@/store';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { styles } from './HomeScreen.styles';
+import { HomeStackParamList } from '@/navigation/HomeStackNavigator';
+
+type NavigationProp = NativeStackNavigationProp<HomeStackParamList>;
 
 const HomeScreen = () => {
   const [isSearchModalVisible, setIsSearchModalVisible] = useState(false);
+  const navigation = useNavigation<NavigationProp>();
   const profile = useStore((state) => state.profile);
   const { forYou, popular, mostSaved, newest } = useHomeSections();
+
+  const handlePostingPress = (postingId: string) => {
+    navigation.navigate('PostingDetail', { postingId });
+  };
 
   return (
     <View style={styles.container}>
@@ -27,6 +37,7 @@ const HomeScreen = () => {
         <HorizontalListingList
           data={forYou.data?.lists}
           isLoading={forYou.isLoading}
+          onPostingPress={handlePostingPress}
         />
 
         <SectionHeader
@@ -38,6 +49,7 @@ const HomeScreen = () => {
         <HorizontalListingList
           data={popular.data?.lists}
           isLoading={popular.isLoading}
+          onPostingPress={handlePostingPress}
         />
 
         <SectionHeader
@@ -49,10 +61,11 @@ const HomeScreen = () => {
         <HorizontalListingList
           data={mostSaved.data?.lists}
           isLoading={mostSaved.isLoading}
+          onPostingPress={handlePostingPress}
         />
 
         <SectionHeader
-          title={`${profile?.city || 'Şehriniz'}'da Yeni İlanlar`}
+          title={`${profile?.city} -  Yeni İlanlar`}
           onSeeAll={() => {
             /* TODO: Navigate */
           }}
@@ -60,6 +73,7 @@ const HomeScreen = () => {
         <HorizontalListingList
           data={newest.data?.lists}
           isLoading={newest.isLoading}
+          onPostingPress={handlePostingPress}
         />
       </ScrollView>
 

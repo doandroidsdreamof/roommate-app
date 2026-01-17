@@ -28,6 +28,7 @@ const LocationPicker = ({
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [isLoading, setIsLoading] = useState(false);
 
+
   const handlePress = async () => {
     setIsLoading(true);
     try {

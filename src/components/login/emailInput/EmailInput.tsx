@@ -35,7 +35,7 @@ const EmailInput = ({
         disabled={isDisabled}
         style={styles.button}
       >
-        Send OTP
+        Doğrulama kodu gönder
       </Button>
     </View>
   );

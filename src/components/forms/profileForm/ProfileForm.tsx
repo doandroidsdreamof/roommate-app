@@ -10,11 +10,11 @@ import {
 } from 'react-native';
 import { Button, Chip, Text, TextInput, useTheme } from 'react-native-paper';
 
+import Dropdown from '@/components/dropdown/Dropdown';
 import { useDistricts } from '@/hooks/useDistricts';
 import { useDropdownState } from '@/hooks/useDropdownState';
 import { useProvinces } from '@/hooks/useProvinces';
 import { ProfileSetupForm } from '@/schemas/profileSchema';
-import Dropdown from '@/components/dropdown/Dropdown';
 import FormErrorMessage from '../formErrorMessage/FormErrorMessage';
 import { createStyles } from './ProfileForm.styles';
 
@@ -73,14 +73,23 @@ const ProfileForm = ({ form, onSubmit }: ProfileFormProps) => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.keyboardAvoidingView}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
       <ScrollView
-        keyboardShouldPersistTaps="always"
+        keyboardShouldPersistTaps="handled"
         contentContainerStyle={styles.scrollViewContent}
       >
         <View style={styles.formContainer}>
+          <View style={styles.header}>
+            <Text variant="displaySmall" style={styles.title}>
+              Profilinizi Oluşturun
+            </Text>
+            <Text variant="bodyMedium" style={styles.subtitle}>
+              Bize kendinizden bahsedin
+            </Text>
+          </View>
           <View>
             <Controller
               control={control}

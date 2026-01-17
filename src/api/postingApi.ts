@@ -50,7 +50,7 @@ export interface ListsQueryParams {
 
   // Location
   city?: string;
-  province?: string; // TODO fix
+  province?: string;
   district?: string;
   neighborhoodId?: number;
 
@@ -90,19 +90,41 @@ export interface ListsQueryParams {
   search?: string;
 }
 
+export interface PostingImage {
+  url: string;
+  order: number;
+}
+
+export interface PostingImages {
+  id: string;
+  postingSpecsId: string;
+  images: PostingImage[];
+  isVerified: boolean;
+}
+
 export interface PostingSpec {
   id: string;
-  postingId: number;
-  description: string | null;
-  hasParking: boolean;
-  hasBalcony: boolean;
-  hasElevator: boolean;
+  postingId: string;
+  description: string;
+  depositAmount: number;
   billsIncluded: boolean;
-  smokingAllowed: boolean;
-  alcoholFriendly: boolean;
+  floor: number;
+  totalFloors: number;
+  hasBalcony: boolean;
+  hasParking: boolean;
+  hasElevator: boolean;
+  currentOccupants: number | null;
+  totalCapacity: number | null;
+  availableRooms: number | null;
+  occupantGenderComposition: 'all_female' | 'all_male' | 'mixed' | null;
+  ageMin: number;
+  ageMax: number;
+  smokingAllowed: boolean | null;
+  alcoholFriendly: boolean | null;
   hasPets: boolean;
-  createdAt: string;
-  updatedAt: string;
+  currentPetOwnership: 'none' | 'has_cats' | 'has_dogs' | 'has_both' | null;
+  nearbyTransport: string | null;
+  images?: PostingImages | null;
 }
 
 export interface PostingItem {
@@ -122,10 +144,42 @@ export interface PostingItem {
   isBookmarked: boolean;
 }
 
+export interface PostingDetail {
+  id: string;
+  userId: string;
+  title: string;
+  coverImageUrl: string;
+  isVerified: boolean;
+  city: string;
+  district: string;
+  neighborhoodId: number;
+  latitude: string;
+  longitude: string;
+  rentAmount: number;
+  roomCount: number;
+  bathroomCount: number;
+  squareMeters: number;
+  isFurnished: boolean;
+  preferredRoommateGender: 'female_only' | 'male_only' | 'mixed';
+  availableFrom: string;
+  deletedAt: string | null;
+  specs: PostingSpec | null;
+  user: {
+    id: string;
+    firstName: string;
+    profileImageUrl: string | null;
+  };
+  isBookmarked: boolean;
+}
+
 export interface ListsResponse {
   lists: PostingItem[];
   nextCursor: string | null;
   hasMore: boolean;
+}
+
+export interface GetPostingResponse {
+  data: PostingDetail;
 }
 
 export class PostingApi {
@@ -177,5 +231,12 @@ export class PostingApi {
     });
 
     return response.data.data;
+  }
+
+  public async getPosting(postingId: string): Promise<GetPostingResponse> {
+    const response = await this.client.get(
+      API_ENDPOINTS.POSTINGS.GET(postingId)
+    );
+    return response.data;
   }
 }

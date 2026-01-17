@@ -1,33 +1,7 @@
 import { spacing } from '@/theme/theme';
-import { StyleSheet, View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
 
-interface SwipeOverlayProps {
-  type: 'PASS' | 'LIKE';
-}
-const SwipeOverlay = ({ type }: SwipeOverlayProps) => {
-  return (
-    <View style={styles.container}>
-      <View
-        style={[
-          styles.overlayLabel,
-          type === 'LIKE' ? styles.likeOverlay : styles.passOverlay,
-        ]}
-      >
-        <Text
-          style={[
-            styles.overlayText,
-            type === 'LIKE' ? styles.likeTextColor : styles.passTextColor,
-          ]}
-        >
-          {type}
-        </Text>
-      </View>
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     alignContent: 'center',
     flex: 1,
@@ -67,5 +41,3 @@ const styles = StyleSheet.create({
     color: '#FFFF00',
   },
 });
-
-export default SwipeOverlay;

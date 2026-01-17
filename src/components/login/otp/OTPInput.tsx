@@ -1,23 +1,27 @@
 import { useCount } from '@/hooks/useCount';
 import React, { useRef } from 'react';
 import { Pressable, TextInput as RNTextInput, View } from 'react-native';
-import { Button, Text, useTheme } from 'react-native-paper';
+import { Button, IconButton, Text, useTheme } from 'react-native-paper';
 import { styles } from './OTPInput.styles';
 
 interface OTPInputProps {
   otp: string;
   otpError?: string;
+  email: string;
   onOtpChange: (otp: string) => void;
   onSubmit: () => void;
   onResend: () => void;
+  onBackToEmail: () => void;
 }
 
 const OTPInput = ({
   otp,
   otpError,
+  email,
   onOtpChange,
   onSubmit,
   onResend,
+  onBackToEmail,
 }: OTPInputProps) => {
   const theme = useTheme();
   const hiddenInputRef = useRef<RNTextInput>(null);
@@ -40,11 +44,18 @@ const OTPInput = ({
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <IconButton
+          icon="arrow-left"
+          size={24}
+          onPress={onBackToEmail}
+          iconColor={theme.colors.onSurface}
+          style={styles.backButton}
+        />
+      </View>
+
       <Text style={[styles.title, { color: theme.colors.onSurface }]}>
-        Enter OTP
-      </Text>
-      <Text style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}>
-        We sent a code to your email
+        Doğrulama Kodu Girin
       </Text>
 
       <RNTextInput
@@ -98,7 +109,7 @@ const OTPInput = ({
         disabled={otp.length !== 6}
         style={styles.button}
       >
-        Verify OTP
+        Doğrula
       </Button>
       <Button
         mode="text"
@@ -106,15 +117,36 @@ const OTPInput = ({
         disabled={expiresIn > 0}
         style={styles.resendButton}
       >
-        Resend OTP {expiresIn > 0 && `(${formatTime(expiresIn)})`}
+        Tekrar Gönder {expiresIn > 0 && `(${formatTime(expiresIn)})`}
       </Button>
       {expiresIn > 0 && (
         <Text
           style={[styles.timerText, { color: theme.colors.onSurfaceVariant }]}
         >
-          Code expires in {formatTime(expiresIn)}
+          Kod süresi dolacak: {formatTime(expiresIn)}
         </Text>
       )}
+      <View>
+        <View style={styles.emailDisplay}>
+          <Text
+            style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}
+          >
+            Kodu şu adrese gönderdik:
+          </Text>
+          <Text style={[styles.emailText, { color: theme.colors.onSurface }]}>
+            {email}
+          </Text>
+          <Button
+            mode="text"
+            onPress={onBackToEmail}
+            compact
+            textColor={theme.colors.primary}
+            style={styles.wrongEmailButton}
+          >
+            Yanlış e-posta?
+          </Button>
+        </View>
+      </View>
     </View>
   );
 };

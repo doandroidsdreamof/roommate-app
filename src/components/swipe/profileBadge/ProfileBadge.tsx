@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Chip, useTheme } from 'react-native-paper';
 import { FeedItem } from '@/schemas/feedSchema';
-import { spacing } from '@/theme/theme';
+import React from 'react';
+import { View } from 'react-native';
+import { Chip, useTheme } from 'react-native-paper';
+import { styles } from './ProfileBadge.styles';
 
 interface BadgeConfig {
   icon: string;
@@ -63,20 +63,5 @@ const ProfileBadge = ({ profile }: ProfileBadgeProps) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  chip: {
-    height: 32,
-  },
-  chipText: {
-    fontSize: 12,
-  },
-  container: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.xs,
-    marginTop: spacing.sm,
-  },
-});
 
 export default ProfileBadge;

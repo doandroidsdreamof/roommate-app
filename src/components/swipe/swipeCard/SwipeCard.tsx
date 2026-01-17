@@ -1,4 +1,3 @@
-import ProfileBadge from '@/components/swipe/ProfileBadge';
 import { FeedItem } from '@/schemas/feedSchema';
 import { shadows } from '@/theme/theme';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -6,6 +5,7 @@ import React, { useMemo } from 'react';
 import { Image, View } from 'react-native';
 import { Card, Text, useTheme } from 'react-native-paper';
 import { createStyles } from './SwipeCard.styles';
+import ProfileBadge from '../profileBadge/ProfileBadge';
 
 interface SwipeCardProps {
   profile: FeedItem;

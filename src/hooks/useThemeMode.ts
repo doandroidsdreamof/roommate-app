@@ -1,5 +1,6 @@
 import { useColorScheme } from 'react-native';
 import { useStore } from '@/store/index';
+import { darkTheme, lightTheme } from '@/theme/theme';
 
 export const useThemeMode = () => {
   const systemColorScheme = useColorScheme();
@@ -17,9 +18,12 @@ export const useThemeMode = () => {
     setThemeMode(newMode);
   };
 
+  const theme = isDarkMode ? darkTheme : lightTheme;
+
   return {
     themeMode,
     setThemeMode,
+    theme,
     isDarkMode,
     toggleDarkMode,
   };

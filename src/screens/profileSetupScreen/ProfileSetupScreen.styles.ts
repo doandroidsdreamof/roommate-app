@@ -13,15 +13,4 @@ export const createStyles = (theme: MD3Theme) =>
       padding: spacing.lg,
       paddingTop: spacing.xxl,
     },
-    header: {
-      marginBottom: spacing.xl,
-    },
-
-    subtitle: {
-      color: theme.colors.onSurfaceVariant,
-    },
-    title: {
-      color: theme.colors.onBackground,
-      marginBottom: spacing.sm,
-    },
   });

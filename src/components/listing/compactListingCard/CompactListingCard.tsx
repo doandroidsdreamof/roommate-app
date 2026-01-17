@@ -1,27 +1,27 @@
 import { PostingItem } from '@/api/index';
-import React, { useState } from 'react';
-import { Image, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import { TouchableOpacity, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { createStyles } from './CompactListingCard.styles';
 import BookmarkButton from '@/components/bookmarkButton/BookmarkButton';
 import IconWithText from '@/components/iconWithText/IconWithText';
 import { useBookmark } from '@/hooks/useBookmark';
+import PriceDisplay from '@/components/listing/priceDisplay/PriceDisplay';
+import ImageWithFallback from '../imageWithFallback/ImageWithFallback';
 
 interface CompactListingCardProps {
   listing: PostingItem;
-  onPress?: (id: string) => void;
   isBookmarked?: boolean;
+  onPress?: (postingId: string) => void;
 }
 
 const CompactListingCard = ({
   listing,
-  onPress,
   isBookmarked = false,
+  onPress,
 }: CompactListingCardProps) => {
   const theme = useTheme();
   const styles = createStyles(theme);
-  const [imageError, setImageError] = useState(false);
 
   const {
     isBookmarked: bookmarked,
@@ -32,29 +32,22 @@ const CompactListingCard = ({
     initialBookmarked: isBookmarked,
   });
 
+  const handlePress = () => {
+    onPress?.(listing.id);
+  };
+
   return (
     <TouchableOpacity
       style={styles.container}
-      onPress={() => onPress?.(listing.id)}
+      onPress={handlePress}
       activeOpacity={0.7}
     >
       <View style={styles.imageContainer}>
-        {listing.coverImageUrl && !imageError ? (
-          <Image
-            source={{ uri: listing.coverImageUrl }}
-            style={styles.image}
-            resizeMode="cover"
-            onError={() => setImageError(true)}
-          />
-        ) : (
-          <View style={[styles.image, styles.placeholderContainer]}>
-            <MaterialCommunityIcons
-              name="home-outline"
-              size={48}
-              color={theme.colors.onSurfaceVariant}
-            />
-          </View>
-        )}
+        <ImageWithFallback
+          uri={listing.coverImageUrl}
+          style={styles.image}
+          fallbackIconSize={48}
+        />
 
         <BookmarkButton
           onPress={toggleBookmark}
@@ -73,14 +66,9 @@ const CompactListingCard = ({
           {listing.title}
         </Text>
 
-        <View style={styles.priceRow}>
-          <Text variant="titleSmall" style={styles.price}>
-            ₺{listing.rentAmount?.toLocaleString('tr-TR')}
-          </Text>
-          <Text variant="bodySmall" style={styles.priceLabel}>
-            / ay
-          </Text>
-        </View>
+        {listing.rentAmount !== null && listing.rentAmount !== undefined && (
+          <PriceDisplay amount={listing.rentAmount} variant="small" />
+        )}
 
         {listing.viewCount > 0 && (
           <IconWithText

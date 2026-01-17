@@ -33,15 +33,6 @@ const ProfileSetupScreen = () => {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.header}>
-        <Text variant="displaySmall" style={styles.title}>
-          Profilinizi Oluşturun
-        </Text>
-        <Text variant="bodyMedium" style={styles.subtitle}>
-          Bize kendinizden bahsedin
-        </Text>
-      </View>
-
       <ProfileForm form={profileForm} onSubmit={onSubmitProfile} />
     </ScrollView>
   );

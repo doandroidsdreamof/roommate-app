@@ -2,12 +2,18 @@ import { BookmarkItem } from '@/api/bookmarkApi';
 import ListingCard from '@/components/listing/listingCard/ListingCard';
 import Loading from '@/components/loading/Loading';
 import { useInfiniteBookmarks } from '@/hooks/useInfiniteBookmarks';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useCallback } from 'react';
 import { FlatList, View } from 'react-native';
 import { Appbar, Text } from 'react-native-paper';
 import { styles } from './BookmarksScreen.styles';
+import { BookmarksStackParamList } from '@/navigation/BookmarksStackNavigator';
+
+type NavigationProp = NativeStackNavigationProp<BookmarksStackParamList>;
 
 const BookmarksScreen = () => {
+  const navigation = useNavigation<NavigationProp>();
   const {
     data,
     fetchNextPage,
@@ -25,40 +31,32 @@ const BookmarksScreen = () => {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+  const handlePostingPress = useCallback(
+    (postingId: string) => {
+      navigation.navigate('PostingDetail', { postingId });
+    },
+    [navigation]
+  );
+
   const renderItem = useCallback(
     ({ item }: { item: BookmarkItem }) => (
-      <ListingCard listing={item.posting} isBookmarked={true} />
+      <ListingCard
+        listing={item.posting}
+        isBookmarked={true}
+        onPress={handlePostingPress}
+      />
     ),
-    []
+    [handlePostingPress]
   );
 
   const keyExtractor = useCallback((item: BookmarkItem) => item.id, []);
 
-  const renderHeader = () => (
-    <Appbar.Header elevated>
-      <Appbar.Content title="Kayıtlı İlanlar" />
-    </Appbar.Header>
-  );
-
-  const renderEmpty = () => {
-    if (isLoading) return null;
-
-    return (
-      <View style={styles.emptyContainer}>
-        <Text variant="headlineSmall" style={styles.emptyTitle}>
-          Henüz kayıtlı ilan yok
-        </Text>
-        <Text variant="bodyMedium" style={styles.emptySubtitle}>
-          Beğendiğiniz ilanları kaydederek daha sonra kolayca erişebilirsiniz
-        </Text>
-      </View>
-    );
-  };
-
   if (isLoading) {
     return (
       <View style={styles.container}>
-        {renderHeader()}
+        <Appbar.Header elevated>
+          <Appbar.Content title="Kayıtlı İlanlar" />
+        </Appbar.Header>
         <View style={styles.centerContent}>
           <Loading size="large" />
         </View>
@@ -69,7 +67,9 @@ const BookmarksScreen = () => {
   if (isError) {
     return (
       <View style={styles.container}>
-        {renderHeader()}
+        <Appbar.Header elevated>
+          <Appbar.Content title="Kayıtlı İlanlar" />
+        </Appbar.Header>
         <View style={styles.centerContent}>
           <Text variant="bodyLarge">Bir hata oluştu</Text>
         </View>
@@ -79,7 +79,9 @@ const BookmarksScreen = () => {
 
   return (
     <View style={styles.container}>
-      {renderHeader()}
+      <Appbar.Header elevated>
+        <Appbar.Content title="Kayıtlı İlanlar" />
+      </Appbar.Header>
       <FlatList
         data={bookmarks}
         renderItem={renderItem}
@@ -87,7 +89,17 @@ const BookmarksScreen = () => {
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         ListFooterComponent={isFetchingNextPage ? <Loading /> : null}
-        ListEmptyComponent={renderEmpty}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text variant="headlineSmall" style={styles.emptyTitle}>
+              Henüz kayıtlı ilan yok
+            </Text>
+            <Text variant="bodyMedium" style={styles.emptySubtitle}>
+              Beğendiğiniz ilanları kaydederek daha sonra kolayca
+              erişebilirsiniz
+            </Text>
+          </View>
+        }
         contentContainerStyle={
           bookmarks.length === 0 ? styles.emptyList : styles.listContent
         }
