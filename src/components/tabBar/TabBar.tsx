@@ -11,7 +11,7 @@ import {
 import { useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
-import MessageIconNotification from '../messageIconNotification/MessageIconNotification';
+import MessageIconNotification from '../message/messageIconNotification/MessageIconNotification';
 import { createStyles } from './TabBar.styles';
 
 const { width } = Dimensions.get('window');

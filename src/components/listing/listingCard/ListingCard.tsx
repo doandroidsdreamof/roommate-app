@@ -1,12 +1,12 @@
 import { PostingItem } from '@/api/postingApi';
+import BookmarkButton from '@/components/bookmarkButton/BookmarkButton';
+import IconWithText from '@/components/listing/iconWithText/IconWithText';
+import { useBookmark } from '@/hooks/useBookmark';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { useMemo, useState } from 'react';
 import { Image, View } from 'react-native';
 import { Card, Chip, Text, useTheme } from 'react-native-paper';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { createStyles } from './ListingCard.styles';
-import BookmarkButton from '@/components/bookmarkButton/BookmarkButton';
-import IconWithText from '@/components/iconWithText/IconWithText';
-import { useBookmark } from '@/hooks/useBookmark';
 
 interface ListingCardProps {
   listing: Partial<PostingItem> & {

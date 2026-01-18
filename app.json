@@ -26,6 +26,21 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-secure-store"]
+    "plugins": [
+      "expo-secure-store",
+      "expo-asset",
+      [
+        "expo-asset",
+        {
+          "assets": ["./assets/leaflet.html"]
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow app to use your location."
+        }
+      ]
+    ]
   }
 }

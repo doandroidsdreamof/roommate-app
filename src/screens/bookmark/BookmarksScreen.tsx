@@ -2,13 +2,13 @@ import { BookmarkItem } from '@/api/bookmarkApi';
 import ListingCard from '@/components/listing/listingCard/ListingCard';
 import Loading from '@/components/loading/Loading';
 import { useInfiniteBookmarks } from '@/hooks/useInfiniteBookmarks';
+import { BookmarksStackParamList } from '@/navigation/BookmarksStackNavigator';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useCallback } from 'react';
 import { FlatList, View } from 'react-native';
 import { Appbar, Text } from 'react-native-paper';
 import { styles } from './BookmarksScreen.styles';
-import { BookmarksStackParamList } from '@/navigation/BookmarksStackNavigator';
 
 type NavigationProp = NativeStackNavigationProp<BookmarksStackParamList>;
 

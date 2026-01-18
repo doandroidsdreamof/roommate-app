@@ -1,13 +1,13 @@
 import { PostingItem } from '@/api/index';
+import BookmarkButton from '@/components/bookmarkButton/BookmarkButton';
+import IconWithText from '@/components/listing/iconWithText/IconWithText';
+import PriceDisplay from '@/components/listing/priceDisplay/PriceDisplay';
+import { useBookmark } from '@/hooks/useBookmark';
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
-import { createStyles } from './CompactListingCard.styles';
-import BookmarkButton from '@/components/bookmarkButton/BookmarkButton';
-import IconWithText from '@/components/iconWithText/IconWithText';
-import { useBookmark } from '@/hooks/useBookmark';
-import PriceDisplay from '@/components/listing/priceDisplay/PriceDisplay';
 import ImageWithFallback from '../imageWithFallback/ImageWithFallback';
+import { createStyles } from './CompactListingCard.styles';
 
 interface CompactListingCardProps {
   listing: PostingItem;

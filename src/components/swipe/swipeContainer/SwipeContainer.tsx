@@ -1,5 +1,5 @@
 import Loading from '@/components/loading/Loading';
-import ScreenText from '@/components/screenText/ScreenText';
+import ScreenText from '@/components/swipe/screenText/ScreenText';
 import SwipeOverlay from '@/components/swipe/swipeOverlay/SwipeOverlay';
 import { useSwipeFeed } from '@/hooks/useSwipeFeed';
 import { useSwipeHandlers } from '@/hooks/useSwipeHandlers';

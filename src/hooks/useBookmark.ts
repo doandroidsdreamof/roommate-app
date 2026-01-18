@@ -17,6 +17,7 @@ export const useBookmark = ({
 }: UseBookmarkOptions) => {
   const queryClient = useQueryClient();
   const [isBookmarked, setIsBookmarked] = useState(initialBookmarked);
+  const queryKeys = ['mostSaved', 'newest', 'forYou', 'popular'];
 
   const bookmarkMutation = useMutation({
     mutationFn: () => bookmarkApi.bookmarkPosting(postingId),
@@ -33,8 +34,17 @@ export const useBookmark = ({
       }
       onError?.(error);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       void queryClient.invalidateQueries({ queryKey: ['bookmarks'] });
+      void queryClient.invalidateQueries({ queryKey: ['posting'] });
+
+      await Promise.all(
+        queryKeys.map((item) =>
+          queryClient.invalidateQueries({
+            queryKey: ['listings', item],
+          })
+        )
+      );
       onSuccess?.();
     },
   });

@@ -1,7 +1,7 @@
 import BookmarksStackNavigator from '@/navigation/BookmarksStackNavigator';
 import HomeStackNavigator from '@/navigation/HomeStackNavigator';
 import MessageScreen from '@/screens/message/MessageScreen';
-import ProfileScreen from '@/screens/profile/ProfileScreen';
+import ProfileScreen from '@/screens/profile/main/ProfileScreen';
 import SwipeScreen from '@/screens/swipe/SwipeScreen';
 
 export const SCREEN_CONFIG = {

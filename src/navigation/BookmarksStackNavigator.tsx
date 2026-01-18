@@ -1,5 +1,5 @@
 import BookmarksScreen from '@/screens/bookmark/BookmarksScreen';
-import PostingDetailScreen from '@/screens/postingDetailScreen/PostingDetailScreen';
+import PostingDetailScreen from '@/screens/home/postingDetailScreen/PostingDetailScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 export type BookmarksStackParamList = {

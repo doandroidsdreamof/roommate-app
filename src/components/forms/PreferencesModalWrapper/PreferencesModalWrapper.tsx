@@ -1,5 +1,7 @@
 import { profileApi } from '@/api';
 import PreferencesForm from '@/components/forms/preferencesForm/PreferencesForm';
+import Loading from '@/components/loading/Loading';
+import Modal from '@/components/modal/Modal';
 import { usePreferenceCheck } from '@/hooks/usePreferenceCheck';
 import {
   PreferencesSetupForm,
@@ -9,8 +11,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
-import Loading from '../loading/Loading';
-import Modal from '../modal/Modal';
 
 interface PreferencesModalWrapperProps {
   visible: boolean;

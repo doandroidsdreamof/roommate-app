@@ -13,6 +13,8 @@ export interface CreatePostingDto {
   isFurnished?: boolean;
   availableFrom?: string;
   coverImageUrl?: string;
+  latitude: string;
+  longitude: string;
   preferredRoommateGender?: 'female_only' | 'male_only' | 'mixed';
   specs: {
     hasParking?: boolean;
@@ -131,6 +133,8 @@ export interface PostingItem {
   id: string;
   title: string;
   city: string;
+  latitude: string;
+  longitude: string;
   district: string;
   rentAmount: number | null;
   roomCount: number | null;
