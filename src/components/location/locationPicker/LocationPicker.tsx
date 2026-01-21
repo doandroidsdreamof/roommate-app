@@ -28,10 +28,20 @@ const LocationPicker = ({
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [isLoading, setIsLoading] = useState(false);
 
-
   const handlePress = async () => {
     setIsLoading(true);
     try {
+      let enabled = await Location.hasServicesEnabledAsync();
+      if (!enabled) {
+        Alert.alert('Location not enabled', 'Please enable your Location', [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          { text: 'OK', onPress: () => console.log('OK Pressed') },
+        ]);
+      }
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         Alert.alert(

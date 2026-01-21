@@ -37,7 +37,6 @@ const formatDate = (dateString: string) => {
 const ListingCard = ({
   listing,
   onPress,
-  isBookmarked = false,
 }: ListingCardProps) => {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
@@ -49,7 +48,7 @@ const ListingCard = ({
     isLoading,
   } = useBookmark({
     postingId: listing.id,
-    initialBookmarked: isBookmarked,
+    isBookmarked: listing.isBookmarked ?? false,
   });
 
   return (
@@ -141,9 +140,4 @@ const ListingCard = ({
   );
 };
 
-export default React.memo(ListingCard, (prevProps, nextProps) => {
-  return (
-    prevProps.listing.id === nextProps.listing.id &&
-    prevProps.isBookmarked === nextProps.isBookmarked
-  );
-});
+export default ListingCard;

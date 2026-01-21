@@ -1,11 +1,11 @@
 import { profileApi } from '@/api';
 import PreferencesForm from '@/components/forms/preferencesForm/PreferencesForm';
-import Loading from '@/components/loading/Loading';
 import Modal from '@/components/modal/Modal';
+import Loading from '@/components/primitives/loading/Loading';
 import { usePreferenceCheck } from '@/hooks/usePreferenceCheck';
 import {
-  PreferencesSetupForm,
-  preferencesSetupSchema,
+    PreferencesSetupForm,
+    preferencesSetupSchema,
 } from '@/schemas/profileSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

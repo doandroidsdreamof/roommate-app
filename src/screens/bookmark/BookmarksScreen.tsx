@@ -1,6 +1,6 @@
 import { BookmarkItem } from '@/api/bookmarkApi';
 import ListingCard from '@/components/listing/listingCard/ListingCard';
-import Loading from '@/components/loading/Loading';
+import Loading from '@/components/primitives/loading/Loading';
 import { useInfiniteBookmarks } from '@/hooks/useInfiniteBookmarks';
 import { BookmarksStackParamList } from '@/navigation/BookmarksStackNavigator';
 import { useNavigation } from '@react-navigation/native';
@@ -42,7 +42,6 @@ const BookmarksScreen = () => {
     ({ item }: { item: BookmarkItem }) => (
       <ListingCard
         listing={item.posting}
-        isBookmarked={true}
         onPress={handlePostingPress}
       />
     ),

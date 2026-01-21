@@ -1,5 +1,5 @@
 import { borderRadius, spacing } from '@/theme/theme';
-import { StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 import type { MD3Theme } from 'react-native-paper';
 
 export const createStyles = (theme: MD3Theme) =>
@@ -13,9 +13,37 @@ export const createStyles = (theme: MD3Theme) =>
       justifyContent: 'center',
       alignItems: 'center',
     },
+    mapContainer: {
+      flex: 1,
+    },
+    bottomSheet: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: theme.colors.background,
+      borderTopLeftRadius: borderRadius.lg,
+      borderTopRightRadius: borderRadius.lg,
+      elevation: 10,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: -2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+    },
+    dragHandle: {
+      alignItems: 'center',
+      paddingVertical: spacing.md,
+    },
+    dragIndicator: {
+      width: 40,
+      height: 4,
+      backgroundColor: theme.colors.outlineVariant,
+      borderRadius: 2,
+    },
     listContent: {
       padding: spacing.md,
       gap: spacing.md,
+      paddingBottom: spacing.xl,
     },
     emptyList: {
       flex: 1,
@@ -33,13 +61,5 @@ export const createStyles = (theme: MD3Theme) =>
     emptySubtitle: {
       color: theme.colors.onSurfaceVariant,
       textAlign: 'center',
-    },
-    mapContainer: {
-      height: 300,
-      borderRadius: borderRadius.md,
-      overflow: 'hidden',
-      zIndex: 10,
-      width: '90%',
-      margin: 'auto',
     },
   });

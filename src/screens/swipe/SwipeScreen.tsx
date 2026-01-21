@@ -1,4 +1,5 @@
-import Loading from '@/components/loading/Loading';
+import PreferencesModalWrapper from '@/components/forms/PreferencesModalWrapper/PreferencesModalWrapper';
+import Loading from '@/components/primitives/loading/Loading';
 import MatchModal from '@/components/swipe/matchModal/MatchModal';
 import SwipeContainer from '@/components/swipe/swipeContainer/SwipeContainer';
 import { usePreferenceCheck } from '@/hooks/usePreferenceCheck';
@@ -6,7 +7,6 @@ import { FeedItem } from '@/schemas/feedSchema';
 import React, { useCallback, useState } from 'react';
 import { View } from 'react-native';
 import { styles } from './SwipeScreen.styles';
-import PreferencesModalWrapper from '@/components/forms/PreferencesModalWrapper/PreferencesModalWrapper';
 
 const SwipeScreen = () => {
   const [matchedProfile, setMatchedProfile] = useState<FeedItem | null>(null);

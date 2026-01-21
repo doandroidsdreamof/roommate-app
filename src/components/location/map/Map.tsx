@@ -6,11 +6,8 @@ import { useTheme } from 'react-native-paper';
 import { createStyles } from './Map.styles';
 import type { LeafletMessage, MapProps } from './types';
 
-const DEFAULT_ZOOM = 12;
-
 const Map = ({
   initialLocation,
-  initialZoom = DEFAULT_ZOOM,
   markers = [],
   circles = [],
   onMapPress,
@@ -29,7 +26,7 @@ const Map = ({
 
     const loadHtml = async () => {
       try {
-        const htmlPath = require('react-native-leaflet-view/android/src/main/assets/leaflet.html');
+        const htmlPath = require('react-native-leaflet-view/android/src/main/assets/leaflet-map.html');
         const asset = Asset.fromModule(htmlPath);
         await asset.downloadAsync();
 
@@ -72,8 +69,8 @@ const Map = ({
         break;
 
       case 'onMapMarkerClicked':
-        if (onMarkerPress && payload?.mapMarkerId) {
-          onMarkerPress(payload.mapMarkerId);
+        if (onMarkerPress && payload?.mapMarkerID) {
+          onMarkerPress(payload.mapMarkerID);
         }
         break;
 

@@ -85,11 +85,13 @@ export interface ListsQueryParams {
   availableFrom?: string;
 
   // Sort
-  sortBy?: 'price' | 'date' | 'viewCount' | 'bookmarkCount';
+  sortBy?: 'createdAt' | 'rentAmount' | 'viewCount' | 'bookmarkCount';
   sortOrder?: 'asc' | 'desc';
 
   // Search
   search?: string;
+
+  bathroomCount?: number;
 }
 
 export interface PostingImage {

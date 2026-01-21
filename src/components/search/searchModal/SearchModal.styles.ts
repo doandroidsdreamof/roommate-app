@@ -13,6 +13,7 @@ export const createStyles = (theme: MD3Theme) =>
       backgroundColor: theme.colors.surface,
       borderTopLeftRadius: 16,
       borderTopRightRadius: 16,
+      paddingTop: spacing.md,
     },
     header: {
       flexDirection: 'row',
@@ -166,5 +167,9 @@ export const createStyles = (theme: MD3Theme) =>
       color: theme.colors.onPrimary,
       fontSize: 16,
       fontWeight: '600',
+    },
+    closeButton: {
+      marginTop: spacing.md,
+      borderColor: theme.colors.outline,
     },
   });

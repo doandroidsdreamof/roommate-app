@@ -1,4 +1,9 @@
-import Loading from '@/components/loading/Loading';
+import { postingApi } from '@/api';
+import BookmarkButton from '@/components/bookmarkButton/BookmarkButton';
+import ImageWithFallback from '@/components/listing/imageWithFallback/ImageWithFallback';
+import PriceDisplay from '@/components/listing/priceDisplay/PriceDisplay';
+import PropertyInfo from '@/components/listing/propertyInfo/PropertyInfo';
+import Loading from '@/components/primitives/loading/Loading';
 import { useBookmark } from '@/hooks/useBookmark';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
@@ -8,11 +13,6 @@ import React from 'react';
 import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
 import { Divider, IconButton, Text, useTheme } from 'react-native-paper';
 import { createStyles } from './PostingDetailScreen.styles';
-import { postingApi } from '@/api';
-import BookmarkButton from '@/components/bookmarkButton/BookmarkButton';
-import ImageWithFallback from '@/components/listing/imageWithFallback/ImageWithFallback';
-import PriceDisplay from '@/components/listing/priceDisplay/PriceDisplay';
-import PropertyInfo from '@/components/listing/propertyInfo/PropertyInfo';
 
 type RootStackParamList = {
   PostingDetail: { postingId: string };
@@ -44,7 +44,7 @@ const PostingDetailScreen = () => {
     isLoading: bookmarkLoading,
   } = useBookmark({
     postingId,
-    initialBookmarked: posting?.isBookmarked ?? false,
+    isBookmarked: posting?.isBookmarked ?? false,
   });
 
   if (isLoading) {

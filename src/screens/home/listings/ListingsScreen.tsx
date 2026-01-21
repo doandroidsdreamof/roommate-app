@@ -1,27 +1,75 @@
 import { PostingItem } from '@/api/postingApi';
 import ListingCard from '@/components/listing/listingCard/ListingCard';
-import Loading from '@/components/loading/Loading';
 import Map from '@/components/location/map/Map';
 import type { MapMarker } from '@/components/location/map/types';
+import Loading from '@/components/primitives/loading/Loading';
 import { useInfiniteListing } from '@/hooks/useInfiniteListing';
 import { HomeStackParamList } from '@/navigation/HomeStackNavigator';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useCallback, useMemo } from 'react';
-import { FlatList, View } from 'react-native';
+import React, { useCallback, useMemo, useRef } from 'react';
+import {
+  Animated,
+  Dimensions,
+  FlatList,
+  PanResponder,
+  View,
+} from 'react-native';
 import { Appbar, Text, useTheme } from 'react-native-paper';
 import { createStyles } from './ListingsScreen.styles';
 
 type ListingsScreenRouteProp = RouteProp<HomeStackParamList, 'Listings'>;
 type NavigationProp = NativeStackNavigationProp<HomeStackParamList>;
 
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const MIN_SHEET_HEIGHT = 300;
+
 const ListingsScreen = () => {
   const theme = useTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<ListingsScreenRouteProp>();
+  const headerHeight = useRef(0);
 
   const { title, params } = route.params;
+
+  const maxHeight = SCREEN_HEIGHT;
+  const sheetY = useRef(
+    new Animated.Value(maxHeight - MIN_SHEET_HEIGHT)
+  ).current;
+  const offsetY = useRef(maxHeight - MIN_SHEET_HEIGHT);
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: (_, { dy }) => Math.abs(dy) > 5,
+      onPanResponderMove: (_, { dy }) => {
+        const newY = Math.max(
+          0,
+          Math.min(maxHeight - MIN_SHEET_HEIGHT, offsetY.current + dy)
+        );
+        sheetY.setValue(newY);
+      },
+      onPanResponderRelease: (_, { dy, vy }) => {
+        const newY = offsetY.current + dy;
+        const snapTo =
+          vy > 0.5
+            ? maxHeight - MIN_SHEET_HEIGHT
+            : vy < -0.5
+              ? 0
+              : newY > maxHeight / 2
+                ? maxHeight - MIN_SHEET_HEIGHT
+                : 0;
+
+        offsetY.current = snapTo;
+        Animated.spring(sheetY, {
+          toValue: snapTo,
+          useNativeDriver: false,
+          bounciness: 4,
+        }).start();
+      },
+    })
+  ).current;
 
   const {
     data,
@@ -33,7 +81,6 @@ const ListingsScreen = () => {
   } = useInfiniteListing(params);
 
   const listings = data?.pages.flatMap((page) => page.lists) ?? [];
-
 
   const markers: MapMarker[] = useMemo(
     () =>
@@ -49,16 +96,12 @@ const ListingsScreen = () => {
     [listings]
   );
 
-  // Calculate center point for map
   const mapCenter = useMemo(() => {
     if (listings.length === 0) return undefined;
 
-    const sumLat = listings.reduce(
-      (sum, listing) => sum + parseFloat(listing.latitude),
-      0
-    );
+    const sumLat = listings.reduce((sum, l) => sum + parseFloat(l.latitude), 0);
     const sumLng = listings.reduce(
-      (sum, listing) => sum + parseFloat(listing.longitude),
+      (sum, l) => sum + parseFloat(l.longitude),
       0
     );
 
@@ -75,51 +118,16 @@ const ListingsScreen = () => {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const handlePostingPress = useCallback(
-    (postingId: string) => {
-      navigation.navigate('PostingDetail', { postingId });
-    },
-    [navigation]
-  );
-
-  const handleMarkerPress = useCallback(
-    (postingId: string) => {
-      navigation.navigate('PostingDetail', { postingId });
-    },
+    (postingId: string) => navigation.navigate('PostingDetail', { postingId }),
     [navigation]
   );
 
   const renderItem = useCallback(
     ({ item }: { item: PostingItem }) => (
-      <ListingCard
-        listing={item}
-        isBookmarked={item.isBookmarked}
-        onPress={handlePostingPress}
-      />
+      <ListingCard listing={item} onPress={handlePostingPress} />
     ),
     [handlePostingPress]
   );
-
-  // Map header component
-  const ListHeaderComponent = useCallback(() => {
-    if (listings.length === 0) return null;
-
-    return (
-      <View style={styles.mapContainer}>
-        <Map
-          initialLocation={mapCenter}
-          markers={markers}
-          onMarkerPress={handleMarkerPress}
-          showUserLocation={false}
-        />
-      </View>
-    );
-  }, [
-    listings.length,
-    mapCenter,
-    markers,
-    handleMarkerPress,
-    styles.mapContainer,
-  ]);
 
   const keyExtractor = useCallback((item: PostingItem) => item.id, []);
 
@@ -151,37 +159,67 @@ const ListingsScreen = () => {
     );
   }
 
+  const SHEET_HEIGHT = SCREEN_HEIGHT - headerHeight.current * 1.8;
+
   return (
     <View style={styles.container}>
-      <Appbar.Header>
+      <Appbar.Header
+        onLayout={(e) => {
+          headerHeight.current = e.nativeEvent.layout.height;
+        }}
+      >
         <Appbar.BackAction onPress={() => navigation.goBack()} />
         <Appbar.Content title={title} />
       </Appbar.Header>
-      <ListHeaderComponent />
-      <FlatList
-        data={listings}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={isFetchingNextPage ? <Loading /> : null}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text variant="headlineSmall" style={styles.emptyTitle}>
-              İlan bulunamadı
-            </Text>
-            <Text variant="bodyMedium" style={styles.emptySubtitle}>
-              Bu kategoride henüz ilan bulunmamaktadır
-            </Text>
-          </View>
-        }
-        contentContainerStyle={
-          listings.length === 0 ? styles.emptyList : styles.listContent
-        }
-        removeClippedSubviews
-        maxToRenderPerBatch={5}
-        windowSize={5}
-      />
+
+      <View style={styles.mapContainer}>
+        <Map
+          initialLocation={mapCenter}
+          markers={markers}
+          onMarkerPress={handlePostingPress}
+          showUserLocation={false}
+        />
+      </View>
+
+      <Animated.View
+        style={[
+          styles.bottomSheet,
+          {
+            transform: [{ translateY: sheetY }],
+            height: SHEET_HEIGHT,
+          },
+        ]}
+      >
+        <View style={styles.dragHandle} {...panResponder.panHandlers}>
+          <View style={styles.dragIndicator} />
+        </View>
+
+        <FlatList
+          data={listings}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={isFetchingNextPage ? <Loading /> : null}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text variant="headlineSmall" style={styles.emptyTitle}>
+                İlan bulunamadı
+              </Text>
+              <Text variant="bodyMedium" style={styles.emptySubtitle}>
+                Bu kategoride henüz ilan bulunmamaktadır
+              </Text>
+            </View>
+          }
+          contentContainerStyle={
+            listings.length === 0 ? styles.emptyList : styles.listContent
+          }
+          removeClippedSubviews
+          maxToRenderPerBatch={5}
+          windowSize={5}
+          showsVerticalScrollIndicator={false}
+        />
+      </Animated.View>
     </View>
   );
 };

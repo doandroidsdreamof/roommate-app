@@ -2,7 +2,7 @@ import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const IS_DEV = __DEV__;
-console.log('🚀 ~ IS_DEV:', IS_DEV);
+console.log('IS_DEV:', IS_DEV);
 
 class SecureStorage {
   private async setItem(key: string, value: string): Promise<void> {
@@ -59,12 +59,11 @@ class SecureStorage {
     ]);
   }
 
-  // Debug method - call this from components
   async logTokenStatus(): Promise<void> {
     if (__DEV__) {
       const hasAccessToken = !!(await this.getAccessToken());
       const hasRefreshToken = !!(await this.getRefreshToken());
-      console.log('🔑 Token status:', {
+      console.log('storage Token status:', {
         hasAccessToken,
         hasRefreshToken,
       });

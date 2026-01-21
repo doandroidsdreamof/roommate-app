@@ -29,7 +29,7 @@ const CompactListingCard = ({
     isLoading,
   } = useBookmark({
     postingId: listing.id,
-    initialBookmarked: isBookmarked,
+    isBookmarked: listing.isBookmarked ?? false,
   });
 
   const handlePress = () => {

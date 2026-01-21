@@ -1,6 +1,6 @@
-import Avatar from '@/components/avatar/Avatar';
-import Loading from '@/components/loading/Loading';
 import MenuItem from '@/components/menu/MenuItem';
+import Avatar from '@/components/primitives/avatar/Avatar';
+import Loading from '@/components/primitives/loading/Loading';
 import { useThemeMode } from '@/hooks/useThemeMode';
 import { useStore } from '@/store/index';
 import { MaterialCommunityIcons } from '@expo/vector-icons';

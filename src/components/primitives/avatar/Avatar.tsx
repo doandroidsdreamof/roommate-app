@@ -12,7 +12,7 @@ interface AvatarProps {
   nameVariant?: 'labelSmall' | 'labelMedium' | 'labelLarge';
 }
 
-const FALLBACK_AVATAR = require('../../../assets/images/fallback-avatar.png');
+const FALLBACK_AVATAR = require('../../../../assets/images/fallback-avatar.png');
 
 const Avatar = ({
   src,

@@ -1,5 +1,5 @@
 import { PostingItem } from '@/api/postingApi';
-import Loading from '@/components/loading/Loading';
+import Loading from '@/components/primitives/loading/Loading';
 import React from 'react';
 import { FlatList, View } from 'react-native';
 import { useTheme } from 'react-native-paper';

@@ -5,7 +5,7 @@ import LocationPicker, {
 } from '@/components/location/locationPicker/LocationPicker';
 import { useStore } from '@/store';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   Modal,
   ScrollView,
@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import { IconButton, Text, useTheme } from 'react-native-paper';
 import ModalAccordion from '../modalAccordion/ModalAccordion';
-import { FILTER_SECTIONS } from './FilterItems';
+import { FILTER_SECTIONS, FilterFieldNames } from './FilterItems';
 import { createStyles } from './SearchModal.styles';
 
 interface SearchModalProps {
@@ -23,33 +23,32 @@ interface SearchModalProps {
   onDismiss: () => void;
 }
 
+const initialState = {
+  initialCity: '',
+  initialDistrict: '',
+};
+
+type SearchParam = Pick<ListsQueryParams, FilterFieldNames> & {
+  initialCity: string;
+} & { initialDistrict: string };
+
 const SearchModal = ({ visible, onDismiss }: SearchModalProps) => {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const [searchParams, setSearchParams] = useState<SearchParam>(initialState);
 
-  const filters = useStore((state) => state.filters);
   const setFilters = useStore((state) => state.setFilters);
   const clearFilters = useStore((state) => state.clearFilters);
 
-  const filtersRef = useRef<Partial<ListsQueryParams>>({});
-
-  const [locationFilterKey, setLocationFilterKey] = useState(0);
-  const [initialCity, setInitialCity] = useState<string>('');
-  const [initialDistrict, setInitialDistrict] = useState<string>('');
-
-  if (visible && locationFilterKey === 0) {
-    filtersRef.current = { ...filters };
-    setInitialCity(filters.province || '');
-    setInitialDistrict(filters.district || '');
-    setLocationFilterKey(Date.now());
-  }
-
   const handleFilterChange = useCallback(
-    (field: string, value: string | number | boolean) => {
-      filtersRef.current = {
-        ...filtersRef.current,
+    <K extends keyof ListsQueryParams>(
+      field: K,
+      value: ListsQueryParams[K]
+    ) => {
+      setSearchParams((prev) => ({
+        ...prev,
         [field]: value,
-      };
+      }));
     },
     []
   );
@@ -58,15 +57,11 @@ const SearchModal = ({ visible, onDismiss }: SearchModalProps) => {
     const province = location.province || '';
     const district = location.district || '';
 
-    filtersRef.current = {
-      ...filtersRef.current,
-      province,
-      district,
-    };
-
-    setInitialCity(province);
-    setInitialDistrict(district);
-    setLocationFilterKey(Date.now());
+    setSearchParams((prev) => ({
+      ...prev,
+      initialCity: province,
+      initialDistrict: district,
+    }));
   }, []);
 
   const handleCityChange = useCallback(
@@ -84,16 +79,11 @@ const SearchModal = ({ visible, onDismiss }: SearchModalProps) => {
   );
 
   const handleSearch = useCallback(() => {
-    setFilters(filtersRef.current);
-    setLocationFilterKey(0);
     onDismiss();
   }, [setFilters, onDismiss]);
 
   const handleClearAll = useCallback(() => {
-    filtersRef.current = {};
-    setInitialCity('');
-    setInitialDistrict('');
-    setLocationFilterKey(Date.now());
+    setSearchParams(initialState);
     clearFilters();
   }, [clearFilters]);
 
@@ -112,7 +102,9 @@ const SearchModal = ({ visible, onDismiss }: SearchModalProps) => {
               icon="close"
               size={24}
               onPress={onDismiss}
+              style={styles.closeButton}
               iconColor={theme.colors.onSurface}
+              hitSlop={{ top: 24, bottom: 24, left: 24, right: 24 }}
             />
           </View>
 
@@ -140,9 +132,8 @@ const SearchModal = ({ visible, onDismiss }: SearchModalProps) => {
               <LocationPicker onLocationSelect={handleLocationSelect} />
 
               <LocationFilter
-                key={locationFilterKey}
-                initialCity={initialCity}
-                initialDistrict={initialDistrict}
+                initialCity={searchParams.initialCity}
+                initialDistrict={searchParams.initialCity}
                 onCityChange={handleCityChange}
                 onDistrictChange={handleDistrictChange}
               />
@@ -151,7 +142,7 @@ const SearchModal = ({ visible, onDismiss }: SearchModalProps) => {
                 (item) => (
                   <ModalAccordion key={item.id} title={item.title}>
                     {item.renderComponent({
-                      filterValues: filtersRef.current,
+                      filterValues: searchParams,
                       onFilterChange: handleFilterChange,
                     })}
                   </ModalAccordion>

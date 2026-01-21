@@ -1,71 +1,46 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { bookmarkApi } from '@/api';
-import { useState } from 'react';
 
 interface UseBookmarkOptions {
   postingId: string;
-  initialBookmarked?: boolean;
+  isBookmarked: boolean;
   onSuccess?: () => void;
   onError?: (error: Error) => void;
 }
 
 export const useBookmark = ({
   postingId,
-  initialBookmarked = false,
+  isBookmarked,
   onSuccess,
   onError,
 }: UseBookmarkOptions) => {
   const queryClient = useQueryClient();
-  const [isBookmarked, setIsBookmarked] = useState(initialBookmarked);
   const queryKeys = ['mostSaved', 'newest', 'forYou', 'popular'];
+
+  const invalidateAll = async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['bookmarks'] }),
+      queryClient.invalidateQueries({ queryKey: ['posting', postingId] }),
+      ...queryKeys.map((key) =>
+        queryClient.invalidateQueries({ queryKey: ['listings', key] })
+      ),
+    ]);
+  };
 
   const bookmarkMutation = useMutation({
     mutationFn: () => bookmarkApi.bookmarkPosting(postingId),
-    onMutate: async () => {
-      setIsBookmarked(true);
-
-      await queryClient.cancelQueries({ queryKey: ['bookmarks'] });
-
-      return { previousState: isBookmarked };
-    },
-    onError: (error, _, context) => {
-      if (context) {
-        setIsBookmarked(context.previousState);
-      }
-      onError?.(error);
-    },
+    onError: (error) => onError?.(error),
     onSuccess: async () => {
-      void queryClient.invalidateQueries({ queryKey: ['bookmarks'] });
-      void queryClient.invalidateQueries({ queryKey: ['posting'] });
-
-      await Promise.all(
-        queryKeys.map((item) =>
-          queryClient.invalidateQueries({
-            queryKey: ['listings', item],
-          })
-        )
-      );
+      await invalidateAll();
       onSuccess?.();
     },
   });
 
   const unbookmarkMutation = useMutation({
     mutationFn: () => bookmarkApi.unbookmarkPosting(postingId),
-    onMutate: async () => {
-      setIsBookmarked(false);
-
-      await queryClient.cancelQueries({ queryKey: ['bookmarks'] });
-
-      return { previousState: isBookmarked };
-    },
-    onError: (error, _, context) => {
-      if (context) {
-        setIsBookmarked(context.previousState);
-      }
-      onError?.(error);
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['bookmarks'] });
+    onError: (error) => onError?.(error),
+    onSuccess: async () => {
+      await invalidateAll();
       onSuccess?.();
     },
   });
