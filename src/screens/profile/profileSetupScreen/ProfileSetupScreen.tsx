@@ -2,7 +2,6 @@ import { profileApi } from '@/api';
 import ProfileForm from '@/components/forms/profileForm/ProfileForm';
 import type { ProfileSetupForm } from '@/schemas/profileSchema';
 import { profileSetupSchema } from '@/schemas/profileSchema';
-import { secureStorage } from '@/storage/storage';
 import { useStore } from '@/store';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React from 'react';
@@ -16,7 +15,6 @@ const ProfileSetupScreen = () => {
   const styles = createStyles(theme);
 
   const setHasProfile = useStore((state) => state.setHasProfile);
-  console.log('🚀 ~ setHasProfile:',  secureStorage.getAccessToken());
   const setProfile = useStore((state) => state.setProfile);
 
   const profileForm = useForm<ProfileSetupForm>({
