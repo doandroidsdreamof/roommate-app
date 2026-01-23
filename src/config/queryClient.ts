@@ -19,20 +19,18 @@ export const queryClient = new QueryClient({
     },
   },
   queryCache: new QueryCache({
-    onSuccess: (data: any, query) => {
-      if (!data?.lists) {
-        log('🟢', 'Query Success', { key: query.queryKey, data });
-      }
+    onSuccess: (data: unknown, query) => {
+      log('🟢', 'Query Success', { key: query.queryKey });
     },
     onError: (error, query) => {
       log('🔴', 'Query Error', { key: query.queryKey, error: error.message });
     },
   }),
   mutationCache: new MutationCache({
-    onSuccess: (data, variables, context, mutation) => {
+    onSuccess: (data, variables) => {
       log('🟣', 'Mutation Success', { variables, data });
     },
-    onError: (error, variables, context, mutation) => {
+    onError: (error, variables) => {
       log('🟠', 'Mutation Error', { variables, error: error.message });
     },
   }),

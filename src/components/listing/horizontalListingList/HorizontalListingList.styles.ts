@@ -1,20 +1,18 @@
-import { StyleSheet } from 'react-native';
-import { MD3Theme } from 'react-native-paper';
 import { spacing } from '@/theme/theme';
+import { StyleSheet } from 'react-native';
 
-export const createStyles = (theme: MD3Theme) =>
-  StyleSheet.create({
-    loadingContainer: {
-      height: 360,
-      justifyContent: 'center',
-      alignItems: 'center',
-      paddingHorizontal: spacing.lg,
-    },
-    cardContainer: {
-      marginRight: spacing.md,
-    },
-    listContent: {
-      paddingHorizontal: spacing.lg,
-      paddingBottom: spacing.md,
-    },
-  });
+export const styles = StyleSheet.create({
+  cardContainer: {
+    marginRight: spacing.md,
+  },
+  listContent: {
+    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.lg,
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    height: 360,
+    justifyContent: 'center',
+    paddingHorizontal: spacing.lg,
+  },
+});

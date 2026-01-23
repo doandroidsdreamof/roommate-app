@@ -5,7 +5,6 @@ import { Checkbox, Chip } from 'react-native-paper';
 import DatePicker from '../datePicker/DatePicker';
 import RangeSlider from '../rangeSlider/RangeSlider';
 import Stepper from '../stepper/Stepper';
-import MultiSlider from '@ptomasroos/react-native-multi-slider';
 
 interface FilterComponentProps {
   filterValues: Partial<ListsQueryParams>;
@@ -184,7 +183,7 @@ export const FILTER_SECTIONS: FilterConfig[] = [
   {
     id: 'amenities',
     title: 'Olanaklar',
-    fields: AMENITY_FIELDS as AmenityField[],
+    fields: AMENITY_FIELDS,
     renderComponent: ({ filterValues, onFilterChange }) => (
       <View style={styles.column}>
         {AMENITY_OPTIONS.map(({ field, label }) => (

@@ -15,9 +15,9 @@ const SectionHeader = ({ title, onSeeAll }: SectionHeaderProps) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
       {onSeeAll && (
         <TouchableOpacity onPress={onSeeAll} style={styles.button}>
+          <Text style={styles.title}>{title}</Text>
           <MaterialCommunityIcons
             name="arrow-right-circle"
             size={32}

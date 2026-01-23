@@ -40,10 +40,7 @@ const BookmarksScreen = () => {
 
   const renderItem = useCallback(
     ({ item }: { item: BookmarkItem }) => (
-      <ListingCard
-        listing={item.posting}
-        onPress={handlePostingPress}
-      />
+      <ListingCard listing={item.posting} onPress={handlePostingPress} />
     ),
     [handlePostingPress]
   );

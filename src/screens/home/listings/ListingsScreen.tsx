@@ -7,7 +7,7 @@ import { useInfiniteListing } from '@/hooks/useInfiniteListing';
 import { HomeStackParamList } from '@/navigation/HomeStackNavigator';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import {
   Animated,
   Dimensions,
@@ -82,34 +82,27 @@ const ListingsScreen = () => {
 
   const listings = data?.pages.flatMap((page) => page.lists) ?? [];
 
-  const markers: MapMarker[] = useMemo(
-    () =>
-      listings.map((listing) => ({
-        id: listing.id,
-        position: {
-          latitude: parseFloat(listing.latitude),
-          longitude: parseFloat(listing.longitude),
-        },
-        title: `${listing.city} - ${listing.district}`,
-        icon: '🏠',
-      })),
-    [listings]
-  );
+  const markers: MapMarker[] = listings.map((listing) => ({
+    id: listing.id,
+    position: {
+      latitude: parseFloat(listing.latitude),
+      longitude: parseFloat(listing.longitude),
+    },
+    title: `${listing.city} - ${listing.district}`,
+    icon: '🏠',
+  }));
 
-  const mapCenter = useMemo(() => {
-    if (listings.length === 0) return undefined;
-
-    const sumLat = listings.reduce((sum, l) => sum + parseFloat(l.latitude), 0);
-    const sumLng = listings.reduce(
-      (sum, l) => sum + parseFloat(l.longitude),
-      0
-    );
-
-    return {
-      latitude: sumLat / listings.length,
-      longitude: sumLng / listings.length,
-    };
-  }, [listings]);
+  const mapCenter =
+    listings.length === 0
+      ? undefined
+      : {
+          latitude:
+            listings.reduce((sum, l) => sum + parseFloat(l.latitude), 0) /
+            listings.length,
+          longitude:
+            listings.reduce((sum, l) => sum + parseFloat(l.longitude), 0) /
+            listings.length,
+        };
 
   const handleLoadMore = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) {

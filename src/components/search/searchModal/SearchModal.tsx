@@ -79,8 +79,12 @@ const SearchModal = ({ visible, onDismiss }: SearchModalProps) => {
   );
 
   const handleSearch = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { initialCity, initialDistrict, ...filters } = searchParams;
+
+    setFilters(filters);
     onDismiss();
-  }, [setFilters, onDismiss]);
+  }, [searchParams, setFilters, onDismiss]);
 
   const handleClearAll = useCallback(() => {
     setSearchParams(initialState);
@@ -133,7 +137,7 @@ const SearchModal = ({ visible, onDismiss }: SearchModalProps) => {
 
               <LocationFilter
                 initialCity={searchParams.initialCity}
-                initialDistrict={searchParams.initialCity}
+                initialDistrict={searchParams.initialDistrict}
                 onCityChange={handleCityChange}
                 onDistrictChange={handleDistrictChange}
               />

@@ -5,11 +5,11 @@ import { spacing } from '@/theme/theme';
 export const createStyles = (theme: MD3Theme) =>
   StyleSheet.create({
     container: {
-      flex: 1,
       backgroundColor: theme.colors.background,
+      flex: 1,
     },
     scrollContent: {
-      paddingHorizontal: spacing.lg,
       paddingBottom: spacing.xl,
+      paddingHorizontal: spacing.lg,
     },
   });

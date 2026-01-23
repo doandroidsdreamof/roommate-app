@@ -3,6 +3,11 @@ import type { MD3Theme } from 'react-native-paper';
 
 export const createStyles = (theme: MD3Theme) =>
   StyleSheet.create({
+    button: {
+      borderColor: theme.colors.outline,
+      borderRadius: 20,
+      borderWidth: 1,
+    },
     container: {
       alignItems: 'center',
     },
@@ -10,13 +15,8 @@ export const createStyles = (theme: MD3Theme) =>
       marginBottom: 8,
     },
     stepperContainer: {
-      flexDirection: 'row',
       alignItems: 'center',
-    },
-    button: {
-      borderWidth: 1,
-      borderRadius: 20,
-      borderColor: theme.colors.outline,
+      flexDirection: 'row',
     },
     value: {
       minWidth: 40,

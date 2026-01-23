@@ -4,21 +4,25 @@ import { spacing } from '@/theme/theme';
 
 export const createStyles = (theme: MD3Theme) =>
   StyleSheet.create({
-    container: {
+    button: {
+      alignItems: 'center',
       flexDirection: 'row',
       justifyContent: 'space-between',
+      padding: spacing.xs,
+      width: "100%"
+    },
+    container: {
       alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingBottom: spacing.md,
       paddingHorizontal: spacing.lg,
       paddingTop: spacing.xl,
-      paddingBottom: spacing.md,
     },
     title: {
+      color: theme.colors.onSurface,
       fontSize: 22,
       fontWeight: '600',
-      color: theme.colors.onSurface,
       letterSpacing: -0.3,
-    },
-    button: {
-      padding: spacing.xs,
     },
   });

@@ -32,7 +32,9 @@
       [
         "expo-asset",
         {
-          "assets": ["./assets/leaflet.html"]
+          "assets": [
+            "./assets/leaflet.html"
+          ]
         }
       ],
       [
@@ -40,7 +42,8 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow app to use your location."
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker"
     ]
   }
 }

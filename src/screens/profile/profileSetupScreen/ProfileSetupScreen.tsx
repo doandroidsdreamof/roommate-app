@@ -2,12 +2,13 @@ import { profileApi } from '@/api';
 import ProfileForm from '@/components/forms/profileForm/ProfileForm';
 import type { ProfileSetupForm } from '@/schemas/profileSchema';
 import { profileSetupSchema } from '@/schemas/profileSchema';
+import { secureStorage } from '@/storage/storage';
 import { useStore } from '@/store';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { ScrollView, View } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { ScrollView } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import { createStyles } from './ProfileSetupScreen.styles';
 
 const ProfileSetupScreen = () => {
@@ -15,6 +16,7 @@ const ProfileSetupScreen = () => {
   const styles = createStyles(theme);
 
   const setHasProfile = useStore((state) => state.setHasProfile);
+  console.log('🚀 ~ setHasProfile:',  secureStorage.getAccessToken());
   const setProfile = useStore((state) => state.setProfile);
 
   const profileForm = useForm<ProfileSetupForm>({

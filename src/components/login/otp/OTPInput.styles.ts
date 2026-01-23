@@ -14,8 +14,8 @@ export const styles = StyleSheet.create({
   },
   emailDisplay: {
     alignItems: 'center',
-    justifyContent: "center",
     flexDirection: 'column',
+    justifyContent: "center",
     marginTop: spacing.lg,
   },
   emailText: {

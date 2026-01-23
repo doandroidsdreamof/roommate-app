@@ -21,7 +21,6 @@ const PreferencesForm = ({
   const {
     control,
     handleSubmit,
-    getValues,
     setValue,
     formState: { errors },
   } = form;
@@ -67,11 +66,7 @@ const PreferencesForm = ({
                     unselectedStyle={{
                       backgroundColor: theme.colors.surfaceVariant,
                     }}
-                    markerStyle={{
-                      backgroundColor: theme.colors.primary,
-                      height: 24,
-                      width: 24,
-                    }}
+                    markerStyle={styles.markerStyles}
                     containerStyle={styles.sliderContainer}
                     trackStyle={styles.sliderTrack}
                   />
@@ -120,11 +115,7 @@ const PreferencesForm = ({
                     unselectedStyle={{
                       backgroundColor: theme.colors.surfaceVariant,
                     }}
-                    markerStyle={{
-                      backgroundColor: theme.colors.primary,
-                      height: 24,
-                      width: 24,
-                    }}
+                    markerStyle={styles.markerStyles}
                     containerStyle={styles.sliderContainer}
                     trackStyle={styles.sliderTrack}
                   />

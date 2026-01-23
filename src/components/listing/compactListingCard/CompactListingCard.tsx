@@ -11,13 +11,11 @@ import { createStyles } from './CompactListingCard.styles';
 
 interface CompactListingCardProps {
   listing: PostingItem;
-  isBookmarked?: boolean;
   onPress?: (postingId: string) => void;
 }
 
 const CompactListingCard = ({
   listing,
-  isBookmarked = false,
   onPress,
 }: CompactListingCardProps) => {
   const theme = useTheme();

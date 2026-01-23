@@ -21,7 +21,7 @@ const DatePicker = ({
 
   const currentDate = value ? new Date(value) : new Date();
 
-  const handleChange = (_: any, selectedDate?: Date) => {
+  const handleChange = (_: unknown, selectedDate?: Date) => {
     setShow(Platform.OS === 'ios');
     if (selectedDate) {
       onChange(selectedDate.toISOString().split('T')[0]);

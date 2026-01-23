@@ -1,3 +1,25 @@
+import {
+  WebviewLeafletMessage,
+  WebviewLeafletMessagePayload,
+} from 'react-native-leaflet-view';
+import { StyleProp, ViewStyle } from 'react-native';
+
+export interface ExtendedPayload extends WebviewLeafletMessagePayload {
+  coords?: {
+    lat: number;
+    lng: number;
+  };
+  zoom?: number;
+  mapMarkerID?: string;
+}
+
+export interface WebviewLeafletMessageWithPayload extends Omit<
+  WebviewLeafletMessage,
+  'payload'
+> {
+  payload?: ExtendedPayload;
+}
+
 export interface MapLocation {
   latitude: number;
   longitude: number;
@@ -31,10 +53,5 @@ export interface MapProps {
   onMoveEnd?: (location: MapLocation, zoom: number) => void;
   showUserLocation?: boolean;
   userLocation?: MapLocation;
-  style?: any;
-}
-
-export interface LeafletMessage {
-  event?: string;
-  payload?: any;
+  style?: StyleProp<ViewStyle>;
 }

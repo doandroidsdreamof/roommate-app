@@ -2,10 +2,9 @@ import Dropdown from '@/components/dropdown/Dropdown';
 import { useDistricts } from '@/hooks/useDistricts';
 import { useDropdownState } from '@/hooks/useDropdownState';
 import { useProvinces } from '@/hooks/useProvinces';
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Keyboard, TextInput as RNTextInput, View } from 'react-native';
-import { useTheme } from 'react-native-paper';
-import { createStyles } from './LocationFilter.styles';
+import { styles } from './LocationFilter.styles';
 
 interface LocationFilterProps {
   initialCity?: string;
@@ -20,9 +19,6 @@ const LocationFilter = ({
   onCityChange,
   onDistrictChange,
 }: LocationFilterProps) => {
-  const theme = useTheme();
-  const styles = useMemo(() => createStyles(theme), [theme]);
-
   const [city, setCity] = useState(initialCity);
   const [district, setDistrict] = useState(initialDistrict);
 

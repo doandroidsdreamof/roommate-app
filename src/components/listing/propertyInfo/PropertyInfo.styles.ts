@@ -7,8 +7,8 @@ export const styles = StyleSheet.create({
     gap: spacing.lg,
   },
   item: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     gap: spacing.xs,
   },
 });

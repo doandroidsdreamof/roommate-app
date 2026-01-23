@@ -1,4 +1,3 @@
-// navigation/RootNavigator.tsx
 import { useProfile } from '@/hooks/useProfile';
 import { useThemeMode } from '@/hooks/useThemeMode';
 import { useStore } from '@/store/index';

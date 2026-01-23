@@ -4,81 +4,80 @@ import { MD3Theme } from 'react-native-paper';
 
 export const createStyles = (theme: MD3Theme) =>
   StyleSheet.create({
-    card: {
-      marginHorizontal: spacing.md,
-      marginVertical: spacing.sm,
-      backgroundColor: theme.colors.surface,
-    },
-    imageContainer: {
-      position: 'relative',
-      height: 200,
-    },
-    image: {
-      width: '100%',
-      height: '100%',
-      borderRadius: borderRadius.lg,
+    amenitiesRow: {
+      flexDirection: 'row',
+      gap: spacing.md,
+      marginBottom: spacing.sm,
     },
     bookmarkButton: {
+      backgroundColor: theme.colors.scrim,
       position: 'absolute',
-      top: spacing.sm,
       right: spacing.sm,
-      backgroundColor: theme.colors.scrim + '80',
+      top: spacing.sm,
     },
-    priceTag: {
-      position: 'absolute',
-      bottom: spacing.md,
-      left: spacing.md,
-      paddingHorizontal: spacing.md,
-      paddingVertical: spacing.sm,
-      borderRadius: borderRadius.md,
-      backgroundColor: theme.colors.primary,
+    card: {
+      backgroundColor: theme.colors.surface,
+      marginHorizontal: spacing.md,
+      marginVertical: spacing.sm,
     },
-    content: {
-      paddingTop: spacing.md,
-    },
-    title: {
-      ...typography.h4,
-      color: theme.colors.onSurface,
-      marginBottom: spacing.sm,
-    },
-    locationRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: spacing.xs,
-      marginBottom: spacing.sm,
+    chip: {
+      backgroundColor: theme.colors.surfaceVariant,
     },
     chipsRow: {
       flexDirection: 'row',
       gap: spacing.sm,
       marginBottom: spacing.sm,
     },
-    chip: {
-      height: 28,
-      backgroundColor: theme.colors.surfaceVariant,
-    },
-    amenitiesRow: {
-      flexDirection: 'row',
-      gap: spacing.md,
-      marginBottom: spacing.sm,
+    content: {
+      paddingTop: spacing.md,
     },
     footer: {
+      alignItems: 'center',
       flexDirection: 'row',
       justifyContent: 'space-between',
-      alignItems: 'center',
       marginTop: spacing.xs,
     },
-    statsRow: {
-      flexDirection: 'row',
+    image: {
+      borderRadius: borderRadius.lg,
+      height: '100%',
+      width: '100%',
+    },
+    imageContainer: {
+      height: 200,
+      position: 'relative',
+    },
+    locationRow: {
       alignItems: 'center',
+      flexDirection: 'row',
+      gap: spacing.xs,
+      marginBottom: spacing.sm,
+    },
+    placeholderContainer: {
+      alignItems: 'center',
+      backgroundColor: theme.colors.surfaceVariant,
+      justifyContent: 'center',
+    },
+    priceTag: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: borderRadius.md,
+      bottom: spacing.md,
+      left: spacing.md,
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.sm,
+      position: 'absolute',
+    },
+    statsRow: {
+      alignItems: 'center',
+      flexDirection: 'row',
       gap: spacing.xs,
     },
     textSecondary: {
       ...typography.caption,
       color: theme.colors.onSurfaceVariant,
     },
-    placeholderContainer: {
-      backgroundColor: theme.colors.surfaceVariant,
-      justifyContent: 'center',
-      alignItems: 'center',
+    title: {
+      ...typography.h4,
+      color: theme.colors.onSurface,
+      marginBottom: spacing.sm,
     },
   });

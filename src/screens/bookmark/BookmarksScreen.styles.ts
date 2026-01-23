@@ -2,33 +2,33 @@ import { StyleSheet } from 'react-native';
 import { spacing } from '@/theme/theme';
 
 export const styles = StyleSheet.create({
+  centerContent: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
   },
-  centerContent: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  listContent: {
-    paddingVertical: spacing.sm,
-  },
-  emptyList: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   emptyContainer: {
     alignItems: 'center',
-    paddingHorizontal: spacing.xl,
     gap: spacing.md,
+    paddingHorizontal: spacing.xl,
+  },
+  emptyList: {
+    alignItems: 'center',
+    flexGrow: 1,
+    justifyContent: 'center',
+  },
+  emptySubtitle: {
+    opacity: 0.7,
+    textAlign: 'center',
   },
   emptyTitle: {
     fontWeight: '600',
     textAlign: 'center',
   },
-  emptySubtitle: {
-    textAlign: 'center',
-    opacity: 0.7,
+  listContent: {
+    paddingVertical: spacing.sm,
   },
 });

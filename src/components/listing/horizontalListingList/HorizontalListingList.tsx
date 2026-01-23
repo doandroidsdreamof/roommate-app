@@ -2,9 +2,8 @@ import { PostingItem } from '@/api/postingApi';
 import Loading from '@/components/primitives/loading/Loading';
 import React from 'react';
 import { FlatList, View } from 'react-native';
-import { useTheme } from 'react-native-paper';
 import CompactListingCard from '../compactListingCard/CompactListingCard';
-import { createStyles } from './HorizontalListingList.styles';
+import { styles } from './HorizontalListingList.styles';
 
 interface HorizontalListingListProps {
   data: PostingItem[] | undefined;
@@ -17,8 +16,7 @@ const HorizontalListingList = ({
   isLoading,
   onPostingPress,
 }: HorizontalListingListProps) => {
-  const theme = useTheme();
-  const styles = createStyles(theme);
+
 
   if (isLoading) {
     return (

@@ -4,42 +4,47 @@ import { spacing } from '@/theme/theme';
 
 export const createStyles = (theme: MD3Theme) =>
   StyleSheet.create({
-    container: {
-      gap: spacing.md,
+    button: {
+      marginTop: spacing.md,
     },
-    title: {
-      color: theme.colors.onSurface,
-      marginBottom: spacing.xs,
-      marginTop: spacing.lg,
-    },
-    subtitle: {
-      color: theme.colors.onSurfaceVariant,
-      marginBottom: spacing.lg,
-    },
-    section: {
-      gap: spacing.sm,
-    },
-    label: {
-      color: theme.colors.onSurfaceVariant,
-      marginBottom: spacing.xs,
-    },
-    sliderContainer: {
-      height: 40,
-      paddingHorizontal: spacing.sm,
-    },
-    sliderTrack: {
-      height: 4,
-      borderRadius: 2,
+    chip: {
+      marginVertical: spacing.xs,
     },
     chipContainer: {
       flexDirection: 'row',
       flexWrap: 'wrap',
       gap: spacing.sm,
     },
-    chip: {
-      marginVertical: spacing.xs,
+    container: {
+      gap: spacing.md,
     },
-    button: {
-      marginTop: spacing.md,
+    label: {
+      color: theme.colors.onSurfaceVariant,
+      marginBottom: spacing.xs,
+    },
+    markerStyles: {
+      backgroundColor: theme.colors.primary,
+      height: 24,
+      width: 24,
+    },
+    section: {
+      gap: spacing.sm,
+    },
+    sliderContainer: {
+      height: 40,
+      paddingHorizontal: spacing.sm,
+    },
+    sliderTrack: {
+      borderRadius: 2,
+      height: 4,
+    },
+    subtitle: {
+      color: theme.colors.onSurfaceVariant,
+      marginBottom: spacing.lg,
+    },
+    title: {
+      color: theme.colors.onSurface,
+      marginBottom: spacing.xs,
+      marginTop: spacing.lg,
     },
   });

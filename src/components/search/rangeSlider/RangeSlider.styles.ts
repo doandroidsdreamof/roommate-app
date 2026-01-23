@@ -11,29 +11,29 @@ export const createStyles = (theme: MD3Theme) =>
       justifyContent: 'space-between',
       marginBottom: 8,
     },
-    sliderContainer: {
-      alignSelf: 'center',
+    marker: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: 12,
+      height: 24,
+      width: 24,
     },
-    track: {
-      height: 4,
-      borderRadius: 2,
+    pressedMarker: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: 14,
+      height: 28,
+      width: 28,
     },
     selectedTrack: {
       backgroundColor: theme.colors.primary,
     },
+    sliderContainer: {
+      alignSelf: 'center',
+    },
+    track: {
+      borderRadius: 2,
+      height: 4,
+    },
     unselectedTrack: {
       backgroundColor: theme.colors.surfaceVariant,
-    },
-    marker: {
-      backgroundColor: theme.colors.primary,
-      height: 24,
-      width: 24,
-      borderRadius: 12,
-    },
-    pressedMarker: {
-      backgroundColor: theme.colors.primary,
-      height: 28,
-      width: 28,
-      borderRadius: 14,
     },
   });

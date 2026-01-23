@@ -21,6 +21,7 @@ export const useBookmark = ({
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ['bookmarks'] }),
       queryClient.invalidateQueries({ queryKey: ['posting', postingId] }),
+      queryClient.invalidateQueries({ queryKey: ['listings'] }),
       ...queryKeys.map((key) =>
         queryClient.invalidateQueries({ queryKey: ['listings', key] })
       ),

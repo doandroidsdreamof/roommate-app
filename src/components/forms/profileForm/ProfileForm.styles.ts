@@ -4,46 +4,8 @@ import { spacing } from '@/theme/theme';
 
 export const createStyles = (theme: MD3Theme) =>
   StyleSheet.create({
-    keyboardAvoidingView: {
-      flex: 1,
-    },
-    scrollViewContent: {
-      flexGrow: 1,
-      paddingBottom: spacing.xl,
-    },
-    formContainer: {
-      gap: spacing.lg,
-      padding: spacing.md,
-      width: '100%',
-      justifyContent: 'center',
-      height: '100%',
-    },
-    input: {
-      backgroundColor: theme.colors.surface,
-    },
-    label: {
-      color: theme.colors.onSurfaceVariant,
-      marginBottom: spacing.sm,
-    },
-    header: {
-      marginBottom: spacing.xl,
-    },
-
-    subtitle: {
-      color: theme.colors.onSurfaceVariant,
-    },
-    title: {
-      color: theme.colors.onBackground,
-      marginBottom: spacing.sm,
-    },
-    genderChips: {
-      flexDirection: 'row',
-      gap: spacing.sm,
-      flexWrap: 'wrap',
-    },
-    genderChip: {
-      flex: 1,
-      minWidth: 80,
+    button: {
+      marginTop: spacing.md,
     },
     cityContainer: {
       gap: spacing.xs,
@@ -51,7 +13,45 @@ export const createStyles = (theme: MD3Theme) =>
     districtContainer: {
       gap: spacing.xs,
     },
-    button: {
-      marginTop: spacing.md,
+    formContainer: {
+      gap: spacing.lg,
+      height: '100%',
+      justifyContent: 'center',
+      padding: spacing.md,
+      width: '100%',
+    },
+    genderChip: {
+      flex: 1,
+      minWidth: 80,
+    },
+    genderChips: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.sm,
+    },
+
+    header: {
+      marginBottom: spacing.xl,
+    },
+    input: {
+      backgroundColor: theme.colors.surface,
+    },
+    keyboardAvoidingView: {
+      flex: 1,
+    },
+    label: {
+      color: theme.colors.onSurfaceVariant,
+      marginBottom: spacing.sm,
+    },
+    scrollViewContent: {
+      flexGrow: 1,
+      paddingBottom: spacing.xl,
+    },
+    subtitle: {
+      color: theme.colors.onSurfaceVariant,
+    },
+    title: {
+      color: theme.colors.onBackground,
+      marginBottom: spacing.sm,
     },
   });

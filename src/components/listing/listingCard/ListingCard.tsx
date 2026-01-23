@@ -34,10 +34,7 @@ const formatDate = (dateString: string) => {
   });
 };
 
-const ListingCard = ({
-  listing,
-  onPress,
-}: ListingCardProps) => {
+const ListingCard = ({ listing, onPress }: ListingCardProps) => {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [imageError, setImageError] = useState(false);

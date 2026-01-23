@@ -70,6 +70,8 @@ const LoginScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.container}>
+        {/*         eslint-disable-next-line react-native/no-inline-styles
+         */}
         <View style={{ display: step === 'email' ? 'flex' : 'none' }}>
           <Controller
             control={control}
@@ -85,7 +87,8 @@ const LoginScreen = () => {
             )}
           />
         </View>
-
+        {/*         eslint-disable-next-line react-native/no-inline-styles
+         */}
         <View style={{ display: step === 'otp' ? 'flex' : 'none' }}>
           <Controller
             control={control}

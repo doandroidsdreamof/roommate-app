@@ -4,7 +4,7 @@ import { ActivityIndicator, Alert, View } from 'react-native';
 import { LeafletView, MapShapeType } from 'react-native-leaflet-view';
 import { useTheme } from 'react-native-paper';
 import { createStyles } from './Map.styles';
-import type { LeafletMessage, MapProps } from './types';
+import type { MapProps, WebviewLeafletMessageWithPayload } from './types';
 
 const Map = ({
   initialLocation,
@@ -26,7 +26,7 @@ const Map = ({
 
     const loadHtml = async () => {
       try {
-        const htmlPath = require('react-native-leaflet-view/android/src/main/assets/leaflet-map.html');
+        const htmlPath = require('react-native-leaflet-view/android/src/main/assets/leaflet.html');
         const asset = Asset.fromModule(htmlPath);
         await asset.downloadAsync();
 
@@ -46,14 +46,14 @@ const Map = ({
       }
     };
 
-    loadHtml();
+    loadHtml().catch(console.error);
 
     return () => {
       isMounted = false;
     };
   }, []);
 
-  const handleMessage = (message: LeafletMessage) => {
+  const handleMessage = (message: WebviewLeafletMessageWithPayload) => {
     if (!message.event) return;
 
     const { event, payload } = message;

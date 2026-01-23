@@ -31,36 +31,37 @@ const LocationPicker = ({
   const handlePress = async () => {
     setIsLoading(true);
     try {
-      let enabled = await Location.hasServicesEnabledAsync();
+      const enabled = await Location.hasServicesEnabledAsync();
       if (!enabled) {
-        Alert.alert('Location not enabled', 'Please enable your Location', [
-          {
-            text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
-          },
-          { text: 'OK', onPress: () => console.log('OK Pressed') },
-        ]);
-      }
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
         Alert.alert(
-          'Permission Required',
-          'Location access is needed to find nearby listings.'
+          'Konum Servisi Kapalı',
+          'Lütfen cihaz ayarlarından konum servisini açın',
+          [{ text: 'Tamam' }]
         );
         setIsLoading(false);
         return;
       }
 
-      // Try cached location first (instant if available)
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert(
+          'İzin Gerekli',
+          'Yakındaki ilanları görmek için konum erişimi gereklidir.'
+        );
+        setIsLoading(false);
+        return;
+      }
+
       let location = await Location.getLastKnownPositionAsync({
-        maxAge: 300000,
+        maxAge: 300000, // 5 minutes
         requiredAccuracy: 1000,
       });
 
       if (!location) {
         location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.Low,
+          accuracy: Location.Accuracy.Lowest,
+          timeInterval: 5000,
+          distanceInterval: 0,
         });
       }
 
@@ -76,12 +77,14 @@ const LocationPicker = ({
           district: address.subregion || address.district || undefined,
         };
         onLocationSelect(locationData);
+      } else {
+        Alert.alert('Adres Bulunamadı', 'Konum bilgisi alınamadı.');
       }
     } catch (error) {
       console.error('Error getting location:', error);
       Alert.alert(
-        'Location Error',
-        'Could not get your location. Please try again.'
+        'Konum Hatası',
+        'Konumunuz alınamadı. Lütfen tekrar deneyin.'
       );
     } finally {
       setIsLoading(false);

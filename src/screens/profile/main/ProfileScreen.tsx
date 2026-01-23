@@ -4,13 +4,14 @@ import Loading from '@/components/primitives/loading/Loading';
 import { useThemeMode } from '@/hooks/useThemeMode';
 import { useStore } from '@/store/index';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ScrollView, View } from 'react-native';
 import { Card, Divider, Switch, Text, useTheme } from 'react-native-paper';
-import { styles } from './ProfileScreen.styles';
+import { createStyles } from './ProfileScreen.styles';
 
 const ProfileScreen = () => {
   const theme = useTheme();
+  const styles = useMemo(() => createStyles(theme), [theme]);
   const { logout } = useStore();
   const { isDarkMode, toggleDarkMode } = useThemeMode();
   const profile = useStore((state) => state.profile);
@@ -21,10 +22,7 @@ const ProfileScreen = () => {
   }
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-      showsVerticalScrollIndicator={false}
-    >
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <Card style={styles.profileCard}>
         <Card.Content style={styles.profileContent}>
           <Avatar size={80} src={profile?.photoUrl} />
@@ -38,10 +36,7 @@ const ProfileScreen = () => {
                   size={16}
                   color={theme.colors.secondary}
                 />
-                <Text
-                  variant="bodySmall"
-                  style={{ color: theme.colors.secondary, marginLeft: 4 }}
-                >
+                <Text variant="bodySmall" style={styles.locationText}>
                   {[profile?.district, profile?.city]
                     .filter(Boolean)
                     .join(', ')}
@@ -56,10 +51,7 @@ const ProfileScreen = () => {
                   size={16}
                   color={theme.colors.primary}
                 />
-                <Text
-                  variant="bodySmall"
-                  style={{ color: theme.colors.primary, marginLeft: 4 }}
-                >
+                <Text variant="bodySmall" style={styles.verifiedText}>
                   Doğrulanmış
                 </Text>
               </View>

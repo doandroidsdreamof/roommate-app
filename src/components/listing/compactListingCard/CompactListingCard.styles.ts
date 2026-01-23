@@ -4,64 +4,64 @@ import { borderRadius, spacing } from '@/theme/theme';
 
 export const createStyles = (theme: MD3Theme) =>
   StyleSheet.create({
-    container: {
-      width: 200,
-      height: 200,
-      paddingBottom: spacing.xxl,
-      marginBottom: spacing.lg,
-    },
-    imageContainer: {
-      position: 'relative',
-      overflow: 'hidden',
-      borderRadius: borderRadius.lg,
-    },
-    image: {
-      width: '100%',
-      height: '100%',
-      objectFit: 'cover',
-    },
     bookmarkButton: {
-      position: 'absolute',
-      top: spacing.sm,
-      right: spacing.sm,
       backgroundColor: 'rgba(0, 0, 0, 0.3)',
       margin: 0,
+      position: 'absolute',
+      right: spacing.sm,
+      top: spacing.sm,
+    },
+    container: {
+      height: 200,
+      marginBottom: spacing.lg,
+      paddingBottom: spacing.xxl,
+      width: 200,
     },
     content: {
       paddingTop: spacing.sm,
     },
-    title: {
-      fontWeight: '600',
+    image: {
+      height: '100%',
+      objectFit: 'cover',
+      width: '100%',
+    },
+    imageContainer: {
+      borderRadius: borderRadius.lg,
+      overflow: 'hidden',
+      position: 'relative',
+    },
+    placeholderContainer: {
+      alignItems: 'center',
+      backgroundColor: theme.colors.surfaceVariant,
+      justifyContent: 'center',
+    },
+    price: {
       color: theme.colors.onSurface,
+      fontWeight: '600',
+    },
+    priceLabel: {
+      color: theme.colors.onSurfaceVariant,
+    },
+    priceRow: {
+      alignItems: 'baseline',
+      flexDirection: 'row',
       marginBottom: 2,
+    },
+    rating: {
+      color: theme.colors.onSurface,
     },
     subtitle: {
       color: theme.colors.onSurfaceVariant,
       marginBottom: spacing.xs,
     },
-    priceRow: {
-      flexDirection: 'row',
-      alignItems: 'baseline',
+    title: {
+      color: theme.colors.onSurface,
+      fontWeight: '600',
       marginBottom: 2,
     },
-    price: {
-      fontWeight: '600',
-      color: theme.colors.onSurface,
-    },
-    priceLabel: {
-      color: theme.colors.onSurfaceVariant,
-    },
     viewRow: {
+      alignItems: 'center',
       flexDirection: 'row',
-      alignItems: 'center',
       gap: 4,
-    },
-    rating: {
-      color: theme.colors.onSurface,
-    },
-    placeholderContainer: {
-      backgroundColor: theme.colors.surfaceVariant,
-      justifyContent: 'center',
-      alignItems: 'center',
     },
   });

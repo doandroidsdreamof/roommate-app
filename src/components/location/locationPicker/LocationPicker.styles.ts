@@ -4,30 +4,30 @@ import { StyleSheet } from 'react-native';
 export const createStyles = (theme: MD3Theme) =>
   StyleSheet.create({
     container: {
-      flexDirection: 'row',
       alignItems: 'center',
-      paddingVertical: 12,
+      flexDirection: 'row',
       gap: 12,
+      paddingVertical: 12,
     },
     iconWrapper: {
-      width: 56,
-      height: 56,
-      borderRadius: 12,
-      backgroundColor: theme.colors.surfaceVariant,
-      justifyContent: 'center',
       alignItems: 'center',
-    },
-    textWrapper: {
-      flex: 1,
+      backgroundColor: theme.colors.surfaceVariant,
+      borderRadius: 12,
+      height: 56,
+      justifyContent: 'center',
+      width: 56,
     },
     primaryText: {
+      color: theme.colors.onSurface,
       fontSize: 16,
       fontWeight: '600',
-      color: theme.colors.onSurface,
       marginBottom: 4,
     },
     secondaryText: {
-      fontSize: 14,
       color: theme.colors.onSurfaceVariant,
+      fontSize: 14,
+    },
+    textWrapper: {
+      flex: 1,
     },
   });
