@@ -63,6 +63,7 @@ const HomeScreen = () => {
 
       <SearchModal
         visible={isSearchModalVisible}
+        navigation={navigation}
         onDismiss={() => setIsSearchModalVisible(false)}
       />
     </View>

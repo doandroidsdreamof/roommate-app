@@ -13,9 +13,10 @@ import { createStyles } from './ProfileSetupScreen.styles';
 const ProfileSetupScreen = () => {
   const theme = useTheme();
   const styles = createStyles(theme);
-
+  
   const setHasProfile = useStore((state) => state.setHasProfile);
   const setProfile = useStore((state) => state.setProfile);
+
 
   const profileForm = useForm<ProfileSetupForm>({
     resolver: zodResolver(profileSetupSchema),
@@ -30,6 +31,8 @@ const ProfileSetupScreen = () => {
       console.error('Failed to create profile:', error);
     }
   };
+
+
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>

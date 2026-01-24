@@ -2,7 +2,7 @@ import Dropdown from '@/components/dropdown/Dropdown';
 import { useDistricts } from '@/hooks/useDistricts';
 import { useDropdownState } from '@/hooks/useDropdownState';
 import { useProvinces } from '@/hooks/useProvinces';
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { Keyboard, TextInput as RNTextInput, View } from 'react-native';
 import { styles } from './LocationFilter.styles';
 
@@ -19,9 +19,6 @@ const LocationFilter = ({
   onCityChange,
   onDistrictChange,
 }: LocationFilterProps) => {
-  const [city, setCity] = useState(initialCity);
-  const [district, setDistrict] = useState(initialDistrict);
-
   const cityDropdown = useDropdownState();
   const districtDropdown = useDropdownState();
 
@@ -34,7 +31,7 @@ const LocationFilter = ({
     isLoading: loadingProvinces,
   } = useProvinces();
 
-  const selectedProvinceData = getProvinceByValue(city);
+  const selectedProvinceData = getProvinceByValue(initialCity);
 
   const { filterDistricts, isFetching: loadingDistricts } =
     useDistricts(selectedProvinceData);
@@ -44,11 +41,11 @@ const LocationFilter = ({
       <View>
         <Dropdown
           label="Şehir"
-          value={city}
+          value={initialCity}
           placeholder="Şehir seçin"
           isLoading={loadingProvinces}
           isOpen={cityDropdown.isOpen}
-          items={filterProvinces(city)}
+          items={filterProvinces(initialCity)}
           getKey={(item) => item.plateCode}
           getLabel={(item) => item.name}
           onFocus={() => {
@@ -56,13 +53,11 @@ const LocationFilter = ({
             districtDropdown.close();
           }}
           onChange={(text) => {
-            setCity(text);
-            setDistrict('');
+            onCityChange(text);
+            onDistrictChange('');
             cityDropdown.open();
           }}
           onSelect={(item) => {
-            setCity(item.name);
-            setDistrict('');
             onCityChange(item.name);
             onDistrictChange('');
             cityDropdown.close();
@@ -78,12 +73,12 @@ const LocationFilter = ({
       <View>
         <Dropdown
           label="İlçe"
-          value={district}
-          placeholder={city ? 'İlçe seçin' : 'Önce şehir seçin'}
+          value={initialDistrict}
+          placeholder={initialCity ? 'İlçe seçin' : 'Önce şehir seçin'}
           disabled={!selectedProvinceData}
           isLoading={loadingDistricts}
           isOpen={districtDropdown.isOpen}
-          items={filterDistricts(district)}
+          items={filterDistricts(initialDistrict)}
           getKey={(item) => item.id}
           getLabel={(item) => item.name}
           onFocus={() => {
@@ -91,10 +86,9 @@ const LocationFilter = ({
             cityDropdown.close();
           }}
           onChange={(text) => {
-            setDistrict(text);
+            onDistrictChange(text);
           }}
           onSelect={(item) => {
-            setDistrict(item.name);
             onDistrictChange(item.name);
             districtDropdown.close();
             Keyboard.dismiss();

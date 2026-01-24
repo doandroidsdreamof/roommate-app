@@ -1,3 +1,4 @@
+import ErrorScreen from '@/components/errors/ErrorScreen';
 import { useProfile } from '@/hooks/useProfile';
 import { useThemeMode } from '@/hooks/useThemeMode';
 import { useStore } from '@/store/index';
@@ -16,26 +17,39 @@ const RootNavigator = () => {
     isLoading: isAuthLoading,
     checkAuth,
     profile,
-    isProfileLoaded,
   } = useStore();
+
   const { isDarkMode } = useThemeMode();
   const navigationTheme = isDarkMode ? combinedDarkTheme : combinedLightTheme;
+  const profileError = useStore((state) => state.profileError);
 
-  const { isFetched: isProfileFetched } = useProfile();
+  const { isFetched: isProfileFetched, refetch, isRefetching } = useProfile();
 
   useEffect(() => {
     void checkAuth();
   }, [checkAuth]);
 
-  // Wait for auth check AND profile fetch to complete
   const isInitializing =
     isAuthLoading || (isAuthenticated && !isProfileFetched);
 
-  if (isInitializing || !isProfileLoaded) {
+  if (isInitializing) {
     return (
       <View style={containerStyle.container}>
         <ActivityIndicator size="large" color="#3ECF8E" />
       </View>
+    );
+  }
+
+  if (isAuthenticated && profileError === 'NETWORK_ERROR') {
+    return (
+      <ErrorScreen
+        icon="wifi-off"
+        title="Bağlantı Hatası"
+        message="İnternet bağlantınızı kontrol edin"
+        actionLabel="Tekrar Dene"
+        onAction={() => refetch()}
+        isLoading={isRefetching}
+      />
     );
   }
 

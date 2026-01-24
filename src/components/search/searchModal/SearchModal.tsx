@@ -3,8 +3,10 @@ import LocationFilter from '@/components/location/locationFilter/LocationFilter'
 import LocationPicker, {
   LocationData,
 } from '@/components/location/locationPicker/LocationPicker';
+import { HomeStackParamList } from '@/navigation/HomeStackNavigator';
 import { useStore } from '@/store';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useCallback, useMemo, useState } from 'react';
 import {
   Modal,
@@ -15,24 +17,22 @@ import {
 } from 'react-native';
 import { IconButton, Text, useTheme } from 'react-native-paper';
 import ModalAccordion from '../modalAccordion/ModalAccordion';
-import { FILTER_SECTIONS, FilterFieldNames } from './FilterItems';
+import { FILTER_SECTIONS } from './FilterItems';
 import { createStyles } from './SearchModal.styles';
 
 interface SearchModalProps {
   visible: boolean;
   onDismiss: () => void;
+  navigation: NativeStackNavigationProp<HomeStackParamList>;
 }
-
-const initialState = {
-  initialCity: '',
-  initialDistrict: '',
+const initialState: Pick<ListsQueryParams, 'province' | 'district'> = {
+  province: '',
+  district: '',
 };
 
-type SearchParam = Pick<ListsQueryParams, FilterFieldNames> & {
-  initialCity: string;
-} & { initialDistrict: string };
+type SearchParam = Partial<ListsQueryParams>;
 
-const SearchModal = ({ visible, onDismiss }: SearchModalProps) => {
+const SearchModal = ({ visible, onDismiss, navigation }: SearchModalProps) => {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [searchParams, setSearchParams] = useState<SearchParam>(initialState);
@@ -59,8 +59,8 @@ const SearchModal = ({ visible, onDismiss }: SearchModalProps) => {
 
     setSearchParams((prev) => ({
       ...prev,
-      initialCity: province,
-      initialDistrict: district,
+      province,
+      district,
     }));
   }, []);
 
@@ -77,15 +77,22 @@ const SearchModal = ({ visible, onDismiss }: SearchModalProps) => {
     },
     [handleFilterChange]
   );
-
   const handleSearch = useCallback(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { initialCity, initialDistrict, ...filters } = searchParams;
+    const { province, ...rest } = searchParams;
+    const backendParams = {
+      ...rest,
+      ...(province && { city: province }),
+    };
 
-    setFilters(filters);
+    setFilters(backendParams);
+
+    navigation.navigate('Listings', {
+      title: 'Arama Sonuçları',
+      params: backendParams,
+    });
+
     onDismiss();
-  }, [searchParams, setFilters, onDismiss]);
-
+  }, [searchParams, setFilters, navigation, onDismiss]);
   const handleClearAll = useCallback(() => {
     setSearchParams(initialState);
     clearFilters();
@@ -127,6 +134,7 @@ const SearchModal = ({ visible, onDismiss }: SearchModalProps) => {
                   style={styles.searchIcon}
                 />
                 <TextInput
+                  onChangeText={(text) => handleFilterChange('search', text)}
                   style={styles.searchInput}
                   placeholder="İlanları arayın"
                   placeholderTextColor={theme.colors.onSurfaceVariant}
@@ -136,8 +144,8 @@ const SearchModal = ({ visible, onDismiss }: SearchModalProps) => {
               <LocationPicker onLocationSelect={handleLocationSelect} />
 
               <LocationFilter
-                initialCity={searchParams.initialCity}
-                initialDistrict={searchParams.initialDistrict}
+                initialCity={searchParams.province}
+                initialDistrict={searchParams.district}
                 onCityChange={handleCityChange}
                 onDistrictChange={handleDistrictChange}
               />

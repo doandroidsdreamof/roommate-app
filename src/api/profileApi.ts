@@ -1,4 +1,4 @@
-import { AxiosInstance } from 'axios';
+import { AxiosError, AxiosInstance } from 'axios';
 import { API_ENDPOINTS } from '../config/apiEndpoints';
 
 // TODO code duplication
@@ -32,8 +32,29 @@ export class ProfileApi {
   }
 
   public async getProfile() {
-    const response = await this.client.get(API_ENDPOINTS.USERS.PROFILE);
-    return response.data.data;
+    try {
+      const response = await this.client.get(API_ENDPOINTS.USERS.PROFILE);
+      return { data: response.data.data, error: null };
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 404) {
+          return { data: null, error: 'PROFILE_NOT_FOUND' };
+        }
+
+        if (
+          error.code === 'ECONNABORTED' ||
+          error.code === 'ERR_NETWORK' ||
+          !error.response
+        ) {
+          return { data: null, error: 'NETWORK_ERROR' };
+        }
+
+        if (error.response.status >= 500) {
+          return { data: null, error: 'NETWORK_ERROR' };
+        }
+      }
+      return { data: null, error: 'UNKNOWN_ERROR' };
+    }
   }
 
   public async createPreferences(data: CreatePreferencesDto) {

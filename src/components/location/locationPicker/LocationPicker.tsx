@@ -59,7 +59,7 @@ const LocationPicker = ({
 
       if (!location) {
         location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.Lowest,
+          accuracy: Location.Accuracy.Low,
           timeInterval: 5000,
           distanceInterval: 0,
         });
@@ -76,6 +76,7 @@ const LocationPicker = ({
           province: address.region || undefined,
           district: address.subregion || address.district || undefined,
         };
+
         onLocationSelect(locationData);
       } else {
         Alert.alert('Adres Bulunamadı', 'Konum bilgisi alınamadı.');

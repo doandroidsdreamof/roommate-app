@@ -1,34 +1,46 @@
 import { profileApi } from '@/api';
 import { useStore } from '@/store/index';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { AxiosError } from 'axios';
 
 export const useProfile = () => {
-  const { isAuthenticated, setProfile } = useStore();
+  const { isAuthenticated, setProfile, setProfileError } = useStore();
 
-  const {
-    data: profile,
-    isLoading,
-    error,
-    isFetched,
-  } = useQuery({
-    queryKey: ['profile'],
-    queryFn: async () => {
-      const response = await profileApi.getProfile();
-      return response;
-    },
-    enabled: isAuthenticated,
-    staleTime: 5 * 60 * 1000,
-    retry: 1,
-  });
+  const { data, isLoading, error, isFetched, refetch, isRefetching } = useQuery(
+    {
+      queryKey: ['profile'],
+      queryFn: async () => {
+        const response = await profileApi.getProfile();
 
-  useEffect(() => {
-    if (profile) {
-      void setProfile(profile);
-    } else if (error) {
-      void setProfile(null);
+        if (response.data) {
+          void setProfile(response.data);
+          setProfileError(null);
+        } else if (response.error === 'PROFILE_NOT_FOUND') {
+          void setProfile(null);
+          setProfileError('PROFILE_NOT_FOUND');
+        } else if (response.error === 'NETWORK_ERROR') {
+          setProfileError('NETWORK_ERROR');
+        }
+
+        return response;
+      },
+      enabled: isAuthenticated,
+      staleTime: 5 * 60 * 1000,
+      retry: (failureCount, error) => {
+        if (error instanceof AxiosError && error.response?.status === 404) {
+          return false;
+        }
+        return failureCount < 1;
+      },
     }
-  }, [profile, error, setProfile]);
+  );
 
-  return { profile, isLoading, error, isFetched };
+  return {
+    profile: data?.data ?? null,
+    isLoading,
+    error: data?.error ?? (error ? 'NETWORK_ERROR' : null),
+    isFetched,
+    refetch,
+    isRefetching,
+  };
 };

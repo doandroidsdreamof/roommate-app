@@ -11,6 +11,7 @@ export const createStyles = (theme: MD3Theme) =>
       bottom: 0,
       elevation: 10,
       left: 0,
+      maxHeight: '100%',
       position: 'absolute',
       right: 0,
       shadowColor: '#000',

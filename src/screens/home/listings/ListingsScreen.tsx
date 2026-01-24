@@ -22,7 +22,6 @@ type ListingsScreenRouteProp = RouteProp<HomeStackParamList, 'Listings'>;
 type NavigationProp = NativeStackNavigationProp<HomeStackParamList>;
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-const MIN_SHEET_HEIGHT = 300;
 
 const ListingsScreen = () => {
   const theme = useTheme();
@@ -33,37 +32,26 @@ const ListingsScreen = () => {
 
   const { title, params } = route.params;
 
-  const maxHeight = SCREEN_HEIGHT;
-  const sheetY = useRef(
-    new Animated.Value(maxHeight - MIN_SHEET_HEIGHT)
-  ).current;
-  const offsetY = useRef(maxHeight - MIN_SHEET_HEIGHT);
+  const INITIAL_POSITION = SCREEN_HEIGHT * 0.4;
+  const EXPANDED_POSITION = SCREEN_HEIGHT * 0.12;
+
+  const sheetY = useRef(new Animated.Value(INITIAL_POSITION)).current;
+  const currentPosition = useRef(INITIAL_POSITION);
 
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: (_, { dy }) => Math.abs(dy) > 5,
-      onPanResponderMove: (_, { dy }) => {
-        const newY = Math.max(
-          0,
-          Math.min(maxHeight - MIN_SHEET_HEIGHT, offsetY.current + dy)
-        );
-        sheetY.setValue(newY);
-      },
-      onPanResponderRelease: (_, { dy, vy }) => {
-        const newY = offsetY.current + dy;
-        const snapTo =
-          vy > 0.5
-            ? maxHeight - MIN_SHEET_HEIGHT
-            : vy < -0.5
-              ? 0
-              : newY > maxHeight / 2
-                ? maxHeight - MIN_SHEET_HEIGHT
-                : 0;
+      onMoveShouldSetPanResponder: (_, { dy }) => Math.abs(dy) > 10,
+      onPanResponderRelease: () => {
+        const targetPosition =
+          currentPosition.current === INITIAL_POSITION
+            ? EXPANDED_POSITION
+            : INITIAL_POSITION;
 
-        offsetY.current = snapTo;
+        currentPosition.current = targetPosition;
+
         Animated.spring(sheetY, {
-          toValue: snapTo,
+          toValue: targetPosition,
           useNativeDriver: false,
           bounciness: 4,
         }).start();
@@ -152,7 +140,7 @@ const ListingsScreen = () => {
     );
   }
 
-  const SHEET_HEIGHT = SCREEN_HEIGHT - headerHeight.current * 1.8;
+  const SHEET_HEIGHT = SCREEN_HEIGHT - headerHeight.current;
 
   return (
     <View style={styles.container}>
