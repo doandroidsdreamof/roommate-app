@@ -49,8 +49,6 @@ export const API_ENDPOINTS = {
   },
 
   MESSAGING: {
-    SEND: '/messages',
-    CONVERSATION: (conversationId: string) => `/messages/${conversationId}`,
-    PENDING: '/messages/pending',
+    CONVERSATIONS: '/messaging/conversations',
   },
 } as const;

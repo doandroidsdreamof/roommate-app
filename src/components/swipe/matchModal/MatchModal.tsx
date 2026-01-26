@@ -1,4 +1,4 @@
-import { FeedItem } from '@/schemas/feedSchema';
+import { MatchedProfile } from '@/screens/swipe/SwipeScreen';
 import React from 'react';
 import { View } from 'react-native';
 import { Button, Modal, Portal, Text, useTheme } from 'react-native-paper';
@@ -10,7 +10,7 @@ interface MatchModalProps {
   onDismiss: () => void;
   onSendMessage?: () => void;
   onKeepSwiping?: () => void;
-  matchedProfile: FeedItem | null;
+  matchedProfile: MatchedProfile | null;
   currentUserPhoto?: string;
 }
 
@@ -26,7 +26,7 @@ const MatchModal = ({
 
   if (!matchedProfile) return null;
 
-  const { name, photoUrl, city, district } = matchedProfile;
+  const { name, photoUrl, city, district } = matchedProfile.feedItem;
   const location = [city, district].filter(Boolean).join(' • ');
 
   return (

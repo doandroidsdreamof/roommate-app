@@ -5,7 +5,7 @@ import { ActivityIndicator, Alert, TouchableOpacity, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { createStyles } from './LocationPicker.styles';
 
-// TODO custom hook for location
+// TODO custom hook for location picker
 export interface LocationData {
   province?: string;
   district?: string;

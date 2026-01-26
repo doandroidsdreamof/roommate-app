@@ -22,7 +22,7 @@ const SearchBar = ({ onPress }: SearchBarProps) => {
             color={theme.colors.onSurfaceVariant}
           />
           <Text variant="bodyLarge" style={styles.placeholder}>
-            Where to?
+            İlanlarda ara...
           </Text>
         </View>
       </Pressable>

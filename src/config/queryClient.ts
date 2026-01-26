@@ -20,7 +20,7 @@ export const queryClient = new QueryClient({
   },
   queryCache: new QueryCache({
     onSuccess: (data: unknown, query) => {
-      log('🟢', 'Query Success', { key: query.queryKey });
+      log('🟢', 'Query Success', { key: query.queryKey, data });
     },
     onError: (error, query) => {
       log('🔴', 'Query Error', { key: query.queryKey, error: error.message });

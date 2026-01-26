@@ -18,7 +18,7 @@ export const ROUTES = [
     unfocusedIcon: 'home-outline' as const,
   },
   {
-    key: 'messages',
+    key: 'MessagesList',
     title: 'Messages',
     focusedIcon: 'message' as const,
     unfocusedIcon: 'message-outline' as const,

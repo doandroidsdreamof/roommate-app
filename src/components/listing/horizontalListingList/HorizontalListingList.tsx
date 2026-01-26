@@ -16,8 +16,6 @@ const HorizontalListingList = ({
   isLoading,
   onPostingPress,
 }: HorizontalListingListProps) => {
-
-
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -36,11 +34,7 @@ const HorizontalListingList = ({
       data={data}
       renderItem={({ item }) => (
         <View style={styles.cardContainer}>
-          <CompactListingCard
-            isBookmarked={item.isBookmarked}
-            listing={item}
-            onPress={onPostingPress}
-          />
+          <CompactListingCard listing={item} onPress={onPostingPress} />
         </View>
       )}
       keyExtractor={(item) => item.id}

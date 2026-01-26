@@ -11,6 +11,8 @@ export interface SwipeResponse {
     swipedId: string;
     action: 'pass' | 'like';
   };
+  conversationId: string;
+  recipientId: string;
   matched: boolean;
 }
 

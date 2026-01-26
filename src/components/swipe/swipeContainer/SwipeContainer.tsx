@@ -18,7 +18,11 @@ const OverlayLabelLeft = () => <SwipeOverlay type="LIKE" />;
 const OverlayLabelRight = () => <SwipeOverlay type="PASS" />;
 
 interface SwipeContainerProps {
-  onMatch: (profile: FeedItem) => void;
+  onMatch: (
+    profile: FeedItem,
+    conversationId: string,
+    recipientId: string
+  ) => void;
 }
 
 const SwipeContainer = ({ onMatch }: SwipeContainerProps) => {

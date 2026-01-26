@@ -7,7 +7,11 @@ export type SwipeDirection = 'pass' | 'like';
 
 export const useSwipeMutations = (
   feed: FeedItem[],
-  onMatch?: (profile: FeedItem) => void
+  onMatch?: (
+    profile: FeedItem,
+    conversationId: string,
+    recipientId: string
+  ) => void
 ) => {
   const swipeMutation = useMutation({
     mutationFn: async ({
@@ -32,7 +36,8 @@ export const useSwipeMutations = (
         );
 
         if (matchedProfile) {
-          onMatch?.(matchedProfile);
+          console.log('🚀 ~ matchedProfil=================>==e:', data);
+          onMatch?.(matchedProfile, data?.conversationId, data.recipientId);
         }
       }
     },

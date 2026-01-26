@@ -53,7 +53,7 @@ const TabBar = ({ state, navigation }: BottomTabBarProps) => {
         {state.routes.map((route, i) => {
           const isFocused = index === i;
           const routeConfig = ROUTES[i];
-          const isMessageTab = route.name === 'messages';
+          const isMessageTab = route.name === 'MessagesList';
 
           return (
             <View key={route.key} style={styles.tabWrapper}>

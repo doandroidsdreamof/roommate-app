@@ -45,7 +45,7 @@ const RootNavigator = () => {
       <ErrorScreen
         icon="wifi-off"
         title="Bağlantı Hatası"
-        message="İnternet bağlantınızı kontrol edin"
+        message="Bir sorun yaşanıyor"
         actionLabel="Tekrar Dene"
         onAction={() => refetch()}
         isLoading={isRefetching}
