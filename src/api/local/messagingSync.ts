@@ -1,6 +1,6 @@
 import { addPendingMessages } from '@/api/local/messageLocalApi';
 import socketService from '@/api/socket/socketService';
-
+// TODO refactor & decouple this mess
 interface PendingMessagesPayload {
   from: string;
   message: { message: string; createdAt: string; isOwn: boolean }[]; // TODO response structure

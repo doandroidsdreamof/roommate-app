@@ -50,6 +50,13 @@ export const createProfileSlice: StateCreator<ProfileSlice> = (set, get) => ({
   setProfile: async (profile) => {
     try {
       if (profile) {
+        /* 
+        TODO reduce them
+
+        Zustand (in-memory)
+        expo-sqlite/kv-store (persistence)
+        React Query cache (useProfile hook)
+        */
         await Storage.setItemAsync(PROFILE_CACHE_KEY, JSON.stringify(profile));
       } else {
         await Storage.removeItemAsync(PROFILE_CACHE_KEY);

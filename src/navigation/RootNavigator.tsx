@@ -75,7 +75,7 @@ const RootNavigator = () => {
       {!isAuthenticated ? (
         <AuthNavigator />
       ) : !profile ? (
-        <ProfileSetupNavigator />
+        <ProfileSetupNavigator /> // TODO glitch bug check online status too
       ) : (
         <MainNavigator />
       )}

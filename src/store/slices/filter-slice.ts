@@ -12,7 +12,8 @@ export interface FilterSlice {
 
 export const createFilterSlice: StateCreator<FilterSlice> = (set, get) => ({
   filters: {},
-
+  // TODO potential memory leak
+  // Clear filters on unmount
   setFilters: (newFilters) =>
     set((state) => ({
       filters: { ...state.filters, ...newFilters },

@@ -27,8 +27,7 @@ export default function App() {
     return <Loading />;
   }
 
-  
-
+  // TODO ErrorBoundary
   return (
     <QueryClientProvider client={queryClient}>
       <PaperProvider theme={theme}>

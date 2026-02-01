@@ -47,7 +47,7 @@ export const createAuthSlice: StateCreator<AuthSlice> = (set) => ({
 
   checkAuth: async () => {
     try {
-      const token = await secureStorage.getAccessToken();
+      const token = await secureStorage.getAccessToken(); // TODO instead verify => /auth/verify
 
       if (!token) {
         set({ isAuthenticated: false, isLoading: false });

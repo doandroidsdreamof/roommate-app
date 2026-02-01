@@ -13,7 +13,7 @@ export const useProfile = () => {
         const response = await profileApi.getProfile();
 
         if (response.data) {
-          void setProfile(response.data);
+          void setProfile(response.data); //* zustand
           setProfileError(null);
         } else if (response.error === 'PROFILE_NOT_FOUND') {
           void setProfile(null);
@@ -36,7 +36,7 @@ export const useProfile = () => {
   );
 
   return {
-    profile: data?.data ?? null,
+    profile: data?.data ?? null, //* React Query
     isLoading,
     error: data?.error ?? (error ? 'NETWORK_ERROR' : null),
     isFetched,

@@ -1,6 +1,7 @@
 import { secureStorage } from '@/storage/storage';
 import { io, Socket } from 'socket.io-client';
 
+// TODO  listener cleanup
 class SocketService {
   private socket: Socket | null = null;
   private reconnectAttempts = 0;

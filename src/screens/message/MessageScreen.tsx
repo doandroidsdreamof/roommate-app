@@ -33,6 +33,8 @@ type MessageScreenRouteProp = RouteProp<MessagesStackParamList, 'Message'>;
 type MessageScreenNavigationProp =
   NativeStackNavigationProp<MessagesStackParamList>;
 
+// TODO refactor and decouple this mess
+
 const MessageScreen = () => {
   // const { profile: user } = useProfile();
   const route = useRoute<MessageScreenRouteProp>();
@@ -85,7 +87,7 @@ const MessageScreen = () => {
         };
 
         await addMessage(conversationId, messageContent);
-
+        // TODO create factory
         const newMessage: MessageBubbleProps = {
           id: Date.now().toString(),
           content: payload.message,
