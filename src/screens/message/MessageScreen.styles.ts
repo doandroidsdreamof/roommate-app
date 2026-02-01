@@ -25,42 +25,10 @@ export const createStyles = (theme: MD3Theme) =>
       gap: spacing.sm,
       padding: spacing.md,
     },
-    messageBubble: {
-      borderRadius: 16,
-      padding: spacing.md,
-    },
-    messageContainer: {
-      marginBottom: spacing.sm,
-      maxWidth: '80%',
-    },
-    messageFooter: {
-      alignItems: 'center',
-      flexDirection: 'row',
-      gap: spacing.xs,
-      justifyContent: 'flex-end',
-      marginTop: spacing.xs,
-    },
-    messageText: {
-      color: theme.colors.onSurface,
-      fontSize: 16,
-    },
+
     messagesList: {
       gap: spacing.sm,
       padding: spacing.md,
-    },
-    otherBubble: {
-      backgroundColor: theme.colors.surfaceVariant,
-      borderBottomLeftRadius: 4,
-    },
-    otherMessage: {
-      alignSelf: 'flex-start',
-    },
-    ownBubble: {
-      backgroundColor: theme.colors.primaryContainer,
-      borderBottomRightRadius: 4,
-    },
-    ownMessage: {
-      alignSelf: 'flex-end',
     },
     sendButton: {
       alignItems: 'center',

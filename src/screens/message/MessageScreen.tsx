@@ -1,5 +1,13 @@
+import {
+  addMessage,
+  getOrCreateConversation,
+  MessageContent,
+} from '@/api/local/messageLocalApi';
 import socketService from '@/api/socket/socketService';
-import { useProfile } from '@/hooks/useProfile';
+import MessageBubble, {
+  MessageBubbleProps,
+} from '@/components/message/messageBubble/MessageBubble';
+import { MessagesStackParamList } from '@/components/swipe/matchModal/MessagesStackNavigator';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -8,124 +16,123 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import { Appbar, useTheme } from 'react-native-paper';
 import { createStyles } from './MessageScreen.styles';
-import { MessagesStackParamList } from '@/components/swipe/matchModal/MessagesStackNavigator';
 
+interface LiveMessagePayload {
+  from: string;
+  message: string;
+  conversationId: string;
+  timestamp: string;
+}
 type MessageScreenRouteProp = RouteProp<MessagesStackParamList, 'Message'>;
 type MessageScreenNavigationProp =
   NativeStackNavigationProp<MessagesStackParamList>;
 
-interface Message {
-  id: string;
-  content: string;
-  timestamp: string;
-  isOwn: boolean;
-}
-
 const MessageScreen = () => {
-  const { profile: user } = useProfile();
+  // const { profile: user } = useProfile();
   const route = useRoute<MessageScreenRouteProp>();
   const navigation = useNavigation<MessageScreenNavigationProp>();
   const theme = useTheme();
   const styles = createStyles(theme);
 
   const [inputText, setInputText] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<MessageBubbleProps[]>([]);
 
-  const isSetup = useRef(false);
   const flatListRef = useRef<FlatList>(null);
 
-  const { recipientId, recipientName } = route.params;
+  const { recipientId, recipientName, conversationId } = route.params;
 
   useEffect(() => {
-    if (!user?.id || isSetup.current) return;
+    console.log('🚀 ~ conversationId:', conversationId);
+    if (!conversationId) return;
 
-    isSetup.current = true;
+    // Load messages from local DB
+    const loadMessages = async () => {
+      const conversation = await getOrCreateConversation(conversationId);
 
-    const handleMessage = (data: unknown) => {
-      const payload = data as { message: string };
-      const newMessage: Message = {
-        id: Date.now().toString(),
-        content: payload.message,
-        timestamp: new Date().toISOString(),
-        isOwn: false,
-      };
-      setMessages((prev) => [...prev, newMessage]);
+      const existingMessages: MessageBubbleProps[] = conversation.map(
+        (msg, idx) => ({
+          id: `${idx}-${msg.createdAt}`,
+          content: msg.message,
+          timestamp: msg.createdAt,
+          isOwn: false,
+        })
+      );
+
+      setMessages(existingMessages);
     };
 
-    socketService
-      .connect()
-      .then(() => {
-        socketService.onMessage(handleMessage);
-      })
-      .catch(console.error);
+    void loadMessages();
+
+    // Handle ONLY live messages for THIS conversation
+    const handleLiveMessage = async (payload: LiveMessagePayload) => {
+      console.log('📨 Received payload:', payload);
+
+      // Only handle if it's for this conversation
+
+      if (typeof payload.message === 'string') {
+        console.log('📨 New live message for this conversation');
+
+        const messageContent: MessageContent = {
+          message: payload.message,
+          createdAt: payload.timestamp,
+          isOwn: false,
+        };
+
+        await addMessage(conversationId, messageContent);
+
+        const newMessage: MessageBubbleProps = {
+          id: Date.now().toString(),
+          content: payload.message,
+          timestamp: payload.timestamp,
+          isOwn: false,
+        };
+
+        setMessages((prev) => [...prev, newMessage]);
+      }
+    };
+
+    socketService.onMessage(handleLiveMessage);
 
     return () => {
-      socketService.offMessage(handleMessage);
-      socketService.disconnect();
-      isSetup.current = false;
+      console.log('closed');
+      socketService.offMessage(handleLiveMessage);
     };
-  }, [user?.id]);
+  }, [conversationId]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!inputText.trim()) return;
 
-    const newMessage: Message = {
+    const newMessage: MessageBubbleProps = {
       id: Date.now().toString(),
       content: inputText.trim(),
       timestamp: new Date().toISOString(),
       isOwn: true,
     };
 
+    const messageContent: MessageContent = {
+      message: inputText.trim(),
+      createdAt: new Date().toISOString(),
+      isOwn: true,
+    };
+
     setMessages((prev) => [...prev, newMessage]);
+    await addMessage(conversationId, messageContent);
+
     socketService.sendMessage(recipientId, inputText.trim());
     setInputText('');
   };
 
-  const renderMessage = ({ item }: { item: Message }) => (
-    <View
-      style={[
-        styles.messageContainer,
-        item.isOwn ? styles.ownMessage : styles.otherMessage,
-      ]}
-    >
-      <View
-        style={[
-          styles.messageBubble,
-          item.isOwn ? styles.ownBubble : styles.otherBubble,
-        ]}
-      >
-        <Text style={styles.messageText}>{item.content}</Text>
-        <View style={styles.messageFooter}>
-          <Text style={styles.timestamp}>
-            {new Date(item.timestamp).toLocaleTimeString('tr-TR', {
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
-          </Text>
-          {item.isOwn && (
-            <MaterialCommunityIcons
-              name="check-all"
-              size={16}
-              color={theme.colors.primary}
-            />
-          )}
-        </View>
-      </View>
-    </View>
-  );
-
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={90}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
       <Appbar.Header>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
@@ -134,8 +141,8 @@ const MessageScreen = () => {
 
       <FlatList
         ref={flatListRef}
-        data={messages}
-        renderItem={renderMessage}
+        data={messages.filter(Boolean)}
+        renderItem={({ item }) => <MessageBubble {...item} />}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.messagesList}
         onContentSizeChange={() => flatListRef.current?.scrollToEnd()}

@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { secureStorage } from '@/storage/storage';
 import { io, Socket } from 'socket.io-client';
 
 class SocketService {
@@ -12,7 +12,7 @@ class SocketService {
       return;
     }
 
-    const token = await AsyncStorage.getItem('accessToken');
+    const token = await secureStorage.getAccessToken();
 
     if (!token) {
       throw new Error('No auth token found');
@@ -84,7 +84,7 @@ class SocketService {
 
   disconnect() {
     if (this.socket) {
-      console.log('Disconnecting socket...');
+      console.log('Disconnecting socket...', this.socket.id);
       this.socket.removeAllListeners();
       this.socket.disconnect();
       this.socket = null;
@@ -107,7 +107,9 @@ class SocketService {
     });
   }
 
-  onMessage(callback: (data: unknown) => void) {
+  onMessage<T = unknown>(callback: (data: T) => void | Promise<void>) {
+    console.log('get message');
+
     if (!this.socket) {
       console.warn('⚠️ Cannot add message listener: socket not initialized');
       return;
@@ -115,7 +117,12 @@ class SocketService {
     this.socket.on('message', callback);
   }
 
-  onMessageSent(callback: (data: unknown) => void) {
+  offMessage<T = unknown>(callback: (data: T) => void | Promise<void>) {
+    if (!this.socket) return;
+    this.socket.off('message', callback);
+  }
+
+  onMessageSent<T = unknown>(callback: (data: T) => void | Promise<void>) {
     if (!this.socket) {
       console.warn(
         '⚠️ Cannot add message_sent listener: socket not initialized'
@@ -125,16 +132,24 @@ class SocketService {
     this.socket.on('message_sent', callback);
   }
 
-  offMessage(callback: (data: unknown) => void) {
-    if (!this.socket) return;
-    this.socket.off('message', callback);
-  }
-
-  offMessageSent(callback: (data: unknown) => void) {
+  offMessageSent<T = unknown>(callback: (data: T) => void | Promise<void>) {
     if (!this.socket) return;
     this.socket.off('message_sent', callback);
   }
 
+  onPendingMessages<T = unknown>(callback: (data: T) => void | Promise<void>) {
+    if (!this.socket) {
+      console.warn(
+        '⚠️ Cannot add pending messages listener: socket not initialized'
+      );
+      return;
+    }
+    this.socket.on('pending_messages', callback);
+  }
+  offPendingMessages<T = unknown>(callback: (data: T) => void | Promise<void>) {
+    if (!this.socket) return;
+    this.socket.off('pending_messages', callback);
+  }
   isConnected(): boolean {
     return this.socket?.connected ?? false;
   }
@@ -152,6 +167,7 @@ class SocketService {
   }
 
   cleanup() {
+    console.log('socker cleanup');
     this.disconnect();
   }
 }

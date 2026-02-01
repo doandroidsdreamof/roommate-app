@@ -4,19 +4,6 @@ import { MD3Theme } from 'react-native-paper';
 
 export const createStyles = (theme: MD3Theme) =>
   StyleSheet.create({
-    activeCircle: {
-      alignItems: 'center',
-      borderRadius: 30,
-      height: 60,
-      justifyContent: 'center',
-      position: 'absolute',
-      top: -20,
-      width: 60,
-    },
-    background: {
-      ...StyleSheet.absoluteFillObject,
-      backgroundColor: theme.colors.surface,
-    },
     container: {
       backgroundColor: theme.colors.surface,
       bottom: 0,

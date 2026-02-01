@@ -7,7 +7,7 @@ import React from 'react';
 export type MessagesStackParamList = {
   MessagesList: undefined;
   Message: {
-    conversationId?: string;
+    conversationId: string;
     recipientId: string;
     recipientName: string;
     contextType?: MESSAGE_CONTEXT_TYPE;

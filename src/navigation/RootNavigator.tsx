@@ -1,3 +1,4 @@
+import { messagingSync, resetMessagingSync } from '@/api/local/messagingSync';
 import ErrorScreen from '@/components/errors/ErrorScreen';
 import { useProfile } from '@/hooks/useProfile';
 import { useThemeMode } from '@/hooks/useThemeMode';
@@ -10,6 +11,7 @@ import { combinedDarkTheme, combinedLightTheme } from '../theme/theme';
 import AuthNavigator from './AuthNavigator';
 import MainNavigator from './MainNavigator';
 import ProfileSetupNavigator from './ProfileSetupNavigator';
+import { clearAllMessages } from '@/api/local/messageLocalApi';
 
 const RootNavigator = () => {
   const {
@@ -18,6 +20,7 @@ const RootNavigator = () => {
     checkAuth,
     profile,
   } = useStore();
+  const { profile: user } = useProfile();
 
   const { isDarkMode } = useThemeMode();
   const navigationTheme = isDarkMode ? combinedDarkTheme : combinedLightTheme;
@@ -28,6 +31,20 @@ const RootNavigator = () => {
   useEffect(() => {
     void checkAuth();
   }, [checkAuth]);
+
+  useEffect(() => {
+    // void clearAllMessages();
+    if (user?.id) {
+      console.log('🚀 ~ user?.id:', user?.id);
+      messagingSync(user.id).catch(console.error);
+    }
+
+    return () => {
+      if (!user?.id) {
+        resetMessagingSync();
+      }
+    };
+  }, [user?.id]);
 
   const isInitializing =
     isAuthLoading || (isAuthenticated && !isProfileFetched);

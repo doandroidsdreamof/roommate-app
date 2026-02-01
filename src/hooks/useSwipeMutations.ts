@@ -36,7 +36,6 @@ export const useSwipeMutations = (
         );
 
         if (matchedProfile) {
-          console.log('🚀 ~ matchedProfil=================>==e:', data);
           onMatch?.(matchedProfile, data?.conversationId, data.recipientId);
         }
       }

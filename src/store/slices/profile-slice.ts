@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import Storage from 'expo-sqlite/kv-store';
 import { StateCreator } from 'zustand';
 
 const PROFILE_CACHE_KEY = '@user_profile';
@@ -50,9 +50,9 @@ export const createProfileSlice: StateCreator<ProfileSlice> = (set, get) => ({
   setProfile: async (profile) => {
     try {
       if (profile) {
-        await AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(profile));
+        await Storage.setItemAsync(PROFILE_CACHE_KEY, JSON.stringify(profile));
       } else {
-        await AsyncStorage.removeItem(PROFILE_CACHE_KEY);
+        await Storage.removeItemAsync(PROFILE_CACHE_KEY);
       }
       set({
         profile,
@@ -77,7 +77,7 @@ export const createProfileSlice: StateCreator<ProfileSlice> = (set, get) => ({
   loadProfileFromCache: async () => {
     try {
       set({ isProfileLoading: true, profileError: null });
-      const cached = await AsyncStorage.getItem(PROFILE_CACHE_KEY);
+      const cached = await Storage.getItem(PROFILE_CACHE_KEY);
 
       if (cached) {
         const profile = JSON.parse(cached);
@@ -97,7 +97,7 @@ export const createProfileSlice: StateCreator<ProfileSlice> = (set, get) => ({
 
   clearProfile: async () => {
     try {
-      await AsyncStorage.removeItem(PROFILE_CACHE_KEY);
+      await Storage.removeItem(PROFILE_CACHE_KEY);
       set({
         profile: null,
         hasProfile: false,

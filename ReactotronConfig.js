@@ -1,7 +1,6 @@
 import Reactotron from 'reactotron-react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-Reactotron.setAsyncStorageHandler(AsyncStorage)
+Reactotron
   .configure({
     name: 'Roommate App',
   })
@@ -15,4 +14,4 @@ Reactotron.setAsyncStorageHandler(AsyncStorage)
   })
   .connect();
 
-console.log('Reactotron Configured');
+console.log('Reactotron Configured with SQLite');

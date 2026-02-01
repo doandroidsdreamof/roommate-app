@@ -12,6 +12,7 @@ import { styles } from './HomeScreen.styles';
 import { HomeStackParamList } from '@/navigation/HomeStackNavigator';
 import { ListsQueryParams } from '@/api';
 import { HOME_SECTIONS } from './homeSections';
+import { Debug } from '@/debug/Debug';
 
 type NavigationProp = NativeStackNavigationProp<HomeStackParamList>;
 
@@ -40,6 +41,7 @@ const HomeScreen = () => {
       <SearchBar onPress={() => setIsSearchModalVisible(true)} />
 
       <ScrollView showsVerticalScrollIndicator={false}>
+        {__DEV__ && <Debug />}
         {HOME_SECTIONS.map((section) => {
           const sectionData = sectionsData[section.dataKey];
           const title = section.getTitleFn(profile ?? {});

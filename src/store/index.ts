@@ -1,17 +1,12 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createAuthSlice, AuthSlice } from './slices/auth-slice';
 import { createThemeSlice, ThemeSlice } from './slices/theme-slice';
 import { createProfileSlice, ProfileSlice } from './slices/profile-slice';
 import { createFilterSlice, FilterSlice } from './slices/filter-slice';
-import { createMessagingSlice, MessagingSLice } from './slices/messaging-slice';
+import Storage from 'expo-sqlite/kv-store';
 
-export type RootStore = AuthSlice &
-  ThemeSlice &
-  ProfileSlice &
-  FilterSlice &
-  MessagingSLice;
+export type RootStore = AuthSlice & ThemeSlice & ProfileSlice & FilterSlice;
 
 export const useStore = create<RootStore>()(
   persist(
@@ -20,11 +15,14 @@ export const useStore = create<RootStore>()(
       ...createThemeSlice(...a),
       ...createProfileSlice(...a),
       ...createFilterSlice(...a),
-      ...createMessagingSlice(...a),
     }),
     {
       name: 'roommate-app-storage',
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createJSONStorage(() => ({
+        getItem: (name) => Storage.getItemSync(name),
+        setItem: (name, value) => Storage.setItem(name, value),
+        removeItem: (name) => Storage.removeItem(name),
+      })),
       partialize: (state) => ({
         themeMode: state.themeMode,
       }),

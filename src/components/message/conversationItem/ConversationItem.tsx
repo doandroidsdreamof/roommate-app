@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { Conversation } from '@/api';
 import { createStyles } from './ConversationItem.styles';
+import { getOrCreateConversation } from '@/api/local/messageLocalApi';
 
 interface ConversationItemProps {
   conversation: Conversation;
@@ -15,6 +16,17 @@ const ConversationItem = ({ conversation, onPress }: ConversationItemProps) => {
   const [isPressed, setIsPressed] = useState(false);
 
   const avatarLetter = conversation.otherUserName.charAt(0).toUpperCase();
+
+  useEffect(() => {
+    async function createLocalChannel() {
+      try {
+        await getOrCreateConversation(conversation.id);
+      } catch (error) {
+        console.error('[ConversationItem Error]', error);
+      }
+    }
+    void createLocalChannel();
+  }, []);
 
   return (
     <Pressable

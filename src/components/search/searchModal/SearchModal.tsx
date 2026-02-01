@@ -118,14 +118,12 @@ const SearchModal = ({ visible, onDismiss, navigation }: SearchModalProps) => {
               hitSlop={{ top: 24, bottom: 24, left: 24, right: 24 }}
             />
           </View>
-
           <ScrollView
             style={styles.scrollView}
             showsVerticalScrollIndicator={false}
           >
             <View style={styles.content}>
               <Text style={styles.title}>Nerede?</Text>
-
               <View style={styles.searchInputContainer}>
                 <MaterialCommunityIcons
                   name="magnify"
@@ -140,9 +138,7 @@ const SearchModal = ({ visible, onDismiss, navigation }: SearchModalProps) => {
                   placeholderTextColor={theme.colors.onSurfaceVariant}
                 />
               </View>
-
               <LocationPicker onLocationSelect={handleLocationSelect} />
-
               <LocationFilter
                 initialCity={searchParams.province}
                 initialDistrict={searchParams.district}
@@ -162,7 +158,6 @@ const SearchModal = ({ visible, onDismiss, navigation }: SearchModalProps) => {
               )}
             </View>
           </ScrollView>
-
           <View style={styles.bottomBar}>
             <TouchableOpacity onPress={handleClearAll}>
               <Text style={styles.clearButton}>Filtreleri Temizle</Text>
