@@ -2,7 +2,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React from 'react';
 import { View } from 'react-native';
 import { Button, Text, useTheme } from 'react-native-paper';
-import { styles } from './ErrorScreen.styles';
+import { styles } from './Error.styles';
 
 type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
 

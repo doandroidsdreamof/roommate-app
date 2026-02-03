@@ -2,6 +2,7 @@ import { swipeApi } from '@/api';
 import { SwipeResponse } from '@/api/swipeApi';
 import { FeedItem } from '@/schemas/feedSchema';
 import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
 export type SwipeDirection = 'pass' | 'like';
 
@@ -53,10 +54,20 @@ export const useSwipeMutations = (
     swipeMutation.mutate({ swipedId, direction: 'pass' });
   };
 
+  const swipeLimitError =
+    swipeMutation.error instanceof AxiosError &&
+    swipeMutation.error.response?.status === 429
+      ? {
+          message: swipeMutation.error.response.data.message,
+          resetAt: swipeMutation.error.response.data.details?.resetAt,
+        }
+      : null;
+
   return {
     handleSwipeLike,
     handleSwipePass,
     isLoading: swipeMutation.isPending,
     error: swipeMutation.error,
+    swipeLimitError,
   };
 };

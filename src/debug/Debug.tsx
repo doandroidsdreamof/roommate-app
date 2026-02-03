@@ -1,14 +1,17 @@
-import { styles } from '@/components/errors/ErrorScreen.styles';
 import { useFocusEffect } from '@react-navigation/native';
 import { db } from 'db/index';
 import { messages } from 'db/schema';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
+import { createStyles } from './Debug.styles';
 
 export function Debug() {
+  const theme = useTheme();
+  const styles = useMemo(() => createStyles(theme), [theme]);
   const [data, setData] = useState([]);
   const [totalMessagesCount, setTotalMessagesCount] = useState(0);
+
   useFocusEffect(
     useCallback(() => {
       try {
@@ -26,13 +29,11 @@ export function Debug() {
   );
 
   return (
-    <View
-      style={[styles.container, { padding: 10, backgroundColor: '#f0f0f0' }]}
-    >
-      <Text variant="bodyMedium" style={{ fontWeight: 'bold' }}>
+    <View style={styles.container}>
+      <Text variant="bodyMedium" style={styles.title}>
         Total Messages: {totalMessagesCount}
       </Text>
-      <Text variant="labelLarge" style={{ color: 'red' }}>
+      <Text variant="labelLarge" style={styles.label}>
         DB Debug (Auto-refreshing):
       </Text>
       <Text>{JSON.stringify(data, null, 2)}</Text>

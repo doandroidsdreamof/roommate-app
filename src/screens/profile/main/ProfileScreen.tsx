@@ -1,6 +1,5 @@
 import MenuItem from '@/components/menu/MenuItem';
 import Avatar from '@/components/primitives/avatar/Avatar';
-import Loading from '@/components/primitives/loading/Loading';
 import { useThemeMode } from '@/hooks/useThemeMode';
 import { useStore } from '@/store/index';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -15,11 +14,7 @@ const ProfileScreen = () => {
   const { logout } = useStore();
   const { isDarkMode, toggleDarkMode } = useThemeMode();
   const profile = useStore((state) => state.profile);
-  const isProfileLoading = useStore((state) => state.isProfileLoading);
 
-  if (isProfileLoading) {
-    return <Loading size="large" />;
-  }
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>

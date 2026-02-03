@@ -13,6 +13,7 @@ import { IconButton, useTheme } from 'react-native-paper';
 import { Swiper, type SwiperCardRefType } from 'rn-swiper-list';
 import SwipeCard from '../swipeCard/SwipeCard';
 import { createStyles } from './SwipeContainer.styles';
+import SwipeLimitBanner from '../swipeLimitBanner/SwipeLimitBanner';
 
 const OverlayLabelLeft = () => <SwipeOverlay type="LIKE" />;
 const OverlayLabelRight = () => <SwipeOverlay type="PASS" />;
@@ -30,16 +31,29 @@ const SwipeContainer = ({ onMatch }: SwipeContainerProps) => {
   const styles = createStyles(theme);
   const swiperRef = useRef<SwiperCardRefType | null>(null);
 
-  const { feed, isLoading, isFetching, currentIndex, handleIndexChange } =
-    useSwipeFeed();
+  const {
+    feed,
+    isLoading,
+    isFetching,
+    currentIndex,
+    swipeLimitError: feedError,
+    handleIndexChange,
+  } = useSwipeFeed();
 
-  const { handleSwipeLike, handleSwipePass } = useSwipeMutations(feed, onMatch);
+  const {
+    handleSwipeLike,
+    handleSwipePass,
+    swipeLimitError: mutationError,
+  } = useSwipeMutations(feed, onMatch);
 
   const { handleSwipeRight, handleSwipeLeft } = useSwipeHandlers(
     feed,
     handleSwipeLike,
     handleSwipePass
   );
+
+  const swipeLimitError = feedError || mutationError;
+  console.log('🚀 ~ swipeLimitError:', swipeLimitError);
 
   const renderCard = useCallback((item: FeedItem) => {
     return <SwipeCard profile={item} />;
@@ -51,6 +65,14 @@ const SwipeContainer = ({ onMatch }: SwipeContainerProps) => {
 
   if (feed.length === 0 && !isFetching) {
     return <ScreenText message="No more profiles to show" />;
+  }
+
+  if (swipeLimitError) {
+    return (
+      <View style={styles.container}>
+        <SwipeLimitBanner error={swipeLimitError} />
+      </View>
+    );
   }
 
   return (
@@ -70,7 +92,6 @@ const SwipeContainer = ({ onMatch }: SwipeContainerProps) => {
           OverlayLabelRight={OverlayLabelRight}
           onIndexChange={handleIndexChange}
         />
-        {isFetching && <Loading size="small" />}
       </View>
 
       <View style={styles.buttonContainer}>
