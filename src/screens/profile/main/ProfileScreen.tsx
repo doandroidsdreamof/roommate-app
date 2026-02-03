@@ -1,20 +1,29 @@
 import MenuItem from '@/components/menu/MenuItem';
 import Avatar from '@/components/primitives/avatar/Avatar';
 import { useThemeMode } from '@/hooks/useThemeMode';
+import { ProfileStackParamList } from '@/navigation/ProfileStackNavigator';
 import { useStore } from '@/store/index';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useMemo } from 'react';
 import { ScrollView, View } from 'react-native';
 import { Card, Divider, Switch, Text, useTheme } from 'react-native-paper';
 import { createStyles } from './ProfileScreen.styles';
 
+type NavigationProp = NativeStackNavigationProp<ProfileStackParamList>;
+
 const ProfileScreen = () => {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const navigation = useNavigation<NavigationProp>();
   const { logout } = useStore();
   const { isDarkMode, toggleDarkMode } = useThemeMode();
   const profile = useStore((state) => state.profile);
 
+  const handleBookmarks = () => {
+    navigation.navigate('Bookmarks');
+  };
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -64,6 +73,12 @@ const ProfileScreen = () => {
             icon="account-edit"
             title="Profili Düzenle"
             onPress={() => {}}
+          />
+          <Divider />
+          <MenuItem
+            icon="bookmark-outline"
+            title="Kayıtlı İlanlar"
+            onPress={handleBookmarks}
           />
           <Divider />
           <MenuItem

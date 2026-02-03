@@ -6,7 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 export type HomeStackParamList = {
   HomeMain: undefined;
-  PostingDetail: { postingId: string };
+  HomePostingDetail: { postingId: string };
   Listings: {
     title: string;
     params: Omit<ListsQueryParams, 'cursor'>;
@@ -19,7 +19,7 @@ const HomeStackNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="HomeMain" component={HomeScreen} />
-      <Stack.Screen name="PostingDetail" component={PostingDetailScreen} />
+      <Stack.Screen name="HomePostingDetail" component={PostingDetailScreen} />
       <Stack.Screen name="Listings" component={ListingsScreen} />
     </Stack.Navigator>
   );

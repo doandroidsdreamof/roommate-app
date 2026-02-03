@@ -5,6 +5,7 @@ import { Checkbox, Chip } from 'react-native-paper';
 import DatePicker from '../datePicker/DatePicker';
 import RangeSlider from '../rangeSlider/RangeSlider';
 import Stepper from '../stepper/Stepper';
+import { GENDER_OPTIONS } from '@/constants/formConstants';
 
 interface FilterComponentProps {
   filterValues: Partial<ListsQueryParams>;
@@ -21,12 +22,6 @@ interface FilterConfig {
   renderComponent: (props: FilterComponentProps) => React.ReactElement;
 }
 
-// Options
-export const GENDER_OPTIONS = [
-  { value: 'female_only', label: 'Sadece Kadın' },
-  { value: 'male_only', label: 'Sadece Erkek' },
-  { value: 'mixed', label: 'Karışık' },
-] as const;
 
 export const AMENITY_OPTIONS = [
   { field: 'hasParking', label: 'Otopark' },
@@ -39,7 +34,6 @@ export const AMENITY_OPTIONS = [
   { field: 'isFurnished', label: 'Ev Mobilyalı mı' },
 ] as const;
 
-// Field arrays
 export const RENT_FIELDS = ['minRent', 'maxRent'] as const;
 export const ROOM_FIELDS = ['minRooms', 'maxRooms'] as const;
 export const BATHROOM_FIELDS = ['bathroomCount'] as const;
@@ -49,7 +43,6 @@ export const METER_SQUARE_FIELDS = [
 ] as const;
 export const AMENITY_FIELDS = AMENITY_OPTIONS.map((o) => o.field);
 
-// Types
 export type AmenityField = (typeof AMENITY_OPTIONS)[number]['field'];
 export type MeterSquareField = (typeof METER_SQUARE_FIELDS)[number];
 export type BathroomField = (typeof BATHROOM_FIELDS)[number];

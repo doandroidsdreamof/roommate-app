@@ -7,7 +7,7 @@ import socketService from '@/api/socket/socketService';
 import MessageBubble, {
   MessageBubbleProps,
 } from '@/components/message/messageBubble/MessageBubble';
-import { MessagesStackParamList } from '@/components/swipe/matchModal/MessagesStackNavigator';
+import { MessagesStackParamList } from '@/navigation/MessagesStackNavigator';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';

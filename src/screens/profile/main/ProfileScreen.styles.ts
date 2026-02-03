@@ -1,6 +1,6 @@
 import { spacing } from '@/theme/theme';
-import { MD3Theme } from 'react-native-paper';
 import { StyleSheet } from 'react-native';
+import { MD3Theme } from 'react-native-paper';
 
 export const createStyles = (theme: MD3Theme) =>
   StyleSheet.create({
@@ -10,6 +10,8 @@ export const createStyles = (theme: MD3Theme) =>
     container: {
       backgroundColor: theme.colors.background,
       flex: 1,
+      paddingBottom: spacing.xl,
+      paddingHorizontal: spacing.lg,
     },
     darkModeItem: {
       alignItems: 'center',

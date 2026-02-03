@@ -9,6 +9,8 @@ import { createStyles } from './LocationPicker.styles';
 export interface LocationData {
   province?: string;
   district?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 interface LocationPickerProps {
@@ -75,6 +77,8 @@ const LocationPicker = ({
         const locationData: LocationData = {
           province: address.region || undefined,
           district: address.subregion || address.district || undefined,
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
         };
 
         onLocationSelect(locationData);

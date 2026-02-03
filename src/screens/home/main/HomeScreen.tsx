@@ -24,7 +24,7 @@ const HomeScreen = () => {
 
   const handlePostingPress = useCallback(
     (postingId: string) => {
-      navigation.navigate('PostingDetail', { postingId });
+      navigation.navigate('HomePostingDetail', { postingId });
     },
     [navigation]
   );
@@ -41,7 +41,7 @@ const HomeScreen = () => {
       <SearchBar onPress={() => setIsSearchModalVisible(true)} />
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {__DEV__ && <Debug />}
+        {/* {__DEV__ && <Debug />} */}
         {HOME_SECTIONS.map((section) => {
           const sectionData = sectionsData[section.dataKey];
           const title = section.getTitleFn(profile ?? {});

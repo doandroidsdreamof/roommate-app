@@ -39,7 +39,6 @@ export const useSwipeFeed = () => {
       setCurrentIndex(index);
 
       if (index >= feed.length - REFETCH_THRESHOLD && feed.length > 0) {
-        console.log('🚀 ~ index:', index);
         void refetch();
       }
     },

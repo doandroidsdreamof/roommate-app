@@ -27,8 +27,8 @@ const MainNavigator = () => {
         lazy: false,
       }}
     >
-      {ROUTES.map((route, index) => {
-        const config = SCREEN_CONFIG[index as keyof typeof SCREEN_CONFIG];
+      {ROUTES.map((route) => {
+        const config = SCREEN_CONFIG[route.key as keyof typeof SCREEN_CONFIG];
 
         return (
           <Tab.Screen

@@ -4,13 +4,13 @@ import Loading from '@/components/primitives/loading/Loading';
 import MatchModal from '@/components/swipe/matchModal/MatchModal';
 import SwipeContainer from '@/components/swipe/swipeContainer/SwipeContainer';
 import { usePreferenceCheck } from '@/hooks/usePreferenceCheck';
+import { MessagesStackParamList } from '@/navigation/MessagesStackNavigator';
 import { FeedItem } from '@/schemas/feedSchema';
 import { CommonActions, useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useCallback, useState } from 'react';
 import { View } from 'react-native';
 import { styles } from './SwipeScreen.styles';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { MessagesStackParamList } from '@/components/swipe/matchModal/MessagesStackNavigator';
 
 type NavigationProp = NativeStackNavigationProp<MessagesStackParamList>;
 

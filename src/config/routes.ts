@@ -1,8 +1,8 @@
 export const ROUTES = [
   {
-    key: 'bookmarks',
-    title: 'Saved',
-    icon: 'bookmark-outline' as const,
+    key: 'posting',
+    title: 'Posting',
+    icon: 'home-outline' as const,
   },
   {
     key: 'swipe',
@@ -12,15 +12,15 @@ export const ROUTES = [
   {
     key: 'home',
     title: 'Home',
-    icon: 'home-outline' as const,
+    icon: 'magnify' as const,
   },
   {
-    key: 'MessagesList',
+    key: 'messages', 
     title: 'Messages',
     icon: 'message-outline' as const,
   },
   {
-    key: 'profile',
+    key: 'profile', 
     title: 'Profile',
     icon: 'account-outline' as const,
   },

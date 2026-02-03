@@ -25,6 +25,9 @@ export const createStyles = (theme: MD3Theme) =>
     listContainer: {
       backgroundColor: theme.colors.background,
       flexGrow: 1,
+      paddingBottom: spacing.xl,
+      paddingHorizontal: spacing.xs,
+      paddingTop: spacing.xl,
     },
     separator: {
       backgroundColor: theme.colors.outlineVariant,

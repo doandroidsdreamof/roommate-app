@@ -2,7 +2,7 @@ import { BookmarkItem } from '@/api/bookmarkApi';
 import ListingCard from '@/components/listing/listingCard/ListingCard';
 import Loading from '@/components/primitives/loading/Loading';
 import { useInfiniteBookmarks } from '@/hooks/useInfiniteBookmarks';
-import { BookmarksStackParamList } from '@/navigation/BookmarksStackNavigator';
+import { ProfileStackParamList } from '@/navigation/ProfileStackNavigator';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useCallback } from 'react';
@@ -10,7 +10,7 @@ import { FlatList, View } from 'react-native';
 import { Appbar, Text } from 'react-native-paper';
 import { styles } from './BookmarksScreen.styles';
 
-type NavigationProp = NativeStackNavigationProp<BookmarksStackParamList>;
+type NavigationProp = NativeStackNavigationProp<ProfileStackParamList>;
 
 const BookmarksScreen = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -51,6 +51,7 @@ const BookmarksScreen = () => {
     return (
       <View style={styles.container}>
         <Appbar.Header elevated>
+          <Appbar.BackAction onPress={() => navigation.goBack()} />
           <Appbar.Content title="Kayıtlı İlanlar" />
         </Appbar.Header>
         <View style={styles.centerContent}>
@@ -64,6 +65,7 @@ const BookmarksScreen = () => {
     return (
       <View style={styles.container}>
         <Appbar.Header elevated>
+          <Appbar.BackAction onPress={() => navigation.goBack()} />
           <Appbar.Content title="Kayıtlı İlanlar" />
         </Appbar.Header>
         <View style={styles.centerContent}>
@@ -76,6 +78,7 @@ const BookmarksScreen = () => {
   return (
     <View style={styles.container}>
       <Appbar.Header elevated>
+        <Appbar.BackAction onPress={() => navigation.goBack()} />
         <Appbar.Content title="Kayıtlı İlanlar" />
       </Appbar.Header>
       <FlatList

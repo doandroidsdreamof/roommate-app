@@ -17,6 +17,11 @@ export interface CreatePostingDto {
   longitude: string;
   preferredRoommateGender?: 'female_only' | 'male_only' | 'mixed';
   specs: {
+    depositAmount: number;
+    floor: number;
+    totalFloors: number;
+    ageMin: number;
+    ageMax: number;
     hasParking?: boolean;
     hasBalcony?: boolean;
     hasElevator?: boolean;
