@@ -60,10 +60,10 @@ const Map = ({
 
     switch (event) {
       case 'onMapClicked':
-        if (onMapPress && payload?.coords) {
+        if (onMapPress && payload?.touchLatLng) {
           onMapPress({
-            latitude: payload.coords.lat,
-            longitude: payload.coords.lng,
+            latitude: payload.touchLatLng.lat,
+            longitude: payload.touchLatLng.lng,
           });
         }
         break;

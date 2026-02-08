@@ -3,7 +3,7 @@ import {
 } from '@/schemas/postingSchema';
 import { FieldPath } from 'react-hook-form';
 import { LocationData } from '../location/locationPicker/LocationPicker';
-import DetailsStepFields from './detailsstepfields/Detailsstepfields';
+import DetailStepfields from './detailStepfields/DetailStepfields';
 import ImagesStepFields from './imagesStepFields/ImagesStepFields';
 import SpecsStepFields from './specsStepFields/SpecsStepFields';
 
@@ -54,7 +54,7 @@ export const STEP_CONFIGS: StepConfig[] = [
       'isFurnished',
       'availableFrom',
     ],
-    component: DetailsStepFields,
+    component: DetailStepfields,
   },
   {
     id: 'specs',

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { View } from 'react-native';
 import {
@@ -13,23 +13,46 @@ import LocationFilter from '@/components/location/locationFilter/LocationFilter'
 import LocationPicker, {
   LocationData,
 } from '@/components/location/locationPicker/LocationPicker';
+import MapPicker from '@/components/location/mapPicker/MapPicker';
+import NeighborhoodDropdown from '@/components/neighborhoodDropdown/NeighborhoodDropdown';
 import DatePicker from '@/components/search/datePicker/DatePicker';
 import Stepper from '@/components/search/stepper/Stepper';
 import { GENDER_OPTIONS } from '@/constants/formConstants';
+import { useDistricts } from '@/hooks/useDistricts';
+import { useProvinces } from '@/hooks/useProvinces';
 import { CreatePostingFormData } from '@/schemas/postingSchema';
-import { styles } from './Detailsstepfields.styles';
-
-// TODO map picker
+import { styles } from './DetailStepfields.styles';
 
 interface DetailsStepFieldsProps {
   onLocationSelect: (location: LocationData) => void;
 }
 
+// TODO  Neighborhood population bug
+
 const DetailsStepFields = ({ onLocationSelect }: DetailsStepFieldsProps) => {
-  const { control, setValue, watch } = useFormContext<CreatePostingFormData>();
+  const {
+    control,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useFormContext<CreatePostingFormData>();
 
   const city = watch('city');
   const district = watch('district');
+  const latitude = watch('latitude');
+  const longitude = watch('longitude');
+
+  const { getProvinceByValue } = useProvinces();
+  const selectedProvince = useMemo(
+    () => getProvinceByValue(city),
+    [city, getProvinceByValue]
+  );
+
+  const { getDistrictByValue } = useDistricts(selectedProvince);
+  const selectedDistrict = useMemo(
+    () => (district ? getDistrictByValue(district) : null),
+    [district, getDistrictByValue]
+  );
 
   return (
     <View style={styles.container}>
@@ -77,33 +100,57 @@ const DetailsStepFields = ({ onLocationSelect }: DetailsStepFieldsProps) => {
 
       <LocationPicker onLocationSelect={onLocationSelect} />
 
-      <LocationFilter // TODO handle error messages and validation
-        initialCity={city}
-        initialDistrict={district}
-        onCityChange={(val) => setValue('city', val, { shouldValidate: true })}
-        onDistrictChange={(val) =>
-          setValue('district', val, { shouldValidate: true })
+      <MapPicker
+        value={
+          latitude !== undefined && longitude !== undefined
+            ? { latitude, longitude }
+            : null
         }
+        onChange={(location) => {
+          setValue('latitude', location.latitude, { shouldValidate: true });
+          setValue('longitude', location.longitude, { shouldValidate: true });
+        }}
+        onLocationDataChange={(locationData) => {
+          if (locationData.province) {
+            setValue('city', locationData.province, { shouldValidate: true });
+          }
+          if (locationData.district) {
+            setValue('district', locationData.district, {
+              shouldValidate: true,
+            });
+          }
+          if (locationData.neighborhoodId) {
+            setValue('neighborhoodId', locationData.neighborhoodId, {
+              shouldValidate: true,
+            });
+          }
+        }}
+        error={errors.latitude?.message || errors.longitude?.message}
+        label="Harita Konumu"
       />
 
-      <Controller // TODO handle it implicitly
-        control={control}
-        name="neighborhoodId"
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <View>
-            <TextInput
-              label="Mahalle ID *"
-              value={value?.toString()}
-              onChangeText={(text) => onChange(Number(text))}
-              mode="outlined"
-              keyboardType="numeric"
-              style={styles.input}
-            />
-            <HelperText type="error" visible={!!error}>
-              {error?.message}
-            </HelperText>
-          </View>
-        )}
+      <LocationFilter
+        initialCity={city}
+        initialDistrict={district}
+        onCityChange={(val) => {
+          setValue('city', val, { shouldValidate: true });
+          setValue('neighborhoodId', 0, { shouldValidate: false });
+        }}
+        onDistrictChange={(val) => {
+          setValue('district', val, { shouldValidate: true });
+          setValue('neighborhoodId', 0, { shouldValidate: false });
+        }}
+        cityError={errors.city?.message}
+        districtError={errors.district?.message}
+      />
+
+      <NeighborhoodDropdown
+        districtId={selectedDistrict?.id}
+        value={watch('neighborhoodId')}
+        onChange={(id) =>
+          setValue('neighborhoodId', id, { shouldValidate: true })
+        }
+        error={errors.neighborhoodId?.message}
       />
 
       <Controller
@@ -118,6 +165,7 @@ const DetailsStepFields = ({ onLocationSelect }: DetailsStepFieldsProps) => {
               mode="outlined"
               keyboardType="numeric"
               style={styles.input}
+              error={!!error}
             />
             <HelperText type="error" visible={!!error}>
               {error?.message}
@@ -138,6 +186,7 @@ const DetailsStepFields = ({ onLocationSelect }: DetailsStepFieldsProps) => {
               mode="outlined"
               keyboardType="numeric"
               style={styles.input}
+              error={!!error}
             />
             <HelperText type="error" visible={!!error}>
               {error?.message}
@@ -153,16 +202,18 @@ const DetailsStepFields = ({ onLocationSelect }: DetailsStepFieldsProps) => {
         control={control}
         name="preferredRoommateGender"
         render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <View style={styles.chipRow}>
-            {GENDER_OPTIONS.map((option) => (
-              <Chip
-                key={option.value}
-                selected={value === option.value}
-                onPress={() => onChange(option.value)}
-              >
-                {option.label}
-              </Chip>
-            ))}
+          <View>
+            <View style={styles.chipRow}>
+              {GENDER_OPTIONS.map((option) => (
+                <Chip
+                  key={option.value}
+                  selected={value === option.value}
+                  onPress={() => onChange(option.value)}
+                >
+                  {option.label}
+                </Chip>
+              ))}
+            </View>
             <HelperText type="error" visible={!!error}>
               {error?.message}
             </HelperText>
@@ -170,13 +221,13 @@ const DetailsStepFields = ({ onLocationSelect }: DetailsStepFieldsProps) => {
         )}
       />
 
-      <Controller // TODO look better UX
+      <Controller
         control={control}
         name="isFurnished"
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <View>
             <Checkbox.Item
-              label="Mobilyalı"
+              label="Mobilyalı *"
               status={value ? 'checked' : 'unchecked'}
               onPress={() => onChange(!value)}
             />

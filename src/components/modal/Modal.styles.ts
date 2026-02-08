@@ -11,15 +11,15 @@ export const styles = StyleSheet.create({
   },
   container: {
     borderRadius: 16,
+    height: '100%',
     marginHorizontal: 16,
     marginVertical: 40,
-    maxHeight: '90%',
   },
   content: {
     maxHeight: '100%',
   },
   scrollContent: {
-    padding: 24,
+    // padding: 24,
     paddingTop: 0,
   },
 });

@@ -7,7 +7,23 @@ export interface Province {
   plateCode: number;
 }
 
+export interface District {
+  id: number;
+  name: string;
+  provincePlateCode: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Neighborhood {
+  id: number;
+  name: string;
+  districtId: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface NeighborhoodSearchResult {
   id: string;
   name: string;
   district: string;
@@ -20,14 +36,6 @@ export interface NeighborhoodSearchParams {
   districtId?: string;
 }
 
-export interface District {
-  id: number;
-  name: string;
-  provincePlateCode: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export class LocationApi {
   constructor(private client: AxiosInstance) {}
 
@@ -35,21 +43,31 @@ export class LocationApi {
     const response = await this.client.get(API_ENDPOINTS.LOCATIONS.PROVINCES);
     return response.data.data;
   }
+
+  public async getDistrictsByProvince(provinceId: number): Promise<District[]> {
+    const response = await this.client.get(
+      API_ENDPOINTS.LOCATIONS.DISTRICTS(provinceId)
+    );
+    return response.data.data;
+  }
+
+  public async getNeighborhoodsByDistrict(
+    districtId: number
+  ): Promise<Neighborhood[]> {
+    const response = await this.client.get(
+      API_ENDPOINTS.LOCATIONS.NEIGHBORHOODS(districtId)
+    );
+    return response.data.data;
+  }
+
   public async searchNeighborhoods(
     params: NeighborhoodSearchParams
-  ): Promise<Neighborhood[]> {
+  ): Promise<NeighborhoodSearchResult[]> {
     const response = await this.client.get(
       API_ENDPOINTS.LOCATIONS.NEIGHBORHOODS_SEARCH,
       {
         params,
       }
-    );
-    return response.data.data;
-  }
-
-  public async getDistrictsByProvince(provinceId: number): Promise<District[]> {
-    const response = await this.client.get(
-      API_ENDPOINTS.LOCATIONS.DISTRICTS(provinceId)
     );
     return response.data.data;
   }

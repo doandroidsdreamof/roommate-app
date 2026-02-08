@@ -6,39 +6,27 @@ import { ScrollView, View } from 'react-native';
 import { Button, Text, useTheme } from 'react-native-paper';
 
 import { LocationData } from '@/components/location/locationPicker/LocationPicker';
+import Modal from '@/components/modal/Modal';
 import { STEP_CONFIGS, Step } from '@/components/posting/Stepconfig';
 import {
   CreatePostingFormData,
   createPostingSchema,
 } from '@/schemas/postingSchema';
 import { createStyles } from './PostingScreen.styles';
+import { initialFormState } from './postingScreenConstants';
 
 const PostingScreen = () => {
   const theme = useTheme();
   const styles = createStyles(theme);
-  const [currentStep, setCurrentStep] = useState<Step>('specs');
+  const [currentStep, setCurrentStep] = useState<Step>('details');
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [additionalImages, setAdditionalImages] = useState<string[]>([]);
+  const [isPostingModalVisible, setisPostingModalVisible] = useState(false);
 
   const methods = useForm<CreatePostingFormData>({
     resolver: zodResolver(createPostingSchema),
     defaultValues: {
-      isFurnished: false,
-      specs: {
-        description: '',
-        ageMin: 18,
-        ageMax: 99,
-        depositAmount: 0,
-        billsIncluded: false,
-        floor: 0,
-        totalFloors: 1,
-        hasBalcony: false,
-        hasParking: false,
-        hasElevator: false,
-        smokingAllowed: false,
-        hasPets: false,
-        alcoholFriendly: false,
-      },
+      ...initialFormState,
     },
     mode: 'onChange',
   });
@@ -110,16 +98,16 @@ const PostingScreen = () => {
   };
 
   const handleNext = async () => {
-    const isFirstStepValid = await trigger([...STEP_CONFIGS[0].requiredFields]);
-    console.log('🚀 ~ isFirstStepValid:', isFirstStepValid);
-    if (isFirstStepValid) {
-      setCurrentStep('specs');
-      const isSecondStepValid = await trigger([
-        ...STEP_CONFIGS[1].requiredFields,
+    try {
+      const isFirstStepValid = await trigger([
+        ...STEP_CONFIGS[0].requiredFields,
       ]);
-      if (isSecondStepValid) {
-        setCurrentStep('images');
+      console.log('🚀 ~ isFirstStepValid:', isFirstStepValid);
+      if (isFirstStepValid && currentIndex <= 2) {
+        setCurrentStep(STEP_CONFIGS[currentIndex + 1].id);
       }
+    } catch (error) {
+      console.error('[PostingScreen/handleNext Error]: ', error);
     }
   };
 
@@ -130,49 +118,70 @@ const PostingScreen = () => {
   const StepComponent = currentConfig.component;
 
   return (
-    <FormProvider {...methods}>
-      <View style={styles.container}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <Text variant="headlineSmall" style={styles.stepTitle}>
-            {currentConfig.title}
-          </Text>
-          <StepComponent
-            formData={formData}
-            onFieldChange={handleFieldChange}
-            onSpecsChange={handleSpecsChange}
-            onLocationSelect={handleLocationSelect}
-            coverImage={coverImage}
-            additionalImages={additionalImages}
-            pickCoverImage={pickCoverImage}
-            pickAdditionalImages={pickAdditionalImages}
-            removeAdditionalImage={(index: number) =>
-              setAdditionalImages((prev) => prev.filter((_, i) => i !== index))
-            }
-            removeCoverImage={() => {
-              setCoverImage(null);
-              setValue('coverImageUrl', '');
-            }}
-          />
-        </ScrollView>
-
-        <View style={styles.buttonContainer}>
-          <View style={styles.buttonRow}>
-            {currentIndex > 0 && (
-              <Button
-                mode="outlined"
-                onPress={handleBack}
-                style={styles.button}
-              >
-                Geri
-              </Button>
-            )}
-            <Button mode="contained" onPress={handleNext} style={styles.button}>
-              {currentIndex === STEP_CONFIGS.length - 1 ? 'Oluştur' : 'İleri'}
-            </Button>
-          </View>
-        </View>
+    <View>
+      <View style={styles.modalButtonContainer}>
+        <Button onPress={() => setisPostingModalVisible(true)} mode="contained">
+          Ev arkadaşı ilanı ver
+        </Button>
       </View>
-    </FormProvider>
+      <Modal
+        showCloseButton
+        visible={isPostingModalVisible}
+        onDismiss={() => setisPostingModalVisible(false)}
+      >
+        <FormProvider {...methods}>
+          <View style={styles.container}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <Text variant="headlineSmall" style={styles.stepTitle}>
+                {currentConfig.title}
+              </Text>
+              <StepComponent
+                formData={formData}
+                onFieldChange={handleFieldChange}
+                onSpecsChange={handleSpecsChange}
+                onLocationSelect={handleLocationSelect}
+                coverImage={coverImage}
+                additionalImages={additionalImages}
+                pickCoverImage={pickCoverImage}
+                pickAdditionalImages={pickAdditionalImages}
+                removeAdditionalImage={(index: number) =>
+                  setAdditionalImages((prev) =>
+                    prev.filter((_, i) => i !== index)
+                  )
+                }
+                removeCoverImage={() => {
+                  setCoverImage(null);
+                  setValue('coverImageUrl', '');
+                }}
+              />
+            </ScrollView>
+
+            <View style={styles.buttonContainer}>
+              <View style={styles.buttonRow}>
+                {currentIndex > 0 && (
+                  <Button
+                    mode="outlined"
+                    onPress={handleBack}
+                    style={styles.button}
+                  >
+                    Geri
+                  </Button>
+                )}
+                <Button
+                  mode="contained"
+                  onPress={handleNext}
+                  style={styles.button}
+                >
+                  {currentIndex === STEP_CONFIGS.length - 1
+                    ? 'Oluştur'
+                    : 'İleri'}
+                </Button>
+              </View>
+            </View>
+          </View>
+        </FormProvider>
+      </Modal>
+    </View>
   );
 };
 

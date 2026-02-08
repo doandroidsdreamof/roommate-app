@@ -4,6 +4,7 @@ import { useDropdownState } from '@/hooks/useDropdownState';
 import { useProvinces } from '@/hooks/useProvinces';
 import React, { useRef } from 'react';
 import { Keyboard, TextInput as RNTextInput, View } from 'react-native';
+import { HelperText } from 'react-native-paper';
 import { styles } from './LocationFilter.styles';
 
 interface LocationFilterProps {
@@ -11,6 +12,8 @@ interface LocationFilterProps {
   initialDistrict?: string;
   onCityChange: (value: string) => void;
   onDistrictChange: (value: string) => void;
+  cityError?: string;
+  districtError?: string;
 }
 
 const LocationFilter = ({
@@ -18,6 +21,8 @@ const LocationFilter = ({
   initialDistrict = '',
   onCityChange,
   onDistrictChange,
+  cityError,
+  districtError,
 }: LocationFilterProps) => {
   const cityDropdown = useDropdownState();
   const districtDropdown = useDropdownState();
@@ -40,7 +45,7 @@ const LocationFilter = ({
     <View style={styles.container}>
       <View>
         <Dropdown
-          label="Şehir"
+          label="Şehir *"
           value={initialCity}
           placeholder="Şehir seçin"
           isLoading={loadingProvinces}
@@ -48,6 +53,7 @@ const LocationFilter = ({
           items={filterProvinces(initialCity)}
           getKey={(item) => item.plateCode}
           getLabel={(item) => item.name}
+          error={!!cityError}
           onFocus={() => {
             cityDropdown.open();
             districtDropdown.close();
@@ -68,11 +74,14 @@ const LocationFilter = ({
           onSubmitEditing={() => districtInputRef.current?.focus()}
           accessibilityLabel="Şehir seçin"
         />
+        <HelperText type="error" visible={!!cityError}>
+          {cityError}
+        </HelperText>
       </View>
 
       <View>
         <Dropdown
-          label="İlçe"
+          label="İlçe *"
           value={initialDistrict}
           placeholder={initialCity ? 'İlçe seçin' : 'Önce şehir seçin'}
           disabled={!selectedProvinceData}
@@ -81,6 +90,7 @@ const LocationFilter = ({
           items={filterDistricts(initialDistrict)}
           getKey={(item) => item.id}
           getLabel={(item) => item.name}
+          error={!!districtError}
           onFocus={() => {
             districtDropdown.open();
             cityDropdown.close();
@@ -97,6 +107,9 @@ const LocationFilter = ({
           returnKeyType="done"
           accessibilityLabel="İlçe seçin"
         />
+        <HelperText type="error" visible={!!districtError}>
+          {districtError}
+        </HelperText>
       </View>
     </View>
   );

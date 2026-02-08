@@ -99,7 +99,7 @@ const ListingsScreen = () => {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const handlePostingPress = useCallback(
-    (postingId: string) => navigation.navigate('PostingDetail', { postingId }),
+    (postingId: string) => navigation.navigate('HomePostingDetail', { postingId }),
     [navigation]
   );
 

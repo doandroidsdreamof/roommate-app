@@ -21,6 +21,12 @@ export const createStyles = (theme: MD3Theme) =>
       paddingHorizontal: spacing.lg,
       paddingTop: spacing.lg,
     },
+    modalButtonContainer: {
+      paddingHorizontal: spacing.lg,
+      paddingVertical: spacing.xxl,
+      top: 25,
+      width: '100%',
+    },
     stepTitle: {
       marginBottom: spacing.lg,
     },

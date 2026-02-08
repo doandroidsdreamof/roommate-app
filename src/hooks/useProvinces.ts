@@ -15,6 +15,7 @@ export const useProvinces = () => {
 
   const getProvinceByValue = useCallback(
     (value: string) => {
+      if (!value) return undefined;
       return provinces.find(
         (p) => p.name.toLocaleLowerCase('tr') === value.toLocaleLowerCase('tr')
       );

@@ -31,6 +31,8 @@ export const API_ENDPOINTS = {
   LOCATIONS: {
     PROVINCES: '/locations/provinces',
     NEIGHBORHOODS_SEARCH: '/locations/neighborhoods/search',
+    NEIGHBORHOODS: (districtId: number) =>
+      `/locations/districts/${districtId}/neighborhoods`,
     DISTRICTS: (provinceId: number) =>
       `/locations/provinces/${provinceId}/districts`,
   },

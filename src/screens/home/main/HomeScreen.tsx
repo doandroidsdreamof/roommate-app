@@ -1,18 +1,17 @@
+import { ListsQueryParams } from '@/api';
 import HorizontalListingList from '@/components/listing/horizontalListingList/HorizontalListingList';
 import SectionHeader from '@/components/listing/sectionHeader/SectionHeader';
 import SearchBar from '@/components/search/searchBar/SearchBar';
 import SearchModal from '@/components/search/searchModal/SearchModal';
 import { useHomeSections } from '@/hooks/useHomeSection';
+import { HomeStackParamList } from '@/navigation/HomeStackNavigator';
 import { useStore } from '@/store';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useCallback, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { styles } from './HomeScreen.styles';
-import { HomeStackParamList } from '@/navigation/HomeStackNavigator';
-import { ListsQueryParams } from '@/api';
 import { HOME_SECTIONS } from './homeSections';
-import { Debug } from '@/debug/Debug';
 
 type NavigationProp = NativeStackNavigationProp<HomeStackParamList>;
 
