@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { View } from 'react-native';
 import {
@@ -10,12 +10,10 @@ import {
 } from 'react-native-paper';
 
 import LocationFilter from '@/components/location/locationFilter/LocationFilter';
-import LocationPicker, {
-  LocationData,
-} from '@/components/location/locationPicker/LocationPicker';
 import MapPicker from '@/components/location/mapPicker/MapPicker';
 import NeighborhoodDropdown from '@/components/neighborhoodDropdown/NeighborhoodDropdown';
 import DatePicker from '@/components/search/datePicker/DatePicker';
+import RangeSlider from '@/components/search/rangeSlider/RangeSlider';
 import Stepper from '@/components/search/stepper/Stepper';
 import { GENDER_OPTIONS } from '@/constants/formConstants';
 import { useDistricts } from '@/hooks/useDistricts';
@@ -23,13 +21,9 @@ import { useProvinces } from '@/hooks/useProvinces';
 import { CreatePostingFormData } from '@/schemas/postingSchema';
 import { styles } from './DetailStepfields.styles';
 
-interface DetailsStepFieldsProps {
-  onLocationSelect: (location: LocationData) => void;
-}
+// TODO Neighborhood population bug
 
-// TODO  Neighborhood population bug
-
-const DetailsStepFields = ({ onLocationSelect }: DetailsStepFieldsProps) => {
+const DetailsStepFields = () => {
   const {
     control,
     setValue,
@@ -43,16 +37,10 @@ const DetailsStepFields = ({ onLocationSelect }: DetailsStepFieldsProps) => {
   const longitude = watch('longitude');
 
   const { getProvinceByValue } = useProvinces();
-  const selectedProvince = useMemo(
-    () => getProvinceByValue(city),
-    [city, getProvinceByValue]
-  );
+  const selectedProvince = getProvinceByValue(city);
 
   const { getDistrictByValue } = useDistricts(selectedProvince);
-  const selectedDistrict = useMemo(
-    () => (district ? getDistrictByValue(district) : null),
-    [district, getDistrictByValue]
-  );
+  const selectedDistrict = district ? getDistrictByValue(district) : null;
 
   return (
     <View style={styles.container}>
@@ -68,6 +56,7 @@ const DetailsStepFields = ({ onLocationSelect }: DetailsStepFieldsProps) => {
               error={!!error}
               mode="outlined"
               placeholder="Örn: Kadıköy'de Ferah Oda"
+              maxLength={100}
             />
             <HelperText type="error" visible={!!error}>
               {error?.message}
@@ -89,7 +78,8 @@ const DetailsStepFields = ({ onLocationSelect }: DetailsStepFieldsProps) => {
               mode="outlined"
               multiline
               numberOfLines={6}
-              placeholder="Evinizi tanıtın (min 50 karakter)"
+              placeholder="Evinizi tanıtın (min 10 karakter)"
+              maxLength={2000}
             />
             <HelperText type="error" visible={!!error}>
               {error?.message}
@@ -97,8 +87,6 @@ const DetailsStepFields = ({ onLocationSelect }: DetailsStepFieldsProps) => {
           </View>
         )}
       />
-
-      <LocationPicker onLocationSelect={onLocationSelect} />
 
       <MapPicker
         value={
@@ -119,8 +107,8 @@ const DetailsStepFields = ({ onLocationSelect }: DetailsStepFieldsProps) => {
               shouldValidate: true,
             });
           }
-          if (locationData.neighborhoodId) {
-            setValue('neighborhoodId', locationData.neighborhoodId, {
+          if (locationData.neighborhood) {
+            setValue('neighborhood', locationData.neighborhood, {
               shouldValidate: true,
             });
           }
@@ -134,11 +122,9 @@ const DetailsStepFields = ({ onLocationSelect }: DetailsStepFieldsProps) => {
         initialDistrict={district}
         onCityChange={(val) => {
           setValue('city', val, { shouldValidate: true });
-          setValue('neighborhoodId', 0, { shouldValidate: false });
         }}
         onDistrictChange={(val) => {
           setValue('district', val, { shouldValidate: true });
-          setValue('neighborhoodId', 0, { shouldValidate: false });
         }}
         cityError={errors.city?.message}
         districtError={errors.district?.message}
@@ -146,11 +132,9 @@ const DetailsStepFields = ({ onLocationSelect }: DetailsStepFieldsProps) => {
 
       <NeighborhoodDropdown
         districtId={selectedDistrict?.id}
-        value={watch('neighborhoodId')}
-        onChange={(id) =>
-          setValue('neighborhoodId', id, { shouldValidate: true })
-        }
-        error={errors.neighborhoodId?.message}
+        value={watch('neighborhood')}
+        onChange={(val) => setValue('neighborhood', val)}
+        error={errors.neighborhood?.message}
       />
 
       <Controller
@@ -158,14 +142,17 @@ const DetailsStepFields = ({ onLocationSelect }: DetailsStepFieldsProps) => {
         name="rentAmount"
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <View>
-            <TextInput
-              label="Kira Bedeli (₺) *"
-              value={value?.toString()}
-              onChangeText={(text) => onChange(Number(text))}
-              mode="outlined"
-              keyboardType="numeric"
-              style={styles.input}
-              error={!!error}
+            <Text variant="labelLarge" style={styles.label}>
+              Kira Bedeli (₺) *
+            </Text>
+            <RangeSlider
+              isSingle
+              value={value ?? 1000}
+              onValueChange={onChange}
+              min={100}
+              max={100000}
+              step={100}
+              formatLabel={(val) => `₺${val.toLocaleString('tr-TR')}`}
             />
             <HelperText type="error" visible={!!error}>
               {error?.message}
@@ -174,19 +161,23 @@ const DetailsStepFields = ({ onLocationSelect }: DetailsStepFieldsProps) => {
         )}
       />
 
+      {/* Square Meters Slider */}
       <Controller
         control={control}
         name="squareMeters"
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <View>
-            <TextInput
-              label="Metrekare *"
-              value={value?.toString()}
-              onChangeText={(text) => onChange(Number(text))}
-              mode="outlined"
-              keyboardType="numeric"
-              style={styles.input}
-              error={!!error}
+            <Text variant="labelLarge" style={styles.label}>
+              Metrekare *
+            </Text>
+            <RangeSlider
+              isSingle
+              value={value ?? 50}
+              onValueChange={onChange}
+              min={10}
+              max={1000}
+              step={5}
+              formatLabel={(val) => `${val} m²`}
             />
             <HelperText type="error" visible={!!error}>
               {error?.message}
@@ -227,7 +218,7 @@ const DetailsStepFields = ({ onLocationSelect }: DetailsStepFieldsProps) => {
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <View>
             <Checkbox.Item
-              label="Mobilyalı *"
+              label="Mobilyalı"
               status={value ? 'checked' : 'unchecked'}
               onPress={() => onChange(!value)}
             />
@@ -258,13 +249,14 @@ const DetailsStepFields = ({ onLocationSelect }: DetailsStepFieldsProps) => {
       <Controller
         control={control}
         name="roomCount"
+        defaultValue={1}
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <View>
             <Stepper
               label="Oda Sayısı *"
-              value={value ?? 1}
+              value={value}
               min={1}
-              max={10}
+              max={20}
               onChange={onChange}
             />
             <HelperText type="error" visible={!!error}>
@@ -276,14 +268,15 @@ const DetailsStepFields = ({ onLocationSelect }: DetailsStepFieldsProps) => {
 
       <Controller
         control={control}
+        defaultValue={1}
         name="bathroomCount"
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <View>
             <Stepper
               label="Banyo Sayısı *"
-              value={value ?? 1}
+              value={value}
               min={1}
-              max={5}
+              max={10}
               onChange={onChange}
             />
             <HelperText type="error" visible={!!error}>

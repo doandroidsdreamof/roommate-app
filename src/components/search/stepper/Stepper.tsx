@@ -1,7 +1,10 @@
-import React from 'react';
-import { View } from 'react-native';
-import { IconButton, Text, useTheme } from 'react-native-paper';
+import React, { useEffect, useState } from 'react';
+import { Pressable, View } from 'react-native';
+import { Icon, Text, useTheme } from 'react-native-paper';
 import { createStyles } from './Stepper.styles';
+
+// TODO decouple debounce
+// TODO optimize this component it is terrible right now
 
 interface StepperProps {
   label?: string;
@@ -23,15 +26,26 @@ const Stepper = ({
   const theme = useTheme();
   const styles = createStyles(theme);
 
+  const [localValue, setLocalValue] = useState(value);
+
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
+
+  const isMinDisabled = localValue <= min;
+  const isMaxDisabled = localValue >= max;
+
   const handleDecrement = () => {
-    if (value - step >= min) {
-      onChange(value - step);
+    const newValue = localValue - step;
+    if (newValue >= min) {
+      onChange(newValue);
     }
   };
 
   const handleIncrement = () => {
-    if (value + step <= max) {
-      onChange(value + step);
+    const newValue = localValue + step;
+    if (newValue <= max) {
+      onChange(newValue);
     }
   };
 
@@ -43,23 +57,43 @@ const Stepper = ({
         </Text>
       )}
       <View style={styles.stepperContainer}>
-        <IconButton
-          icon="minus"
-          size={20}
+        <Pressable
           onPress={handleDecrement}
-          disabled={value <= min}
-          style={styles.button}
-        />
+          disabled={isMinDisabled}
+          style={[styles.button, isMinDisabled && styles.buttonDisabled]}
+          android_ripple={{ color: theme.colors.primary, radius: 20 }}
+        >
+          <Icon
+            source="minus"
+            size={20}
+            color={
+              isMinDisabled
+                ? theme.colors.surfaceDisabled
+                : theme.colors.onSurface
+            }
+          />
+        </Pressable>
+
         <Text variant="titleMedium" style={styles.value}>
-          {value}
+          {localValue}
         </Text>
-        <IconButton
-          icon="plus"
-          size={20}
+
+        <Pressable
           onPress={handleIncrement}
-          disabled={value >= max}
-          style={styles.button}
-        />
+          disabled={isMaxDisabled}
+          style={[styles.button, isMaxDisabled && styles.buttonDisabled]}
+          android_ripple={{ color: theme.colors.primary, radius: 20 }}
+        >
+          <Icon
+            source="plus"
+            size={20}
+            color={
+              isMaxDisabled
+                ? theme.colors.surfaceDisabled
+                : theme.colors.onSurface
+            }
+          />
+        </Pressable>
       </View>
     </View>
   );

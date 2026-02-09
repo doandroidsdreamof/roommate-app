@@ -27,6 +27,11 @@ export const createStyles = (theme: MD3Theme) =>
       top: 25,
       width: '100%',
     },
+    modalContainer: {
+      flex: 1,
+      height: '100%',
+      padding: spacing.sm,
+    },
     stepTitle: {
       marginBottom: spacing.lg,
     },

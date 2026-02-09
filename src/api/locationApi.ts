@@ -18,9 +18,6 @@ export interface District {
 export interface Neighborhood {
   id: number;
   name: string;
-  districtId: number;
-  createdAt?: string;
-  updatedAt?: string;
 }
 
 export interface NeighborhoodSearchResult {

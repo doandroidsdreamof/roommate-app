@@ -1,11 +1,10 @@
 export const initialFormState = {
   isFurnished: false,
   specs: {
-    description: '',
-    ageMin: 18,
-    ageMax: 99,
     depositAmount: 0,
     billsIncluded: false,
+    ageMin: 18,
+    ageMax: 100,
     floor: 0,
     totalFloors: 1,
     hasBalcony: false,

@@ -84,7 +84,7 @@ export const createPostingSchema = z.object({
   coverImageUrl: z.url('Geçerli bir URL olmalıdır'),
   city: z.string().min(1, 'Şehir zorunludur').max(100),
   district: z.string().min(1, 'İlçe zorunludur').max(100),
-  neighborhoodId: z.number().int().positive('Mahalle ID pozitif olmalıdır'),
+  neighborhood: z.string().min(1, 'Mahalle zorunludur').max(100),
   latitude: z.number().min(-90).max(90),
   longitude: z.number().min(-180).max(180),
   rentAmount: z.number().int().positive('Kira bedeli pozitif olmalıdır'),
@@ -92,7 +92,9 @@ export const createPostingSchema = z.object({
   bathroomCount: z.number().int().min(1, 'Banyo sayısı en az 1 olmalıdır'),
   squareMeters: z.number().int().positive('Metrekare pozitif olmalıdır'),
   isFurnished: z.boolean(),
-  preferredRoommateGender: z.enum(['female_only', 'male_only', 'mixed']),
+  preferredRoommateGender: z.enum(['female_only', 'male_only', 'mixed'], {
+    error: 'bu alan gereklidir',
+  }),
   availableFrom: z.string(),
   specs: postingSpecsSchema,
   images: z

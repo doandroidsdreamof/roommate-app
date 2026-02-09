@@ -16,10 +16,11 @@ export const styles = StyleSheet.create({
     marginVertical: 40,
   },
   content: {
-    maxHeight: '100%',
+    height: '100%',
   },
   scrollContent: {
     // padding: 24,
+    height: '100%',
     paddingTop: 0,
   },
 });

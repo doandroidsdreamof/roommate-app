@@ -1,37 +1,8 @@
 import { AxiosInstance } from 'axios';
 import { API_ENDPOINTS } from '../config/apiEndpoints';
+import { CreatePostingFormData } from '@/schemas/postingSchema';
 
-export interface CreatePostingDto {
-  title: string;
-  description: string;
-  city: string;
-  district: string;
-  neighborhoodId?: number;
-  rentAmount?: number;
-  roomCount?: number;
-  squareMeters?: number;
-  isFurnished?: boolean;
-  availableFrom?: string;
-  coverImageUrl?: string;
-  latitude: string;
-  longitude: string;
-  preferredRoommateGender?: 'female_only' | 'male_only' | 'mixed';
-  specs: {
-    depositAmount: number;
-    floor: number;
-    totalFloors: number;
-    ageMin: number;
-    ageMax: number;
-    hasParking?: boolean;
-    hasBalcony?: boolean;
-    hasElevator?: boolean;
-    billsIncluded?: boolean;
-    smokingAllowed?: boolean;
-    alcoholFriendly?: boolean;
-    hasPets?: boolean;
-  };
-}
-
+// TODO migrate from those to zod schema
 export interface UpdatePostingDto {
   title?: string;
   description?: string;
@@ -48,6 +19,7 @@ export interface UpdatePostingImagesDto {
 
 export interface ClosePostingDto {
   reason?: string;
+  status: 'inactive' | 'rented';
 }
 
 export interface ListsQueryParams {
@@ -196,7 +168,7 @@ export interface GetPostingResponse {
 export class PostingApi {
   constructor(private client: AxiosInstance) {}
 
-  public async create(data: CreatePostingDto): Promise<PostingItem> {
+  public async create(data: CreatePostingFormData): Promise<PostingItem> {
     const response = await this.client.post(
       API_ENDPOINTS.POSTINGS.CREATE,
       data
@@ -248,6 +220,11 @@ export class PostingApi {
     const response = await this.client.get(
       API_ENDPOINTS.POSTINGS.GET(postingId)
     );
+    return response.data;
+  }
+
+  public async getUserPostings(): Promise<{ data: PostingItem[] }> {
+    const response = await this.client.get(API_ENDPOINTS.POSTINGS.USER_POSTING);
     return response.data;
   }
 }

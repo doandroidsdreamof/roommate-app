@@ -1,11 +1,15 @@
 import HomeStackNavigator from '@/navigation/HomeStackNavigator';
 import MessagesStackNavigator from '@/navigation/MessagesStackNavigator';
 import ProfileStackNavigator from '@/navigation/ProfileStackNavigator';
-import PostingScreen from '@/screens/posting/PostingScreen';
+import PostingStackNavigator from '@/navigation/PostingStackNavigator';
 import SwipeScreen from '@/screens/swipe/SwipeScreen';
 
 export const SCREEN_CONFIG = {
-  posting: { component: PostingScreen, scrollable: true, hasLayout: false },
+  posting: {
+    component: PostingStackNavigator,
+    scrollable: false,
+    hasLayout: true,
+  },
   swipe: { component: SwipeScreen, scrollable: false, hasLayout: false },
   home: { component: HomeStackNavigator, scrollable: false, hasLayout: true },
   messages: {
@@ -18,4 +22,4 @@ export const SCREEN_CONFIG = {
     scrollable: false,
     hasLayout: true,
   },
-}
+};

@@ -1,4 +1,4 @@
-import { spacing } from '@/theme/theme';
+import { spacing, borderRadius } from '@/theme/theme';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -11,14 +11,16 @@ export const styles = StyleSheet.create({
     height: 100,
   },
   container: {
+    display: 'flex',
     gap: spacing.md,
+    width: '100%',
   },
   helperText: {
     marginBottom: spacing.sm,
     opacity: 0.7,
   },
   image: {
-    borderRadius: spacing.sm,
+    borderRadius: borderRadius.md,
     height: 200,
     width: '100%',
   },
@@ -39,13 +41,11 @@ export const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   removeButton: {
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     position: 'absolute',
     right: spacing.xs,
     top: spacing.xs,
   },
   removeButtonSmall: {
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     position: 'absolute',
     right: -spacing.xs,
     top: -spacing.xs,
@@ -54,7 +54,7 @@ export const styles = StyleSheet.create({
     position: 'relative',
   },
   thumbnailImage: {
-    borderRadius: spacing.sm,
+    borderRadius: borderRadius.md,
     height: 100,
     width: 100,
   },

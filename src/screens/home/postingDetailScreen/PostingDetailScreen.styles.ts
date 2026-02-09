@@ -1,6 +1,6 @@
-import { StyleSheet, Dimensions } from 'react-native';
-import { MD3Theme } from 'react-native-paper';
 import { spacing } from '@/theme/theme';
+import { Dimensions, StyleSheet } from 'react-native';
+import { MD3Theme } from 'react-native-paper';
 
 const { width } = Dimensions.get('window');
 const IMAGE_HEIGHT = width * 0.75;
@@ -21,6 +21,7 @@ export const createStyles = (theme: MD3Theme) =>
     },
     backButton: {
       backgroundColor: theme.colors.surface,
+      borderWidth: 1,
       margin: 0,
     },
     bookMarkButton: {
@@ -160,6 +161,11 @@ export const createStyles = (theme: MD3Theme) =>
     sectionTitle: {
       fontWeight: '600',
       marginBottom: spacing.md,
+    },
+    settingsButton: {
+      backgroundColor: theme.colors.surface,
+      borderWidth: 1,
+      margin: 0,
     },
     title: {
       fontWeight: '600',

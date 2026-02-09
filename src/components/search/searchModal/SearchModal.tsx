@@ -145,7 +145,6 @@ const SearchModal = ({ visible, onDismiss, navigation }: SearchModalProps) => {
                 onCityChange={handleCityChange}
                 onDistrictChange={handleDistrictChange}
               />
-
               {FILTER_SECTIONS.filter((item) => item.id !== 'location').map(
                 (item) => (
                   <ModalAccordion key={item.id} title={item.title}>

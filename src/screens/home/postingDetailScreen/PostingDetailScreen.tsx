@@ -5,13 +5,14 @@ import PriceDisplay from '@/components/listing/priceDisplay/PriceDisplay';
 import PropertyInfo from '@/components/listing/propertyInfo/PropertyInfo';
 import Loading from '@/components/primitives/loading/Loading';
 import { useBookmark } from '@/hooks/useBookmark';
+import { secureStorage } from '@/storage/storage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useQuery } from '@tanstack/react-query';
-import React from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import React, { useCallback, useState } from 'react';
 import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
-import { Divider, IconButton, Text, useTheme } from 'react-native-paper';
+import { Divider, IconButton, Menu, Text, useTheme } from 'react-native-paper';
 import { createStyles } from './PostingDetailScreen.styles';
 
 type RootStackParamList = {
@@ -29,7 +30,9 @@ const PostingDetailScreen = () => {
   const styles = createStyles(theme);
   const route = useRoute<PostingDetailRouteProp>();
   const navigation = useNavigation<PostingDetailNavigationProp>();
+  const queryClient = useQueryClient();
   const { postingId } = route.params;
+  const [menuVisible, setMenuVisible] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ['posting', postingId],
@@ -47,6 +50,27 @@ const PostingDetailScreen = () => {
     isBookmarked: posting?.isBookmarked ?? false,
   });
 
+  const closePostingMutation = useMutation({
+    mutationFn: (status: 'inactive' | 'rented') =>
+      postingApi.close(postingId, { status }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['posting', postingId] });
+      void queryClient.invalidateQueries({ queryKey: ['user-postings'] });
+      navigation.goBack();
+    },
+    onError: (error) => {
+      console.error('Error closing posting:', error);
+    },
+  });
+
+  const openMenu = useCallback(() => setMenuVisible(true), []);
+  const closeMenu = useCallback(() => setMenuVisible(false), []);
+
+  const handleClosePosting = useCallback(() => {
+    closeMenu();
+    closePostingMutation.mutate('inactive');
+  }, [closePostingMutation, closeMenu]);
+
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -58,6 +82,9 @@ const PostingDetailScreen = () => {
   if (!posting) {
     return null;
   }
+
+  const currentUserId = secureStorage.getUserIdSync();
+  const isOwnPosting = currentUserId && posting.userId === currentUserId;
 
   const images = posting.specs?.images?.images || [];
   const allImages = [{ url: posting.coverImageUrl, order: 0 }, ...images].sort(
@@ -93,12 +120,36 @@ const PostingDetailScreen = () => {
               style={styles.backButton}
             />
             <View style={styles.headerActions}>
-              <BookmarkButton
-                onPress={toggleBookmark}
-                isBookmarked={isBookmarked}
-                isLoading={bookmarkLoading}
-                style={styles.bookMarkButton}
-              />
+              {isOwnPosting ? (
+                <Menu
+                  key={menuVisible.toString()}
+                  visible={menuVisible}
+                  onDismiss={closeMenu}
+                  anchorPosition='bottom'
+                  anchor={
+                    <IconButton
+                      style={styles.settingsButton}
+                      icon="dots-vertical"
+                      size={24}
+                      iconColor={theme.colors.onSurface}
+                      onPress={openMenu}
+                    />
+                  }
+                >
+                  <Menu.Item
+                    onPress={handleClosePosting}
+                    title="İlanı Kapat"
+                    titleStyle={{ color: theme.colors.error }}
+                  />
+                </Menu>
+              ) : (
+                <BookmarkButton
+                  onPress={toggleBookmark}
+                  isBookmarked={isBookmarked}
+                  isLoading={bookmarkLoading}
+                  style={styles.bookMarkButton}
+                />
+              )}
             </View>
           </View>
         </View>
@@ -125,7 +176,6 @@ const PostingDetailScreen = () => {
 
           <Divider style={styles.divider} />
 
-          {/* Host Info */}
           {posting.user?.firstName && (
             <>
               <TouchableOpacity style={styles.section}>
@@ -147,7 +197,6 @@ const PostingDetailScreen = () => {
             </>
           )}
 
-          {/* Description */}
           {posting.specs?.description && (
             <>
               <View style={styles.section}>
@@ -162,7 +211,6 @@ const PostingDetailScreen = () => {
             </>
           )}
 
-          {/* Amenities */}
           <View style={styles.section}>
             <Text variant="titleMedium" style={styles.sectionTitle}>
               Özellikler
@@ -223,7 +271,6 @@ const PostingDetailScreen = () => {
 
           <Divider style={styles.divider} />
 
-          {/* Property Details */}
           {posting.specs && (
             <>
               <View style={styles.section}>
@@ -270,20 +317,21 @@ const PostingDetailScreen = () => {
           )}
         </View>
       </ScrollView>
-
       {posting.rentAmount !== undefined && (
         <View style={styles.bottomBar}>
           <PriceDisplay amount={posting.rentAmount} variant="large" />
-          <TouchableOpacity
-            style={[
-              styles.contactButton,
-              { backgroundColor: theme.colors.primary },
-            ]}
-          >
-            <Text variant="titleMedium" style={styles.contactButtonText}>
-              İletişime Geç
-            </Text>
-          </TouchableOpacity>
+          {!isOwnPosting && (
+            <TouchableOpacity
+              style={[
+                styles.contactButton,
+                { backgroundColor: theme.colors.primary },
+              ]}
+            >
+              <Text variant="titleMedium" style={styles.contactButtonText}>
+                İletişime Geç
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       )}
     </View>

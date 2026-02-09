@@ -20,6 +20,11 @@ export const createStyles = (theme: MD3Theme) =>
       marginHorizontal: spacing.md,
       marginVertical: spacing.sm,
     },
+    cardNoVerticalMargin: {
+      backgroundColor: theme.colors.surface,
+      marginHorizontal: 0,
+      marginVertical: spacing.sm,
+    },
     chip: {
       backgroundColor: theme.colors.surfaceVariant,
     },

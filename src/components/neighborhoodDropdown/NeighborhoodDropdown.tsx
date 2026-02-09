@@ -1,17 +1,17 @@
 import Dropdown from '@/components/dropdown/Dropdown';
 import { useDropdownState } from '@/hooks/useDropdownState';
-import { useNeighborhoods } from '@/hooks/useNeighborhoods';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Keyboard, TextInput as RNTextInput, View } from 'react-native';
 import { HelperText } from 'react-native-paper';
 import { styles } from './NeighborhoodDropdown.styles';
 
 interface NeighborhoodDropdownProps {
   districtId?: number;
-  value?: number;
-  onChange: (neighborhoodId: number) => void;
+  value?: string | null;
+  onChange: (neighborhoodId: string) => void;
   error?: string;
 }
+// TODO refactor
 
 const NeighborhoodDropdown = ({
   districtId,
@@ -23,37 +23,13 @@ const NeighborhoodDropdown = ({
   const inputRef = useRef<RNTextInput>(null);
   const [searchText, setSearchText] = useState('');
 
-  const { isLoading, filterNeighborhoods, getNeighborhoodById } =
-    useNeighborhoods(districtId);
-
-  const selectedNeighborhood = value ? getNeighborhoodById(value) : null;
-  
-  // Use selected neighborhood name or search text
-  const displayValue = selectedNeighborhood?.name || searchText;
-
-  const filteredNeighborhoods = filterNeighborhoods(displayValue);
-
-  // Clear search text when a neighborhood is selected
-  useEffect(() => {
-    if (selectedNeighborhood) {
-      setSearchText('');
-    }
-  }, [selectedNeighborhood]);
-
-  // Clear value when district changes
-  useEffect(() => {
-    if (!districtId && value) {
-      onChange(0);
-    }
-  }, [districtId, value, onChange]);
-
   const handleChange = (text: string) => {
     setSearchText(text);
     dropdown.open();
   };
 
-  const handleSelect = (item: { id: number; name: string }) => {
-    onChange(item.id);
+  const handleSelect = (item: { value: string; name: string }) => {
+    onChange(item.value);
     setSearchText('');
     dropdown.close();
     Keyboard.dismiss();
@@ -63,13 +39,12 @@ const NeighborhoodDropdown = ({
     <View style={styles.container}>
       <Dropdown
         label="Mahalle *"
-        value={displayValue}
+        value={value ?? ''}
+        items={[]}
         placeholder={!districtId ? 'Önce şehir ve ilçe seçin' : 'Mahalle seçin'}
         disabled={!districtId}
-        isLoading={isLoading}
         isOpen={dropdown.isOpen}
-        items={filteredNeighborhoods}
-        getKey={(item) => item.id.toString()}
+        getKey={(item) => item.toString()}
         getLabel={(item) => item.name}
         error={!!error}
         onFocus={() => dropdown.open()}

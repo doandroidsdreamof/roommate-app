@@ -2,7 +2,6 @@ import {
   CreatePostingFormData
 } from '@/schemas/postingSchema';
 import { FieldPath } from 'react-hook-form';
-import { LocationData } from '../location/locationPicker/LocationPicker';
 import DetailStepfields from './detailStepfields/DetailStepfields';
 import ImagesStepFields from './imagesStepFields/ImagesStepFields';
 import SpecsStepFields from './specsStepFields/SpecsStepFields';
@@ -19,7 +18,6 @@ export interface StepFieldProps {
     field: K,
     value: CreatePostingFormData['specs'][K]
   ) => void;
-  onLocationSelect: (location: LocationData) => void;
   coverImage: string | null;
   additionalImages: string[];
   pickCoverImage: () => void;
@@ -45,7 +43,7 @@ export const STEP_CONFIGS: StepConfig[] = [
       'specs.description',
       'city',
       'district',
-      'neighborhoodId',
+      'neighborhood',
       'rentAmount',
       'roomCount',
       'bathroomCount',

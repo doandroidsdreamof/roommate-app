@@ -1,4 +1,3 @@
-import { locationApi } from '@/api';
 import * as Location from 'expo-location';
 import React, { useEffect, useState } from 'react';
 import { Modal, View } from 'react-native';
@@ -23,7 +22,7 @@ interface MapPickerProps {
   onLocationDataChange?: (locationData: {
     province?: string;
     district?: string;
-    neighborhoodId?: number;
+    neighborhood?: string | null;
   }) => void;
   error?: string;
   label?: string;
@@ -55,7 +54,6 @@ const MapPicker = ({
     }
   }, [showMap]);
 
-  // TODO code duplication
   const getUserLocation = async () => {
     try {
       setLocationLoading(true);
@@ -88,6 +86,7 @@ const MapPicker = ({
     }
   };
 
+  // TODO this part is terrible decouple and test it
   const reverseGeocodeAndFindNeighborhood = async (location: MapLocation) => {
     if (!onLocationDataChange) return;
 
@@ -96,6 +95,7 @@ const MapPicker = ({
         latitude: location.latitude,
         longitude: location.longitude,
       });
+      console.log('🚀 ~ addresses==============>:', addresses);
 
       if (addresses.length === 0) {
         console.log('No addresses found');
@@ -104,6 +104,8 @@ const MapPicker = ({
 
       const address = addresses[0];
       const provinceName = address.region;
+      const neighborhood = address.district;
+      console.log('🚀 ~ neighborhood:', neighborhood);
       const districtName = address.subregion || address.district;
 
       if (!provinceName || !districtName) {
@@ -116,30 +118,29 @@ const MapPicker = ({
       }
 
       try {
-        const neighborhoods = await locationApi.searchNeighborhoods({
-          query: address.street || address.name || '',
-        });
+        if (neighborhood?.length === 0) {
+          console.log('❌ No neighborhoods found for district:', districtName);
+          onLocationDataChange({
+            province: provinceName,
+            district: districtName,
+          });
+          return;
+        }
 
-        const matchingNeighborhood = neighborhoods.find(
-          (n) =>
-            n.city.toLowerCase() === provinceName.toLowerCase() &&
-            n.district.toLowerCase() === districtName.toLowerCase()
+        console.log(
+          '✅ Autopopulated:',
+          provinceName,
+          districtName,
+          neighborhood
         );
 
-        if (matchingNeighborhood) {
-          onLocationDataChange({
-            province: provinceName,
-            district: districtName,
-            neighborhoodId: parseInt(matchingNeighborhood.id, 10),
-          });
-        } else {
-          onLocationDataChange({
-            province: provinceName,
-            district: districtName,
-          });
-        }
+        onLocationDataChange({
+          province: provinceName,
+          district: districtName,
+          neighborhood: neighborhood,
+        });
       } catch (apiError) {
-        console.error('Error searching neighborhoods:', apiError);
+        console.error('Error fetching location data:', apiError);
         onLocationDataChange({
           province: provinceName,
           district: districtName,
@@ -149,7 +150,6 @@ const MapPicker = ({
       console.error('Error reverse geocoding:', error);
     }
   };
-
   const handleConfirm = async () => {
     if (tempLocation) {
       onChange(tempLocation);

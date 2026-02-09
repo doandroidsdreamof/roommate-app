@@ -23,7 +23,7 @@ interface SingleModeProps extends CommonProps {
 }
 
 interface RangeModeProps extends CommonProps {
-  isSingle?: false;
+  isSingle?: false; // TODO ?
   lowValue: number;
   highValue: number;
   onLowChange: (value: number) => void;

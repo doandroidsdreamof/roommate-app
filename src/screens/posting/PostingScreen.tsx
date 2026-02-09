@@ -5,9 +5,11 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { ScrollView, View } from 'react-native';
 import { Button, Text, useTheme } from 'react-native-paper';
 
-import { LocationData } from '@/components/location/locationPicker/LocationPicker';
+import UserPostingsList from '@/components/listing/userPostingsList/UserPostingsList';
 import Modal from '@/components/modal/Modal';
 import { STEP_CONFIGS, Step } from '@/components/posting/Stepconfig';
+import Toast from '@/components/toast/Toast';
+import { useCreatePosting } from '@/hooks/useCreatePosting';
 import {
   CreatePostingFormData,
   createPostingSchema,
@@ -20,14 +22,27 @@ const PostingScreen = () => {
   const styles = createStyles(theme);
   const [currentStep, setCurrentStep] = useState<Step>('details');
   const [coverImage, setCoverImage] = useState<string | null>(null);
+  const [successSnackbar, setSuccessSnackbar] = useState({
+    visible: false,
+    message: '',
+  });
+  const [errorSnackbar, setErrorSnackbar] = useState({
+    visible: false,
+    message: '',
+  });
   const [additionalImages, setAdditionalImages] = useState<string[]>([]);
   const [isPostingModalVisible, setisPostingModalVisible] = useState(false);
+  const { mutateAsync: createPosting } = useCreatePosting();
 
   const methods = useForm<CreatePostingFormData>({
-    resolver: zodResolver(createPostingSchema),
-    defaultValues: {
-      ...initialFormState,
-    },
+    resolver: zodResolver(createPostingSchema, {
+      error: (iss) => {
+        if (iss.code === 'invalid_type') {
+          return { message: 'bu alan gereklidir' };
+        }
+      },
+    }),
+    defaultValues: { ...initialFormState },
     mode: 'onChange',
   });
 
@@ -35,41 +50,18 @@ const PostingScreen = () => {
     watch,
     setValue,
     trigger,
-    formState: { errors },
+    reset,
   } = methods;
   const formData = watch();
-  console.log('🚀 ~ errors:', errors);
 
   const currentIndex = STEP_CONFIGS.findIndex((s) => s.id === currentStep);
   const currentConfig = STEP_CONFIGS[currentIndex];
 
-  const handleFieldChange = (field: unknown, value: unknown) => {
-    console.log('🚀 ~ value:', value);
-    console.log('🚀 ~ field:', field);
-  };
-
-  const handleSpecsChange = (field: unknown, value: unknown) => {
-    console.log('🚀 ~ value:', value);
-    console.log('🚀 ~ field:', field);
-  };
-
-  const handleLocationSelect = (location: LocationData) => {
-    if (location.province) setValue('city', location.province);
-    if (location.district) setValue('district', location.district);
-    if (location.latitude && location.longitude) {
-      setValue(
-        'latitude',
-        typeof location.latitude === 'string'
-          ? parseFloat(location.latitude)
-          : location.latitude
-      );
-      setValue(
-        'longitude',
-        typeof location.longitude === 'string'
-          ? parseFloat(location.longitude)
-          : location.longitude
-      );
-    }
+  const resetForm = () => {
+    reset();
+    setCoverImage(null);
+    setAdditionalImages([]);
+    setCurrentStep('details');
   };
 
   const pickCoverImage = async () => {
@@ -99,15 +91,28 @@ const PostingScreen = () => {
 
   const handleNext = async () => {
     try {
-      const isFirstStepValid = await trigger([
-        ...STEP_CONFIGS[0].requiredFields,
-      ]);
-      console.log('🚀 ~ isFirstStepValid:', isFirstStepValid);
-      if (isFirstStepValid && currentIndex <= 2) {
+      const fields = STEP_CONFIGS[currentIndex].requiredFields;
+      const isValid = await trigger(fields);
+
+      if (!isValid) return;
+
+      if (currentStep === 'images') {
+        await createPosting(formData);
+        setSuccessSnackbar({
+          visible: true,
+          message: 'İlan başarı ile oluşturuldu',
+        });
+        setisPostingModalVisible(false);
+        resetForm();
+        return;
+      }
+
+      if (currentIndex < STEP_CONFIGS.length - 1) {
         setCurrentStep(STEP_CONFIGS[currentIndex + 1].id);
       }
     } catch (error) {
       console.error('[PostingScreen/handleNext Error]: ', error);
+      setErrorSnackbar({ visible: true, message: 'Bir hata oluştu' });
     }
   };
 
@@ -118,28 +123,39 @@ const PostingScreen = () => {
   const StepComponent = currentConfig.component;
 
   return (
-    <View>
-      <View style={styles.modalButtonContainer}>
-        <Button onPress={() => setisPostingModalVisible(true)} mode="contained">
-          Ev arkadaşı ilanı ver
-        </Button>
-      </View>
+    <View style={styles.container}>
+      <Toast
+        visible={successSnackbar.visible}
+        message={successSnackbar.message}
+        onDismiss={() =>
+          setSuccessSnackbar({ ...successSnackbar, visible: false })
+        }
+      />
+
+      <UserPostingsList
+        onCreatePress={() => {
+          setisPostingModalVisible(true);
+        }}
+      />
+
       <Modal
         showCloseButton
         visible={isPostingModalVisible}
-        onDismiss={() => setisPostingModalVisible(false)}
+        onDismiss={() => {
+          setisPostingModalVisible(false);
+          resetForm();
+        }}
       >
         <FormProvider {...methods}>
-          <View style={styles.container}>
+          <View style={styles.modalContainer}>
             <ScrollView showsVerticalScrollIndicator={false}>
               <Text variant="headlineSmall" style={styles.stepTitle}>
                 {currentConfig.title}
               </Text>
               <StepComponent
                 formData={formData}
-                onFieldChange={handleFieldChange}
-                onSpecsChange={handleSpecsChange}
-                onLocationSelect={handleLocationSelect}
+                onFieldChange={() => {}}
+                onSpecsChange={() => {}}
                 coverImage={coverImage}
                 additionalImages={additionalImages}
                 pickCoverImage={pickCoverImage}
@@ -155,7 +171,6 @@ const PostingScreen = () => {
                 }}
               />
             </ScrollView>
-
             <View style={styles.buttonContainer}>
               <View style={styles.buttonRow}>
                 {currentIndex > 0 && (
@@ -178,6 +193,14 @@ const PostingScreen = () => {
                 </Button>
               </View>
             </View>
+
+            <Toast
+              visible={errorSnackbar.visible}
+              message={errorSnackbar.message}
+              onDismiss={() =>
+                setErrorSnackbar({ ...errorSnackbar, visible: false })
+              }
+            />
           </View>
         </FormProvider>
       </Modal>

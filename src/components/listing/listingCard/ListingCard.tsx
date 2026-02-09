@@ -18,6 +18,8 @@ interface ListingCardProps {
   };
   onPress?: (id: string) => void;
   isBookmarked?: boolean;
+  disableBookmark?: boolean;
+  noVerticalMargin?: boolean;
 }
 
 const genderLabels = {
@@ -34,11 +36,17 @@ const formatDate = (dateString: string) => {
   });
 };
 
-const ListingCard = ({ listing, onPress }: ListingCardProps) => {
+const ListingCard = ({
+  listing,
+  onPress,
+  disableBookmark = false,
+  noVerticalMargin = false,
+}: ListingCardProps) => {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [imageError, setImageError] = useState(false);
 
+  // TODO pass it from parent in some pages bookmark is not used anymore e.q. PostingScreen
   const {
     isBookmarked: bookmarked,
     toggleBookmark,
@@ -49,7 +57,10 @@ const ListingCard = ({ listing, onPress }: ListingCardProps) => {
   });
 
   return (
-    <Card style={styles.card} onPress={() => onPress?.(listing.id)}>
+    <Card
+      style={[styles.card, noVerticalMargin && styles.cardNoVerticalMargin]}
+      onPress={() => onPress?.(listing.id)}
+    >
       <View style={styles.imageContainer}>
         {listing.coverImageUrl && !imageError ? (
           <Image
@@ -68,12 +79,14 @@ const ListingCard = ({ listing, onPress }: ListingCardProps) => {
           </View>
         )}
 
-        <BookmarkButton
-          onPress={toggleBookmark}
-          isBookmarked={bookmarked}
-          isLoading={isLoading}
-          style={styles.bookmarkButton}
-        />
+        {!disableBookmark && (
+          <BookmarkButton
+            onPress={toggleBookmark}
+            isBookmarked={bookmarked}
+            isLoading={isLoading}
+            style={styles.bookmarkButton}
+          />
+        )}
 
         {listing.rentAmount != null && (
           <View style={styles.priceTag}>
