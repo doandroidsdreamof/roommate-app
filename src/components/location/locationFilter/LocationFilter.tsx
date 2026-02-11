@@ -45,7 +45,7 @@ const LocationFilter = ({
     <View style={styles.container}>
       <View>
         <Dropdown
-          label="Şehir *"
+          label="Şehir"
           value={initialCity}
           placeholder="Şehir seçin"
           isLoading={loadingProvinces}
@@ -78,10 +78,9 @@ const LocationFilter = ({
           {cityError}
         </HelperText>
       </View>
-
       <View>
         <Dropdown
-          label="İlçe *"
+          label="İlçe"
           value={initialDistrict}
           placeholder={initialCity ? 'İlçe seçin' : 'Önce şehir seçin'}
           disabled={!selectedProvinceData}

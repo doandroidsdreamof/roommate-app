@@ -5,8 +5,16 @@ import { createThemeSlice, ThemeSlice } from './slices/theme-slice';
 import { createProfileSlice, ProfileSlice } from './slices/profile-slice';
 import { createFilterSlice, FilterSlice } from './slices/filter-slice';
 import Storage from 'expo-sqlite/kv-store';
+import {
+  createNotificationSlice,
+  NotificationSlice,
+} from './slices/notification-slice';
 
-export type RootStore = AuthSlice & ThemeSlice & ProfileSlice & FilterSlice;
+export type RootStore = AuthSlice &
+  ThemeSlice &
+  ProfileSlice &
+  FilterSlice &
+  NotificationSlice;
 
 export const useStore = create<RootStore>()(
   persist(
@@ -15,6 +23,7 @@ export const useStore = create<RootStore>()(
       ...createThemeSlice(...a),
       ...createProfileSlice(...a),
       ...createFilterSlice(...a),
+      ...createNotificationSlice(...a),
     }),
     {
       name: 'roommate-app-storage',

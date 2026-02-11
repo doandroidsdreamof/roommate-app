@@ -21,8 +21,10 @@ const ProfileScreen = () => {
   const { isDarkMode, toggleDarkMode } = useThemeMode();
   const profile = useStore((state) => state.profile);
 
-  const handleBookmarks = () => {
-    navigation.navigate('Bookmarks');
+  const handleNavigation = (
+    page: keyof Omit<ProfileStackParamList, 'PostingDetail'>
+  ) => {
+    navigation.navigate(page);
   };
 
   return (
@@ -72,13 +74,13 @@ const ProfileScreen = () => {
           <MenuItem
             icon="account-edit"
             title="Profili Düzenle"
-            onPress={() => {}}
+            onPress={() => handleNavigation('EditProfile')}
           />
           <Divider />
           <MenuItem
             icon="bookmark-outline"
             title="Kayıtlı İlanlar"
-            onPress={handleBookmarks}
+            onPress={() => handleNavigation('Bookmarks')}
           />
           <Divider />
           <MenuItem
@@ -89,7 +91,11 @@ const ProfileScreen = () => {
           <Divider />
           <MenuItem icon="lock-outline" title="Gizlilik" onPress={() => {}} />
           <Divider />
-          <MenuItem icon="cog-outline" title="Tercihler" onPress={() => {}} />
+          <MenuItem
+            icon="cog-outline"
+            title="Tercihler"
+            onPress={() => handleNavigation('EditPreference')}
+          />
           <Divider />
           <View style={styles.darkModeItem}>
             <View style={styles.menuItemLeft}>

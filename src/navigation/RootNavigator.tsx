@@ -9,6 +9,7 @@ import { combinedDarkTheme, combinedLightTheme } from '../theme/theme';
 import AuthNavigator from './AuthNavigator';
 import MainNavigator from './MainNavigator';
 import ProfileSetupNavigator from './ProfileSetupNavigator';
+import GlobalToast from '@/components/globalToast/GlobalToast';
 
 const RootNavigator = () => {
   const {
@@ -29,7 +30,6 @@ const RootNavigator = () => {
   }, [checkAuth]);
 
   useEffect(() => {
-    // void clearAllMessages();
     if (user?.id) {
       console.log('🚀 ~ user?.id:', user?.id);
       messagingSync(user.id).catch(console.error);
@@ -60,6 +60,7 @@ const RootNavigator = () => {
       ) : (
         <MainNavigator />
       )}
+      <GlobalToast />
     </NavigationContainer>
   );
 };

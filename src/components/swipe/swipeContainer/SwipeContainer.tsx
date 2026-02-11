@@ -53,7 +53,6 @@ const SwipeContainer = ({ onMatch }: SwipeContainerProps) => {
   );
 
   const swipeLimitError = feedError || mutationError;
-  console.log('🚀 ~ swipeLimitError:', swipeLimitError);
 
   const renderCard = useCallback((item: FeedItem) => {
     return <SwipeCard profile={item} />;

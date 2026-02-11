@@ -15,7 +15,7 @@ interface SingleModeProps extends CommonProps {
   isSingle: true;
   value: number;
   onValueChange: (value: number) => void;
-
+  // TODO review
   lowValue?: never;
   highValue?: never;
   onLowChange?: never;

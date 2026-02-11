@@ -8,12 +8,12 @@ import { Button, Text, useTheme } from 'react-native-paper';
 import UserPostingsList from '@/components/listing/userPostingsList/UserPostingsList';
 import Modal from '@/components/modal/Modal';
 import { STEP_CONFIGS, Step } from '@/components/posting/Stepconfig';
-import Toast from '@/components/toast/Toast';
 import { useCreatePosting } from '@/hooks/useCreatePosting';
 import {
   CreatePostingFormData,
   createPostingSchema,
 } from '@/schemas/postingSchema';
+import { useStore } from '@/store/index';
 import { createStyles } from './PostingScreen.styles';
 import { initialFormState } from './postingScreenConstants';
 
@@ -22,17 +22,10 @@ const PostingScreen = () => {
   const styles = createStyles(theme);
   const [currentStep, setCurrentStep] = useState<Step>('details');
   const [coverImage, setCoverImage] = useState<string | null>(null);
-  const [successSnackbar, setSuccessSnackbar] = useState({
-    visible: false,
-    message: '',
-  });
-  const [errorSnackbar, setErrorSnackbar] = useState({
-    visible: false,
-    message: '',
-  });
   const [additionalImages, setAdditionalImages] = useState<string[]>([]);
   const [isPostingModalVisible, setisPostingModalVisible] = useState(false);
   const { mutateAsync: createPosting } = useCreatePosting();
+  const addToast = useStore((state) => state.addToast);
 
   const methods = useForm<CreatePostingFormData>({
     resolver: zodResolver(createPostingSchema, {
@@ -46,12 +39,7 @@ const PostingScreen = () => {
     mode: 'onChange',
   });
 
-  const {
-    watch,
-    setValue,
-    trigger,
-    reset,
-  } = methods;
+  const { watch, setValue, trigger, reset } = methods;
   const formData = watch();
 
   const currentIndex = STEP_CONFIGS.findIndex((s) => s.id === currentStep);
@@ -68,6 +56,7 @@ const PostingScreen = () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       allowsEditing: true,
+      selectionLimit: 1,
       aspect: [16, 9],
       quality: 0.8,
     });
@@ -81,11 +70,12 @@ const PostingScreen = () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       allowsMultipleSelection: true,
+      selectionLimit: 5,
       quality: 0.8,
     });
     if (!result.canceled) {
       const uris = result.assets.map((a) => a.uri);
-      setAdditionalImages((prev) => [...prev, ...uris].slice(0, 5));
+      setAdditionalImages((prev) => [...prev, ...uris]);
     }
   };
 
@@ -98,10 +88,7 @@ const PostingScreen = () => {
 
       if (currentStep === 'images') {
         await createPosting(formData);
-        setSuccessSnackbar({
-          visible: true,
-          message: 'İlan başarı ile oluşturuldu',
-        });
+        addToast({ toastMessage: 'İlan başarı ile oluşturuldu' });
         setisPostingModalVisible(false);
         resetForm();
         return;
@@ -112,7 +99,7 @@ const PostingScreen = () => {
       }
     } catch (error) {
       console.error('[PostingScreen/handleNext Error]: ', error);
-      setErrorSnackbar({ visible: true, message: 'Bir hata oluştu' });
+      addToast({ toastMessage: 'Bir hata oluştu' });
     }
   };
 
@@ -124,14 +111,6 @@ const PostingScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Toast
-        visible={successSnackbar.visible}
-        message={successSnackbar.message}
-        onDismiss={() =>
-          setSuccessSnackbar({ ...successSnackbar, visible: false })
-        }
-      />
-
       <UserPostingsList
         onCreatePress={() => {
           setisPostingModalVisible(true);
@@ -193,14 +172,6 @@ const PostingScreen = () => {
                 </Button>
               </View>
             </View>
-
-            <Toast
-              visible={errorSnackbar.visible}
-              message={errorSnackbar.message}
-              onDismiss={() =>
-                setErrorSnackbar({ ...errorSnackbar, visible: false })
-              }
-            />
           </View>
         </FormProvider>
       </Modal>

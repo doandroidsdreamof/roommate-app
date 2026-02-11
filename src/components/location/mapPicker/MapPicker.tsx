@@ -1,8 +1,10 @@
+import { useLocation } from '@/hooks/useLocation';
 import * as Location from 'expo-location';
 import React, { useEffect, useState } from 'react';
-import { Modal, View } from 'react-native';
+import { Alert, Modal, View } from 'react-native';
 import {
   Button,
+  ButtonProps,
   HelperText,
   IconButton,
   Text,
@@ -16,14 +18,17 @@ export interface MapLocation {
   longitude: number;
 }
 
+export interface LocationChange {
+  province?: string;
+  district?: string;
+  neighborhood?: string | null;
+}
+
 interface MapPickerProps {
   value?: MapLocation | null;
-  onChange: (location: MapLocation) => void;
-  onLocationDataChange?: (locationData: {
-    province?: string;
-    district?: string;
-    neighborhood?: string | null;
-  }) => void;
+  buttonType?: ButtonProps['mode'];
+  onChange?: (location: MapLocation) => void;
+  onLocationDataChange?: (locationData: LocationChange) => void;
   error?: string;
   label?: string;
 }
@@ -35,7 +40,8 @@ const MapPicker = ({
   onChange,
   onLocationDataChange,
   error,
-  label = 'Harita Konumu',
+  buttonType,
+  label,
 }: MapPickerProps) => {
   const theme = useTheme();
   const styles = createStyles(theme, !!error);
@@ -46,45 +52,44 @@ const MapPicker = ({
   );
   const [initialLocation, setInitialLocation] =
     useState<MapLocation>(DEFAULT_LOCATION);
-  const [locationLoading, setLocationLoading] = useState(false);
+  const { fetchRawLocation, checkLocationPermissions, isLoading } = useLocation(
+    {
+      lastKnownMaxAge: 300000,
+      requiredAccuracy: 1000,
+      fallbackAccuracy: Location.Accuracy.Balanced,
+      timeInterval: 5000,
+      distanceInterval: 0,
+    }
+  );
+
+  const getUserLocation = async () => {
+    try {
+      const hasPermission = await checkLocationPermissions(Alert.alert);
+      if (!hasPermission) {
+        setInitialLocation(DEFAULT_LOCATION);
+        return;
+      }
+
+      const location = await fetchRawLocation();
+      if (location) {
+        const userCoords = {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        };
+        setInitialLocation(userCoords);
+        if (!tempLocation) setTempLocation(userCoords);
+      }
+    } catch (err) {
+      console.error('Error in getUserLocation:', err);
+      setInitialLocation(DEFAULT_LOCATION);
+    }
+  };
 
   useEffect(() => {
     if (showMap && !value) {
       void getUserLocation();
     }
-  }, [showMap]);
-
-  const getUserLocation = async () => {
-    try {
-      setLocationLoading(true);
-      const { status } = await Location.requestForegroundPermissionsAsync();
-
-      if (status !== 'granted') {
-        console.log('Location permission denied');
-        setInitialLocation(DEFAULT_LOCATION);
-        return;
-      }
-
-      const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced,
-      });
-
-      const userLocation = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      };
-
-      setInitialLocation(userLocation);
-      if (!tempLocation) {
-        setTempLocation(userLocation);
-      }
-    } catch (error) {
-      console.error('Error getting location:', error);
-      setInitialLocation(DEFAULT_LOCATION);
-    } finally {
-      setLocationLoading(false);
-    }
-  };
+  }, [showMap, value]);
 
   // TODO this part is terrible decouple and test it
   const reverseGeocodeAndFindNeighborhood = async (location: MapLocation) => {
@@ -119,7 +124,7 @@ const MapPicker = ({
 
       try {
         if (neighborhood?.length === 0) {
-          console.log('❌ No neighborhoods found for district:', districtName);
+          console.log(' No neighborhoods found for district:', districtName);
           onLocationDataChange({
             province: provinceName,
             district: districtName,
@@ -127,12 +132,7 @@ const MapPicker = ({
           return;
         }
 
-        console.log(
-          '✅ Autopopulated:',
-          provinceName,
-          districtName,
-          neighborhood
-        );
+        console.log('Autopopulated:', provinceName, districtName, neighborhood);
 
         onLocationDataChange({
           province: provinceName,
@@ -152,7 +152,7 @@ const MapPicker = ({
   };
   const handleConfirm = async () => {
     if (tempLocation) {
-      onChange(tempLocation);
+      if (onChange) onChange(tempLocation);
       await reverseGeocodeAndFindNeighborhood(tempLocation);
       setShowMap(false);
     }
@@ -165,18 +165,25 @@ const MapPicker = ({
 
   return (
     <View>
-      <Text variant="labelLarge" style={styles.label}>
-        {label} {!value && '*'}
-      </Text>
-
+      {label && (
+        <Text variant="labelLarge" style={styles.label}>
+          {label} {!value && '*'}
+        </Text>
+      )}
       {!showMap ? (
         <View>
           <Button
-            mode={value ? 'outlined' : 'contained'}
+            mode={
+              typeof buttonType === 'string'
+                ? buttonType
+                : value
+                  ? 'outlined'
+                  : 'contained'
+            }
             icon="map-marker"
             onPress={() => setShowMap(true)}
             style={styles.button}
-            loading={locationLoading}
+            loading={isLoading}
           >
             Haritadan Konum Seç
           </Button>

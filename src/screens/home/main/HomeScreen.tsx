@@ -46,6 +46,10 @@ const HomeScreen = () => {
           const title = section.getTitleFn(profile ?? {});
           const params = section.getParamsFn(profile ?? {});
 
+          if (!sectionData.data?.lists || sectionData.data.lists.length === 0) {
+            return null;
+          }
+
           return (
             <React.Fragment key={section.id}>
               <SectionHeader

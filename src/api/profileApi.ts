@@ -1,33 +1,18 @@
 import { AxiosError, AxiosInstance } from 'axios';
 import { API_ENDPOINTS } from '../config/apiEndpoints';
+import {
+  CreateProfileDto,
+  CreatePreferencesDto,
+  UpdateAddressDto,
+  UpdatePhotoDto,
+} from '@/schemas/profileSchema';
 
-// TODO code duplication
-
-export interface CreateProfileDto {
-  name: string;
-  gender: 'male' | 'female' | 'other';
-  city: string;
-  district: string;
-}
-
-export interface CreatePreferencesDto {
-  ageMin: number;
-  ageMax: number;
-  budgetMin?: number;
-  budgetMax?: number;
-  genderPreference?: 'female_only' | 'male_only' | 'mixed';
-}
-
+// TODO decouple preference
 export class ProfileApi {
   constructor(private client: AxiosInstance) {}
 
   public async createProfile(data: CreateProfileDto) {
     const response = await this.client.post(API_ENDPOINTS.USERS.PROFILE, data);
-    return response.data;
-  }
-
-  public async updateProfile(data: Partial<CreateProfileDto>) {
-    const response = await this.client.patch(API_ENDPOINTS.USERS.PROFILE, data);
     return response.data;
   }
 
@@ -75,6 +60,26 @@ export class ProfileApi {
   public async updatePreferences(data: Partial<CreatePreferencesDto>) {
     const response = await this.client.patch(
       API_ENDPOINTS.USERS.PREFERENCES,
+      data
+    );
+    return response.data;
+  }
+  public async updateAddress(data: UpdateAddressDto) {
+    const response = await this.client.patch(
+      API_ENDPOINTS.USERS.PROFILE_ADDRESS,
+      data
+    );
+    return response.data;
+  }
+
+  public async getPreferences() {
+    const response = await this.client.get(API_ENDPOINTS.USERS.PREFERENCES);
+    return response.data;
+  }
+
+  public async updatePhoto(data: UpdatePhotoDto) {
+    const response = await this.client.patch(
+      API_ENDPOINTS.USERS.PROFILE_PHOTO,
       data
     );
     return response.data;

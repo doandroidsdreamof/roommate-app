@@ -2,10 +2,10 @@ import { profileApi } from '@/api';
 import PreferencesForm from '@/components/forms/preferencesForm/PreferencesForm';
 import Modal from '@/components/modal/Modal';
 import Loading from '@/components/primitives/loading/Loading';
-import { usePreferenceCheck } from '@/hooks/usePreferenceCheck';
+import { usePreferenceCheck } from '@/hooks/usePreferences';
 import {
-    PreferencesSetupForm,
-    preferencesSetupSchema,
+  CreatePreferencesDto,
+  createPreferencesSchema,
 } from '@/schemas/profileSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -24,8 +24,8 @@ const PreferencesModalWrapper = ({
   const queryClient = useQueryClient();
   const { isLoading } = usePreferenceCheck();
 
-  const form = useForm<PreferencesSetupForm>({
-    resolver: zodResolver(preferencesSetupSchema),
+  const form = useForm<CreatePreferencesDto>({
+    resolver: zodResolver(createPreferencesSchema),
     defaultValues: {
       ageMin: 18,
       ageMax: 35,
@@ -33,7 +33,7 @@ const PreferencesModalWrapper = ({
   });
 
   const mutation = useMutation({
-    mutationFn: (data: PreferencesSetupForm) =>
+    mutationFn: (data: CreatePreferencesDto) =>
       profileApi.createPreferences(data),
     onSuccess: async () => {
       console.log('Preferences created successfully');
@@ -48,7 +48,7 @@ const PreferencesModalWrapper = ({
   });
 
   const handleSubmit = useCallback(
-    async (data: PreferencesSetupForm): Promise<void> => {
+    async (data: CreatePreferencesDto): Promise<void> => {
       await mutation.mutateAsync(data);
     },
     [mutation]

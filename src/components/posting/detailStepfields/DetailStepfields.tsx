@@ -11,7 +11,7 @@ import {
 
 import LocationFilter from '@/components/location/locationFilter/LocationFilter';
 import MapPicker from '@/components/location/mapPicker/MapPicker';
-import NeighborhoodDropdown from '@/components/neighborhoodDropdown/NeighborhoodDropdown';
+import NeighborhoodDropdown from '@/components/location/neighborhoodDropdown/NeighborhoodDropdown';
 import DatePicker from '@/components/search/datePicker/DatePicker';
 import RangeSlider from '@/components/search/rangeSlider/RangeSlider';
 import Stepper from '@/components/search/stepper/Stepper';

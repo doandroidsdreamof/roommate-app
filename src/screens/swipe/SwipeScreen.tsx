@@ -3,7 +3,7 @@ import { MESSAGE_CONTEXT_TYPE } from '@/components/message/types';
 import Loading from '@/components/primitives/loading/Loading';
 import MatchModal from '@/components/swipe/matchModal/MatchModal';
 import SwipeContainer from '@/components/swipe/swipeContainer/SwipeContainer';
-import { usePreferenceCheck } from '@/hooks/usePreferenceCheck';
+import { usePreferenceCheck } from '@/hooks/usePreferences';
 import { MessagesStackParamList } from '@/navigation/MessagesStackNavigator';
 import { FeedItem } from '@/schemas/feedSchema';
 import { CommonActions, useNavigation } from '@react-navigation/native';

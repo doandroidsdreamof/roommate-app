@@ -1,11 +1,11 @@
+import { useLocation } from '@/hooks/useLocation';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { ActivityIndicator, Alert, TouchableOpacity, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { createStyles } from './LocationPicker.styles';
 
-// TODO custom hook for location picker
 export interface LocationData {
   province?: string;
   district?: string;
@@ -28,78 +28,19 @@ const LocationPicker = ({
 }: LocationPickerProps) => {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handlePress = async () => {
-    setIsLoading(true);
-    try {
-      const enabled = await Location.hasServicesEnabledAsync();
-      if (!enabled) {
-        Alert.alert(
-          'Konum Servisi Kapalı',
-          'Lütfen cihaz ayarlarından konum servisini açın',
-          [{ text: 'Tamam' }]
-        );
-        setIsLoading(false);
-        return;
-      }
-
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert(
-          'İzin Gerekli',
-          'Yakındaki ilanları görmek için konum erişimi gereklidir.'
-        );
-        setIsLoading(false);
-        return;
-      }
-
-      let location = await Location.getLastKnownPositionAsync({
-        maxAge: 300000, // 5 minutes
-        requiredAccuracy: 1000,
-      });
-
-      if (!location) {
-        location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.Low,
-          timeInterval: 5000,
-          distanceInterval: 0,
-        });
-      }
-
-      const addresses = await Location.reverseGeocodeAsync({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      });
-
-      if (addresses.length > 0) {
-        const address = addresses[0];
-        const locationData: LocationData = {
-          province: address.region || undefined,
-          district: address.subregion || address.district || undefined,
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-        };
-
-        onLocationSelect(locationData);
-      } else {
-        Alert.alert('Adres Bulunamadı', 'Konum bilgisi alınamadı.');
-      }
-    } catch (error) {
-      console.error('Error getting location:', error);
-      Alert.alert(
-        'Konum Hatası',
-        'Konumunuz alınamadı. Lütfen tekrar deneyin.'
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { handleLocation, isLoading } = useLocation({
+    lastKnownMaxAge: 300000, // 5 minutes
+    requiredAccuracy: 1000,
+    fallbackAccuracy: Location.Accuracy.Low,
+    timeInterval: 5000,
+    distanceInterval: 0,
+  });
 
   return (
     <TouchableOpacity
       style={styles.container}
-      onPress={handlePress}
+      onPress={() => handleLocation(Alert.alert, onLocationSelect)}
       disabled={isLoading}
     >
       <View style={styles.iconWrapper}>

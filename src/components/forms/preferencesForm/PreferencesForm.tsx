@@ -1,4 +1,4 @@
-import { PreferencesSetupForm } from '@/schemas/profileSchema';
+import { CreatePreferencesDto } from '@/schemas/profileSchema';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import React from 'react';
 import { Controller, UseFormReturn } from 'react-hook-form';
@@ -8,8 +8,8 @@ import FormErrorMessage from '../formErrorMessage/FormErrorMessage';
 import { createStyles } from './PreferencesForm.styles';
 
 interface PreferencesFormProps {
-  form: UseFormReturn<PreferencesSetupForm>;
-  onSubmit: (data: PreferencesSetupForm) => Promise<void>;
+  form: UseFormReturn<CreatePreferencesDto>;
+  onSubmit: (data: CreatePreferencesDto) => Promise<void>;
   isLoading?: boolean;
 }
 
